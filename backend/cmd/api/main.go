@@ -10,9 +10,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
+	apihttp "revenue-recovery/backend/internal/api"
 	"revenue-recovery/backend/internal/config"
 	"revenue-recovery/backend/internal/decisionclient"
 	"revenue-recovery/backend/internal/logging"
+	"revenue-recovery/backend/internal/recovery"
+	"revenue-recovery/backend/internal/store"
 )
 
 func main() {
@@ -134,6 +137,11 @@ func main() {
 			})
 		},
 	)
+
+	recoveryRepository := store.NewPostgres(db)
+	recoveryService := recovery.NewService(recoveryRepository)
+	recoveryHandlers := apihttp.NewRecoveryCases(recoveryService)
+	recoveryHandlers.Register(router.Group("/api/v1"))
 
 	logger.Info(
 		"backend_starting",

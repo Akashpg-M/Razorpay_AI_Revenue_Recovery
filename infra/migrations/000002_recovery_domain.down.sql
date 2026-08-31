@@ -1,0 +1,18 @@
+DROP TRIGGER IF EXISTS recovery_events_immutable ON recovery_events;
+DROP FUNCTION IF EXISTS reject_recovery_event_mutation();
+DROP TABLE IF EXISTS evaluation_runs;
+DROP TABLE IF EXISTS webhook_events;
+DROP TABLE IF EXISTS promises_to_pay;
+DROP TABLE IF EXISTS executions;
+DROP TABLE IF EXISTS action_predictions;
+ALTER TABLE IF EXISTS policy_decisions DROP CONSTRAINT IF EXISTS policy_decisions_action_fk;
+DROP TABLE IF EXISTS recovery_actions;
+DROP TABLE IF EXISTS policy_decisions;
+DROP TABLE IF EXISTS recovery_events;
+DROP TABLE IF EXISTS recovery_cases;
+DROP TABLE IF EXISTS model_versions;
+DROP TABLE IF EXISTS customer_recovery_profiles;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS merchant_policies;
+DROP TABLE IF EXISTS merchants;
+UPDATE platform_metadata SET value='phase_1' WHERE key='schema_version';

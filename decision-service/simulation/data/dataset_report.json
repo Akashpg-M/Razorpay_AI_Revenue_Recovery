@@ -1,0 +1,75 @@
+{
+  "configuration": {
+    "checkout_failure_distribution": {
+      "LOW_INTENT_ABANDONMENT": 0.08,
+      "METHOD_MISMATCH": 0.17,
+      "PAYMENT_FAILURE": 0.24,
+      "PAYMENT_FRICTION": 0.21,
+      "PRICE_HESITATION": 0.11,
+      "TEMPORARY_ABANDONMENT": 0.19
+    },
+    "dataset_size": 5000,
+    "merchant_mix": {
+      "ECOMMERCE": 0.35,
+      "EDTECH": 0.18,
+      "MEDIA": 0.17,
+      "SAAS": 0.3
+    },
+    "seed": 42,
+    "subscription_failure_distribution": {
+      "AMBIGUOUS_CUSTOMER_INTENT": 0.08,
+      "HARD_DECLINE": 0.12,
+      "INSUFFICIENT_FUNDS": 0.28,
+      "MANDATE_FAILURE": 0.14,
+      "PAYMENT_METHOD_INVALID": 0.16,
+      "TEMPORARY_BANK_FAILURE": 0.22
+    },
+    "subscription_share": 0.7
+  },
+  "currency": "INR",
+  "customer_segments": {
+    "ESTABLISHED": 2559,
+    "HIGH_VALUE": 2102,
+    "NEW": 339
+  },
+  "data_contract": {
+    "evaluation_only": "_ground_truth",
+    "optimizer_input": "observable",
+    "warning": "Never expose _ground_truth fields to a strategy or fitted feature pipeline."
+  },
+  "dataset_size": 5000,
+  "failure_distribution": {
+    "AMBIGUOUS_CUSTOMER_INTENT": 244,
+    "HARD_DECLINE": 436,
+    "INSUFFICIENT_FUNDS": 945,
+    "LOW_INTENT_ABANDONMENT": 124,
+    "MANDATE_FAILURE": 476,
+    "METHOD_MISMATCH": 253,
+    "PAYMENT_FAILURE": 373,
+    "PAYMENT_FRICTION": 329,
+    "PAYMENT_METHOD_INVALID": 554,
+    "PRICE_HESITATION": 178,
+    "TEMPORARY_ABANDONMENT": 308,
+    "TEMPORARY_BANK_FAILURE": 780
+  },
+  "feature_version": "synthetic-observable-v1",
+  "generated_at": "2026-01-01T00:00:00+00:00",
+  "leak_type_distribution": {
+    "CHECKOUT_ABANDONMENT": 1565,
+    "FAILED_SUBSCRIPTION": 3435
+  },
+  "merchant_segments": {
+    "ECOMMERCE": 1757,
+    "EDTECH": 905,
+    "MEDIA": 863,
+    "SAAS": 1475
+  },
+  "revenue_at_risk_minor": 857191638,
+  "seed": 42,
+  "simulation_version": "1.0.0",
+  "split_sizes": {
+    "test": 750,
+    "train": 3500,
+    "validation": 750
+  }
+}
