@@ -1,0 +1,69 @@
+{
+  "algorithm": "gradient_boosting",
+  "artifact": "models\\natural_recovery_v1.joblib",
+  "calibration": {
+    "dataset": "first half of validation",
+    "method": "sigmoid"
+  },
+  "candidate_metrics": {
+    "gradient_boosting": {
+      "average_precision": 0.272662,
+      "brier_score": 0.174361,
+      "by_action": {
+        "WAIT": {
+          "brier_score": 0.174361,
+          "roc_auc": 0.573266
+        }
+      },
+      "calibration_comparison": {
+        "calibrated_brier_score": 0.175762,
+        "calibrated_expected_calibration_error": 0.032558,
+        "calibration_applied": false,
+        "uncalibrated_brier_score": 0.174361,
+        "uncalibrated_expected_calibration_error": 0.010293
+      },
+      "expected_calibration_error": 0.010293,
+      "precision_at_0_5": 0.0,
+      "recall_at_0_5": 0.0,
+      "roc_auc": 0.573266,
+      "simple_ranker_realized_net_minor": 14483213
+    },
+    "logistic_regression": {
+      "average_precision": 0.237861,
+      "brier_score": 0.176037,
+      "by_action": {
+        "WAIT": {
+          "brier_score": 0.176037,
+          "roc_auc": 0.514199
+        }
+      },
+      "calibration_comparison": {
+        "calibrated_brier_score": 0.176037,
+        "calibrated_expected_calibration_error": 0.026371,
+        "calibration_applied": true,
+        "uncalibrated_brier_score": 0.17643,
+        "uncalibrated_expected_calibration_error": 0.012911
+      },
+      "expected_calibration_error": 0.026371,
+      "precision_at_0_5": 0.0,
+      "recall_at_0_5": 0.0,
+      "roc_auc": 0.514199,
+      "simple_ranker_realized_net_minor": 14483213
+    }
+  },
+  "feature_version": "natural-features-v1",
+  "held_out_test_used": false,
+  "model_version": "natural-recovery-v1",
+  "seed": 42,
+  "training_dataset": {
+    "path": "simulation\\data\\train.jsonl",
+    "rows": 3500,
+    "sha256": "BF26EF7C6826C05C6C971816BFB94E24197BC5DE3A1458516163186FE0B64600"
+  },
+  "training_timestamp": "2026-08-31T17:29:17.937593+00:00",
+  "validation_dataset": {
+    "path": "simulation\\data\\validation.jsonl",
+    "rows": 750,
+    "sha256": "8C2C41DA4ADA314B0339B32AC6B1660892E5894D161E38CDED2FD673F81CC987"
+  }
+}

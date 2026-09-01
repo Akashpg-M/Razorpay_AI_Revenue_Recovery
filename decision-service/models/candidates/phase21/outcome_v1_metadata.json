@@ -1,0 +1,407 @@
+{
+  "algorithm": "gradient_boosting",
+  "artifact": "models\\candidates\\phase21\\outcome_v1.joblib",
+  "calibration": {
+    "dataset": "first half of validation split",
+    "method": "sigmoid",
+    "methods_compared": [
+      "raw",
+      "sigmoid",
+      "isotonic"
+    ],
+    "selection_dataset": "second half of validation split"
+  },
+  "candidate_metrics": {
+    "gradient_boosting": {
+      "average_precision": 0.401176,
+      "brier_score": 0.175082,
+      "by_action": {
+        "REQUEST_PAYMENT_METHOD_UPDATE": {
+          "brier_score": 0.188022,
+          "roc_auc": 0.703102
+        },
+        "RETENTION_ACTION": {
+          "brier_score": 0.201482,
+          "roc_auc": 0.606141
+        },
+        "RETRY_LATER": {
+          "brier_score": 0.204383,
+          "roc_auc": 0.688001
+        },
+        "RETRY_NOW": {
+          "brier_score": 0.152306,
+          "roc_auc": 0.561271
+        },
+        "SEND_CHECKOUT_RECOVERY_LINK": {
+          "brier_score": 0.211363,
+          "roc_auc": 0.739382
+        },
+        "SEND_PAYMENT_LINK": {
+          "brier_score": 0.165101,
+          "roc_auc": 0.590682
+        },
+        "SEND_REMINDER": {
+          "brier_score": 0.141613,
+          "roc_auc": 0.532593
+        },
+        "SUGGEST_ALTERNATE_METHOD": {
+          "brier_score": 0.169154,
+          "roc_auc": 0.68148
+        },
+        "WAIT": {
+          "brier_score": 0.176286,
+          "roc_auc": 0.488053
+        },
+        "WAIT_FOR_PROMISE_TO_PAY": {
+          "brier_score": 0.172116,
+          "roc_auc": 0.476008
+        }
+      },
+      "calibration_comparison": {
+        "isotonic": {
+          "brier_score": 0.175426,
+          "expected_calibration_error": 0.023862
+        },
+        "raw": {
+          "brier_score": 0.175993,
+          "expected_calibration_error": 0.024255
+        },
+        "sigmoid": {
+          "brier_score": 0.175082,
+          "expected_calibration_error": 0.022627
+        }
+      },
+      "calibration_method": "sigmoid",
+      "expected_calibration_error": 0.022627,
+      "precision_at_0_5": 0.638554,
+      "recall_at_0_5": 0.070013,
+      "roc_auc": 0.633888,
+      "simple_ranker_realized_net_minor": 28196526,
+      "top_features": [
+        {
+          "feature": "categorical__x7_RETRY_LATER",
+          "weight": 0.1413884
+        },
+        {
+          "feature": "categorical__x1_INSUFFICIENT_FUNDS",
+          "weight": 0.12449737
+        },
+        {
+          "feature": "categorical__x1_TEMPORARY_BANK_FAILURE",
+          "weight": 0.07596304
+        },
+        {
+          "feature": "categorical__x7_REQUEST_PAYMENT_METHOD_UPDATE",
+          "weight": 0.0666367
+        },
+        {
+          "feature": "categorical__x7_RETENTION_ACTION",
+          "weight": 0.06604982
+        },
+        {
+          "feature": "categorical__x1_PRICE_OR_VALUE_HESITATION",
+          "weight": 0.041679
+        },
+        {
+          "feature": "categorical__x7_SEND_CHECKOUT_RECOVERY_LINK",
+          "weight": 0.04049931
+        },
+        {
+          "feature": "categorical__x7_SEND_PAYMENT_LINK",
+          "weight": 0.03854693
+        },
+        {
+          "feature": "categorical__x1_HARD_DECLINE",
+          "weight": 0.03756113
+        },
+        {
+          "feature": "categorical__x1_DELAYED_INTENT",
+          "weight": 0.03694219
+        },
+        {
+          "feature": "categorical__x7_SUGGEST_ALTERNATE_METHOD",
+          "weight": 0.03656427
+        },
+        {
+          "feature": "categorical__x7_SEND_REMINDER",
+          "weight": 0.03543152
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_METHOD_MISMATCH",
+          "weight": 0.0348119
+        },
+        {
+          "feature": "numeric__x9",
+          "weight": 0.03271519
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_METHOD_INVALID",
+          "weight": 0.03195806
+        },
+        {
+          "feature": "numeric__x15",
+          "weight": 0.03146351
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_FRICTION",
+          "weight": 0.02222637
+        },
+        {
+          "feature": "numeric__x8",
+          "weight": 0.01763595
+        },
+        {
+          "feature": "categorical__x7_RETRY_NOW",
+          "weight": 0.01445334
+        },
+        {
+          "feature": "numeric__x16",
+          "weight": 0.01089435
+        },
+        {
+          "feature": "numeric__x14",
+          "weight": 0.01002484
+        },
+        {
+          "feature": "numeric__x12",
+          "weight": 0.00753483
+        },
+        {
+          "feature": "numeric__x11",
+          "weight": 0.00649613
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_FAILURE",
+          "weight": 0.00641963
+        },
+        {
+          "feature": "categorical__x1_UNKNOWN_ABANDONMENT",
+          "weight": 0.00639028
+        },
+        {
+          "feature": "categorical__x3_NONE",
+          "weight": 0.00630595
+        },
+        {
+          "feature": "categorical__x1_CUSTOMER_INTENT_OR_UNKNOWN",
+          "weight": 0.00512343
+        },
+        {
+          "feature": "numeric__x10",
+          "weight": 0.00341317
+        },
+        {
+          "feature": "categorical__x2_UPI",
+          "weight": 0.0020528
+        },
+        {
+          "feature": "numeric__x13",
+          "weight": 0.00182408
+        }
+      ]
+    },
+    "logistic_regression": {
+      "average_precision": 0.323401,
+      "brier_score": 0.181325,
+      "by_action": {
+        "REQUEST_PAYMENT_METHOD_UPDATE": {
+          "brier_score": 0.197249,
+          "roc_auc": 0.643775
+        },
+        "RETENTION_ACTION": {
+          "brier_score": 0.206816,
+          "roc_auc": 0.538731
+        },
+        "RETRY_LATER": {
+          "brier_score": 0.239183,
+          "roc_auc": 0.508901
+        },
+        "RETRY_NOW": {
+          "brier_score": 0.152288,
+          "roc_auc": 0.571835
+        },
+        "SEND_CHECKOUT_RECOVERY_LINK": {
+          "brier_score": 0.232435,
+          "roc_auc": 0.642643
+        },
+        "SEND_PAYMENT_LINK": {
+          "brier_score": 0.16722,
+          "roc_auc": 0.597254
+        },
+        "SEND_REMINDER": {
+          "brier_score": 0.137271,
+          "roc_auc": 0.556168
+        },
+        "SUGGEST_ALTERNATE_METHOD": {
+          "brier_score": 0.179216,
+          "roc_auc": 0.475175
+        },
+        "WAIT": {
+          "brier_score": 0.175904,
+          "roc_auc": 0.509899
+        },
+        "WAIT_FOR_PROMISE_TO_PAY": {
+          "brier_score": 0.172811,
+          "roc_auc": 0.45845
+        }
+      },
+      "calibration_comparison": {
+        "isotonic": {
+          "brier_score": 0.181606,
+          "expected_calibration_error": 0.020938
+        },
+        "raw": {
+          "brier_score": 0.181325,
+          "expected_calibration_error": 0.015626
+        },
+        "sigmoid": {
+          "brier_score": 0.181605,
+          "expected_calibration_error": 0.021009
+        }
+      },
+      "calibration_method": "raw",
+      "expected_calibration_error": 0.015626,
+      "precision_at_0_5": 0.0,
+      "recall_at_0_5": 0.0,
+      "roc_auc": 0.596838,
+      "simple_ranker_realized_net_minor": 22016787,
+      "top_features": [
+        {
+          "feature": "categorical__x7_RETRY_LATER",
+          "weight": 0.58617035
+        },
+        {
+          "feature": "categorical__x7_SEND_REMINDER",
+          "weight": -0.48145418
+        },
+        {
+          "feature": "categorical__x1_UNKNOWN_ABANDONMENT",
+          "weight": -0.42422852
+        },
+        {
+          "feature": "categorical__x6_UNKNOWN",
+          "weight": -0.29772102
+        },
+        {
+          "feature": "categorical__x7_SUGGEST_ALTERNATE_METHOD",
+          "weight": -0.28939779
+        },
+        {
+          "feature": "categorical__x7_RETENTION_ACTION",
+          "weight": 0.24981292
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_FRICTION",
+          "weight": 0.24661296
+        },
+        {
+          "feature": "categorical__x7_RETRY_NOW",
+          "weight": -0.23287517
+        },
+        {
+          "feature": "categorical__x7_SEND_PAYMENT_LINK",
+          "weight": -0.23153793
+        },
+        {
+          "feature": "categorical__x1_HARD_DECLINE",
+          "weight": -0.22027365
+        },
+        {
+          "feature": "categorical__x7_SEND_CHECKOUT_RECOVERY_LINK",
+          "weight": 0.19908793
+        },
+        {
+          "feature": "categorical__x0_FAILED_SUBSCRIPTION",
+          "weight": -0.17607386
+        },
+        {
+          "feature": "categorical__x3_NONE",
+          "weight": -0.14769784
+        },
+        {
+          "feature": "categorical__x1_PRICE_OR_VALUE_HESITATION",
+          "weight": -0.13597173
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_FAILURE",
+          "weight": 0.12818598
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_METHOD_INVALID",
+          "weight": 0.12640058
+        },
+        {
+          "feature": "categorical__x4_HIGH_VALUE",
+          "weight": -0.12525055
+        },
+        {
+          "feature": "categorical__x0_CHECKOUT_ABANDONMENT",
+          "weight": -0.12164717
+        },
+        {
+          "feature": "categorical__x4_ESTABLISHED",
+          "weight": -0.11937587
+        },
+        {
+          "feature": "categorical__x7_WAIT_FOR_PROMISE_TO_PAY",
+          "weight": -0.11235265
+        },
+        {
+          "feature": "categorical__x7_REQUEST_PAYMENT_METHOD_UPDATE",
+          "weight": 0.11132723
+        },
+        {
+          "feature": "categorical__x2_NETBANKING",
+          "weight": -0.10682069
+        },
+        {
+          "feature": "categorical__x2_WALLET",
+          "weight": -0.10415712
+        },
+        {
+          "feature": "categorical__x3_RETRY_LATER",
+          "weight": -0.09894109
+        },
+        {
+          "feature": "categorical__x7_WAIT",
+          "weight": -0.09650175
+        },
+        {
+          "feature": "categorical__x1_CUSTOMER_INTENT_OR_UNKNOWN",
+          "weight": -0.08208597
+        },
+        {
+          "feature": "categorical__x5_MEDIA",
+          "weight": -0.07855582
+        },
+        {
+          "feature": "categorical__x1_PAYMENT_METHOD_MISMATCH",
+          "weight": 0.0784621
+        },
+        {
+          "feature": "categorical__x5_EDTECH",
+          "weight": -0.07455175
+        },
+        {
+          "feature": "categorical__x5_ECOMMERCE",
+          "weight": -0.07433487
+        }
+      ]
+    }
+  },
+  "feature_version": "features-v1",
+  "held_out_test_used": false,
+  "model_version": "outcome-v1",
+  "training_dataset": {
+    "path": "simulation\\data\\train.jsonl",
+    "rows": 3500,
+    "sha256": "BF26EF7C6826C05C6C971816BFB94E24197BC5DE3A1458516163186FE0B64600"
+  },
+  "training_seed": 42,
+  "training_timestamp": "2026-09-01T04:20:44.878673+00:00",
+  "validation_dataset": {
+    "path": "simulation\\data\\validation.jsonl",
+    "rows": 750,
+    "sha256": "8C2C41DA4ADA314B0339B32AC6B1660892E5894D161E38CDED2FD673F81CC987"
+  }
+}

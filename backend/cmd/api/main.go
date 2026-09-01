@@ -11,10 +11,24 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	apihttp "revenue-recovery/backend/internal/api"
+	"revenue-recovery/backend/internal/attribution"
+	"revenue-recovery/backend/internal/budget"
 	"revenue-recovery/backend/internal/config"
+	recoverycontext "revenue-recovery/backend/internal/context"
 	"revenue-recovery/backend/internal/decisionclient"
+	"revenue-recovery/backend/internal/decisioning"
+	"revenue-recovery/backend/internal/detection"
+	"revenue-recovery/backend/internal/eligibility"
+	"revenue-recovery/backend/internal/integrations/razorpay"
+	"revenue-recovery/backend/internal/intelligence"
 	"revenue-recovery/backend/internal/logging"
+	"revenue-recovery/backend/internal/merchantprofile"
+	"revenue-recovery/backend/internal/modelregistry"
+	"revenue-recovery/backend/internal/orchestrator"
+	"revenue-recovery/backend/internal/portfolio"
+	"revenue-recovery/backend/internal/promises"
 	"revenue-recovery/backend/internal/recovery"
+	"revenue-recovery/backend/internal/responses"
 	"revenue-recovery/backend/internal/store"
 )
 
@@ -142,6 +156,41 @@ func main() {
 	recoveryService := recovery.NewService(recoveryRepository)
 	recoveryHandlers := apihttp.NewRecoveryCases(recoveryService)
 	recoveryHandlers.Register(router.Group("/api/v1"))
+	detectionService := detection.NewService(recoveryService)
+	razorpayIngestor := razorpay.NewIngestor(cfg.RazorpayWebhookSecret, recoveryRepository, detectionService)
+	detectionHandlers := apihttp.NewDetection(detectionService, detection.CheckoutAdapter{Store: recoveryRepository}, razorpayIngestor)
+	detectionHandlers.Register(router.Group("/api/v1"))
+	contextService := recoverycontext.NewService(recoveryRepository)
+	contextHandlers := apihttp.NewContext(contextService)
+	contextHandlers.Register(router.Group("/api/v1"))
+	eligibilityService := eligibility.NewService(contextService)
+	eligibilityHandlers := apihttp.NewEligibility(eligibilityService)
+	eligibilityHandlers.Register(router.Group("/api/v1"))
+	intelligenceService := intelligence.NewService(contextService, decisionClient, recoveryRepository)
+	intelligenceHandlers := apihttp.NewIntelligence(intelligenceService)
+	intelligenceHandlers.Register(router.Group("/api/v1"))
+	decisionService := decisioning.NewService(contextService, decisionClient, recoveryRepository)
+	scheduler := orchestrator.NewScheduler(recoveryRepository)
+	decisionHandlers := apihttp.NewDecision(decisionService, scheduler)
+	decisionHandlers.Register(router.Group("/api/v1"))
+	responseService := responses.NewService(recoveryRepository)
+	promiseService := promises.NewService(recoveryRepository, nil)
+	responseService.SetPromiseCreator(promiseService)
+	responseHandlers := apihttp.NewCustomerResponses(responseService)
+	responseHandlers.Register(router.Group("/api/v1"))
+	promiseHandlers := apihttp.NewPromises(promiseService)
+	promiseHandlers.Register(router.Group("/api/v1"))
+	merchantProfileService := merchantprofile.NewService(recoveryRepository)
+	merchantProfileHandlers := apihttp.NewMerchantProfiles(merchantProfileService)
+	merchantProfileHandlers.Register(router.Group("/api/v1"))
+	attributionHandlers := apihttp.NewAttributions(attribution.NewService(recoveryRepository))
+	attributionHandlers.Register(router.Group("/api/v1"))
+	portfolioHandlers := apihttp.NewPortfolio(portfolio.NewService(recoveryRepository), budget.NewService(recoveryRepository))
+	portfolioHandlers.Register(router.Group("/api/v1"))
+	modelRegistryHandlers := apihttp.NewModelRegistry(modelregistry.NewService(recoveryRepository))
+	modelRegistryHandlers.Register(router.Group("/api/v1"))
+	workflowHandlers := apihttp.NewWorkflow(recoveryRepository)
+	workflowHandlers.Register(router.Group("/api/v1"))
 
 	logger.Info(
 		"backend_starting",
