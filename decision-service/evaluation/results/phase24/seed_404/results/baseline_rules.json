@@ -1,0 +1,111 @@
+{
+  "action_counts": {
+    "REQUEST_PAYMENT_METHOD_UPDATE": 101,
+    "RETENTION_ACTION": 27,
+    "RETRY_24H": 123,
+    "RETRY_NOW": 107,
+    "SEND_CHECKOUT_RECOVERY_LINK": 115,
+    "SEND_PAYMENT_LINK": 79,
+    "SEND_REMINDER": 97,
+    "STOP": 68,
+    "SUGGEST_ALTERNATE_METHOD": 33
+  },
+  "baseline": "rules",
+  "baseline_version": "rules-v1",
+  "dataset_path": "evaluation\\results\\phase24\\seed_404\\data\\test.jsonl",
+  "dataset_sha256": "AC4DB35FD46285CC8D6A2F91DBDDB9D46DF22EA123FB36C3B3A7F97DDFDD23F8",
+  "dataset_size": 750,
+  "evaluation_timestamp": "2026-01-01T00:00:00+00:00",
+  "metrics": {
+    "aggregate": {
+      "average_recovery_latency_hours": 24.5895,
+      "cases": 750,
+      "customer_contacts": 452,
+      "intervention_cost_minor": 108080,
+      "natural_recovery_count": 0,
+      "natural_recovery_value_minor": 0,
+      "recovered_revenue_by_action_minor": {
+        "REQUEST_PAYMENT_METHOD_UPDATE": 7248378,
+        "RETENTION_ACTION": 2845958,
+        "RETRY_24H": 13204944,
+        "RETRY_NOW": 7227206,
+        "SEND_CHECKOUT_RECOVERY_LINK": 8154124,
+        "SEND_PAYMENT_LINK": 2852549,
+        "SEND_REMINDER": 7534414,
+        "SUGGEST_ALTERNATE_METHOD": 1690460
+      },
+      "recovered_revenue_by_failure_minor": {
+        "AMBIGUOUS_CUSTOMER_INTENT": 5106490,
+        "INSUFFICIENT_FUNDS": 13204944,
+        "MANDATE_FAILURE": 2852549,
+        "METHOD_MISMATCH": 1690460,
+        "PAYMENT_FAILURE": 3879238,
+        "PAYMENT_FRICTION": 4274886,
+        "PAYMENT_METHOD_INVALID": 7248378,
+        "PRICE_HESITATION": 2845958,
+        "TEMPORARY_ABANDONMENT": 2427924,
+        "TEMPORARY_BANK_FAILURE": 7227206
+      },
+      "recovery_attempts": 230,
+      "recovery_rate": 0.38,
+      "revenue_per_intervention_minor": 74425.27,
+      "total_revenue_at_risk_minor": 124217039,
+      "total_revenue_recovered_minor": 50758033
+    },
+    "checkout": {
+      "average_recovery_latency_hours": 23.4896,
+      "cases": 241,
+      "customer_contacts": 221,
+      "intervention_cost_minor": 89140,
+      "natural_recovery_count": 0,
+      "natural_recovery_value_minor": 0,
+      "recovered_revenue_by_action_minor": {
+        "RETENTION_ACTION": 2845958,
+        "SEND_CHECKOUT_RECOVERY_LINK": 8154124,
+        "SEND_REMINDER": 2427924,
+        "SUGGEST_ALTERNATE_METHOD": 1690460
+      },
+      "recovered_revenue_by_failure_minor": {
+        "METHOD_MISMATCH": 1690460,
+        "PAYMENT_FAILURE": 3879238,
+        "PAYMENT_FRICTION": 4274886,
+        "PRICE_HESITATION": 2845958,
+        "TEMPORARY_ABANDONMENT": 2427924
+      },
+      "recovery_attempts": 0,
+      "recovery_rate": 0.39834,
+      "revenue_per_intervention_minor": 68409.35,
+      "total_revenue_at_risk_minor": 32673279,
+      "total_revenue_recovered_minor": 15118466
+    },
+    "subscription": {
+      "average_recovery_latency_hours": 25.1481,
+      "cases": 509,
+      "customer_contacts": 231,
+      "intervention_cost_minor": 18940,
+      "natural_recovery_count": 0,
+      "natural_recovery_value_minor": 0,
+      "recovered_revenue_by_action_minor": {
+        "REQUEST_PAYMENT_METHOD_UPDATE": 7248378,
+        "RETRY_24H": 13204944,
+        "RETRY_NOW": 7227206,
+        "SEND_PAYMENT_LINK": 2852549,
+        "SEND_REMINDER": 5106490
+      },
+      "recovered_revenue_by_failure_minor": {
+        "AMBIGUOUS_CUSTOMER_INTENT": 5106490,
+        "INSUFFICIENT_FUNDS": 13204944,
+        "MANDATE_FAILURE": 2852549,
+        "PAYMENT_METHOD_INVALID": 7248378,
+        "TEMPORARY_BANK_FAILURE": 7227206
+      },
+      "recovery_attempts": 230,
+      "recovery_rate": 0.371316,
+      "revenue_per_intervention_minor": 77309.26,
+      "total_revenue_at_risk_minor": 91543760,
+      "total_revenue_recovered_minor": 35639567
+    }
+  },
+  "seed": 404,
+  "simulation_version": "1.0.0"
+}

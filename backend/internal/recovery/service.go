@@ -20,6 +20,7 @@ var (
 type Repository interface {
 	CreateCase(context.Context, domain.RecoveryCase, []domain.RecoveryEvent) error
 	GetCase(context.Context, domain.ID) (domain.RecoveryCase, error)
+	GetCaseBySource(context.Context, domain.ID, string) (domain.RecoveryCase, error)
 	TransitionCase(context.Context, domain.ID, int64, domain.CaseState, domain.RecoveryEvent) (domain.RecoveryCase, error)
 	AppendEvent(context.Context, domain.RecoveryEvent) (domain.RecoveryEvent, error)
 	ListEvents(context.Context, domain.ID) ([]domain.RecoveryEvent, error)
@@ -151,6 +152,10 @@ func (s *Service) RecordEvent(ctx context.Context, caseID domain.ID, input Recor
 
 func (s *Service) GetCase(ctx context.Context, caseID domain.ID) (domain.RecoveryCase, error) {
 	return s.repository.GetCase(ctx, caseID)
+}
+
+func (s *Service) GetCaseBySource(ctx context.Context, merchantID domain.ID, sourceReference string) (domain.RecoveryCase, error) {
+	return s.repository.GetCaseBySource(ctx, merchantID, sourceReference)
 }
 
 func (s *Service) Events(ctx context.Context, caseID domain.ID) ([]domain.RecoveryEvent, error) {

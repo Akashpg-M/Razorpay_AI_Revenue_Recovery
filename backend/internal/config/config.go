@@ -3,11 +3,15 @@ package config
 import "os"
 
 type Config struct {
-	Environment        string
-	Port               string
-	DatabaseURL        string
-	RedisURL           string
-	DecisionServiceURL string
+	Environment           string
+	Port                  string
+	DatabaseURL           string
+	RedisURL              string
+	DecisionServiceURL    string
+	RazorpayKeyID         string
+	RazorpayKeySecret     string
+	RazorpayWebhookSecret string
+	RazorpayAPIURL        string
 }
 
 func Load() Config {
@@ -29,6 +33,10 @@ func Load() Config {
 			"DECISION_SERVICE_URL",
 			"http://localhost:8001",
 		),
+		RazorpayKeyID:         getEnv("RAZORPAY_KEY_ID", ""),
+		RazorpayKeySecret:     getEnv("RAZORPAY_KEY_SECRET", ""),
+		RazorpayWebhookSecret: getEnv("RAZORPAY_WEBHOOK_SECRET", ""),
+		RazorpayAPIURL:        getEnv("RAZORPAY_API_URL", "https://api.razorpay.com"),
 	}
 }
 

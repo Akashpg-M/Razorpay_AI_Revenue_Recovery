@@ -32,6 +32,14 @@ func (m *memoryRepository) GetCase(_ context.Context, id domain.ID) (domain.Reco
 	}
 	return c, nil
 }
+func (m *memoryRepository) GetCaseBySource(_ context.Context, merchantID domain.ID, source string) (domain.RecoveryCase, error) {
+	for _, c := range m.cases {
+		if c.MerchantID == merchantID && c.SourceReference == source {
+			return c, nil
+		}
+	}
+	return domain.RecoveryCase{}, ErrNotFound
+}
 func (m *memoryRepository) TransitionCase(_ context.Context, id domain.ID, expected int64, to domain.CaseState, event domain.RecoveryEvent) (domain.RecoveryCase, error) {
 	c := m.cases[id]
 	if c.Version != expected {

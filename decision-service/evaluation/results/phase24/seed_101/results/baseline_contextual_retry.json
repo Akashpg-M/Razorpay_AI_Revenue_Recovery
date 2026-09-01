@@ -1,0 +1,99 @@
+{
+  "action_counts": {
+    "RETRY_24H": 33,
+    "RETRY_48H": 110,
+    "RETRY_6H": 137,
+    "RETRY_NOW": 12,
+    "STOP": 203,
+    "WAIT": 255
+  },
+  "baseline": "contextual_retry",
+  "baseline_version": "empirical-retry-v1",
+  "dataset_path": "evaluation\\results\\phase24\\seed_101\\data\\test.jsonl",
+  "dataset_sha256": "9E5C8332D05D33A4B05E7DACA8AAB603ED3514F62BDF2BAE1DC616AB12301DE0",
+  "dataset_size": 750,
+  "evaluation_timestamp": "2026-01-01T00:00:00+00:00",
+  "metrics": {
+    "aggregate": {
+      "average_recovery_latency_hours": 35.5488,
+      "cases": 750,
+      "customer_contacts": 0,
+      "intervention_cost_minor": 10220,
+      "natural_recovery_count": 64,
+      "natural_recovery_value_minor": 7662060,
+      "recovered_revenue_by_action_minor": {
+        "RETRY_24H": 8989015,
+        "RETRY_48H": 9867591,
+        "RETRY_6H": 9860936,
+        "RETRY_NOW": 619954,
+        "WAIT": 7662060
+      },
+      "recovered_revenue_by_failure_minor": {
+        "AMBIGUOUS_CUSTOMER_INTENT": 3090182,
+        "INSUFFICIENT_FUNDS": 16263380,
+        "LOW_INTENT_ABANDONMENT": 346763,
+        "METHOD_MISMATCH": 1436022,
+        "PAYMENT_FAILURE": 1162669,
+        "PAYMENT_FRICTION": 1652291,
+        "PRICE_HESITATION": 341816,
+        "TEMPORARY_ABANDONMENT": 2722499,
+        "TEMPORARY_BANK_FAILURE": 9983934
+      },
+      "recovery_attempts": 292,
+      "recovery_rate": 0.286667,
+      "revenue_per_intervention_minor": 126710.81,
+      "total_revenue_at_risk_minor": 125401909,
+      "total_revenue_recovered_minor": 36999556
+    },
+    "checkout": {
+      "average_recovery_latency_hours": 49.1562,
+      "cases": 249,
+      "customer_contacts": 0,
+      "intervention_cost_minor": 0,
+      "natural_recovery_count": 64,
+      "natural_recovery_value_minor": 7662060,
+      "recovered_revenue_by_action_minor": {
+        "WAIT": 7662060
+      },
+      "recovered_revenue_by_failure_minor": {
+        "LOW_INTENT_ABANDONMENT": 346763,
+        "METHOD_MISMATCH": 1436022,
+        "PAYMENT_FAILURE": 1162669,
+        "PAYMENT_FRICTION": 1652291,
+        "PRICE_HESITATION": 341816,
+        "TEMPORARY_ABANDONMENT": 2722499
+      },
+      "recovery_attempts": 0,
+      "recovery_rate": 0.257028,
+      "revenue_per_intervention_minor": 0,
+      "total_revenue_at_risk_minor": 32307702,
+      "total_revenue_recovered_minor": 7662060
+    },
+    "subscription": {
+      "average_recovery_latency_hours": 29.7815,
+      "cases": 501,
+      "customer_contacts": 0,
+      "intervention_cost_minor": 10220,
+      "natural_recovery_count": 0,
+      "natural_recovery_value_minor": 0,
+      "recovered_revenue_by_action_minor": {
+        "RETRY_24H": 8989015,
+        "RETRY_48H": 9867591,
+        "RETRY_6H": 9860936,
+        "RETRY_NOW": 619954
+      },
+      "recovered_revenue_by_failure_minor": {
+        "AMBIGUOUS_CUSTOMER_INTENT": 3090182,
+        "INSUFFICIENT_FUNDS": 16263380,
+        "TEMPORARY_BANK_FAILURE": 9983934
+      },
+      "recovery_attempts": 292,
+      "recovery_rate": 0.301397,
+      "revenue_per_intervention_minor": 100470.88,
+      "total_revenue_at_risk_minor": 93094207,
+      "total_revenue_recovered_minor": 29337496
+    }
+  },
+  "seed": 101,
+  "simulation_version": "1.0.0"
+}

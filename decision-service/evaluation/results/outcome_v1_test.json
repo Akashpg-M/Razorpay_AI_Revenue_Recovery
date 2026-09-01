@@ -1,0 +1,59 @@
+{
+  "algorithm": "gradient_boosting",
+  "dataset_sha256": "CC1A248AF3E1026761DC60CED0394FD89FD784646DC73F659AEC69E2BBB763F2",
+  "dataset_size": 750,
+  "feature_version": "features-v1",
+  "metrics": {
+    "average_precision": 0.347985,
+    "brier_score": 0.175677,
+    "by_action": {
+      "REQUEST_PAYMENT_METHOD_UPDATE": {
+        "brier_score": 0.173807,
+        "roc_auc": 0.661378
+      },
+      "RETENTION_ACTION": {
+        "brier_score": 0.202117,
+        "roc_auc": 0.49675
+      },
+      "RETRY_LATER": {
+        "brier_score": 0.195561,
+        "roc_auc": 0.687877
+      },
+      "RETRY_NOW": {
+        "brier_score": 0.187578,
+        "roc_auc": 0.553667
+      },
+      "SEND_CHECKOUT_RECOVERY_LINK": {
+        "brier_score": 0.217473,
+        "roc_auc": 0.593622
+      },
+      "SEND_PAYMENT_LINK": {
+        "brier_score": 0.161867,
+        "roc_auc": 0.610345
+      },
+      "SEND_REMINDER": {
+        "brier_score": 0.129208,
+        "roc_auc": 0.590776
+      },
+      "SUGGEST_ALTERNATE_METHOD": {
+        "brier_score": 0.176904,
+        "roc_auc": 0.670703
+      },
+      "WAIT": {
+        "brier_score": 0.16997,
+        "roc_auc": 0.508986
+      },
+      "WAIT_FOR_PROMISE_TO_PAY": {
+        "brier_score": 0.182496,
+        "roc_auc": 0.547474
+      }
+    },
+    "expected_calibration_error": 0.020511,
+    "precision_at_0_5": 0.494624,
+    "recall_at_0_5": 0.063536,
+    "roc_auc": 0.622492,
+    "simple_ranker_realized_net_minor": 47088499
+  },
+  "model_version": "outcome-v1",
+  "split": "test"
+}

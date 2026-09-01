@@ -3,6 +3,8 @@ import time
 from fastapi import FastAPI, Request
 
 from logging_config import configure_logging
+from prediction.service import router as prediction_router
+from prediction.natural_service import router as natural_prediction_router
 
 
 logger = configure_logging()
@@ -11,6 +13,9 @@ app = FastAPI(
     title="Revenue Recovery Decision Service",
     version="0.1.0",
 )
+
+app.include_router(prediction_router)
+app.include_router(natural_prediction_router)
 
 
 @app.middleware("http")

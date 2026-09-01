@@ -51,6 +51,15 @@ func (p *Postgres) GetCase(ctx context.Context, id domain.ID) (domain.RecoveryCa
 	return c, err
 }
 
+func (p *Postgres) GetCaseBySource(ctx context.Context, merchantID domain.ID, sourceReference string) (domain.RecoveryCase, error) {
+	row := p.pool.QueryRow(ctx, caseSelect+` WHERE merchant_id=$1 AND source_reference=$2`, merchantID, sourceReference)
+	c, err := scanCase(row)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.RecoveryCase{}, recovery.ErrNotFound
+	}
+	return c, err
+}
+
 func (p *Postgres) TransitionCase(ctx context.Context, caseID domain.ID, expectedVersion int64, to domain.CaseState, event domain.RecoveryEvent) (domain.RecoveryCase, error) {
 	tx, err := p.pool.Begin(ctx)
 	if err != nil {

@@ -1,0 +1,1655 @@
+{
+  "artifacts": {
+    "natural": {
+      "path": "models\\candidates\\phase21\\natural_recovery_v1.joblib",
+      "sha256": "F60830F98F1EADC27017A085E949AE982D6B1F2B74B6D19E1A2D174941C55C09"
+    },
+    "outcome": {
+      "path": "models\\candidates\\phase21\\outcome_v1.joblib",
+      "sha256": "25C94AA9BEAD6A6CDBB067C781FFA8C3CD4648086ABC916DC74A242051D7316C"
+    }
+  },
+  "chart_rows": [
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 28776924,
+      "recovered_minor": 28776924,
+      "recovery_rate": 0.226667,
+      "seed": 101,
+      "strategy": "no_recovery",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 21114864,
+      "recovered_minor": 21114864,
+      "recovery_rate": 0.211577,
+      "seed": 101,
+      "strategy": "no_recovery",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 7662060,
+      "recovered_minor": 7662060,
+      "recovery_rate": 0.257028,
+      "seed": 101,
+      "strategy": "no_recovery",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 501,
+      "contacts": 249,
+      "intervention_cost_minor": 28740,
+      "net_recovered_minor": 44843893,
+      "recovered_minor": 44872633,
+      "recovery_rate": 0.317333,
+      "seed": 101,
+      "strategy": "fixed_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 501,
+      "contacts": 0,
+      "intervention_cost_minor": 17535,
+      "net_recovered_minor": 36716908,
+      "recovered_minor": 36734443,
+      "recovery_rate": 0.349301,
+      "seed": 101,
+      "strategy": "fixed_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 249,
+      "intervention_cost_minor": 11205,
+      "net_recovered_minor": 8126985,
+      "recovered_minor": 8138190,
+      "recovery_rate": 0.253012,
+      "seed": 101,
+      "strategy": "fixed_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 260,
+      "contacts": 409,
+      "intervention_cost_minor": 104100,
+      "net_recovered_minor": 53226244,
+      "recovered_minor": 53330344,
+      "recovery_rate": 0.376,
+      "seed": 101,
+      "strategy": "rules",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 260,
+      "contacts": 179,
+      "intervention_cost_minor": 17610,
+      "net_recovered_minor": 40400679,
+      "recovered_minor": 40418289,
+      "recovery_rate": 0.37525,
+      "seed": 101,
+      "strategy": "rules",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 230,
+      "intervention_cost_minor": 86490,
+      "net_recovered_minor": 12825565,
+      "recovered_minor": 12912055,
+      "recovery_rate": 0.37751,
+      "seed": 101,
+      "strategy": "rules",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 292,
+      "contacts": 0,
+      "intervention_cost_minor": 10220,
+      "net_recovered_minor": 36989336,
+      "recovered_minor": 36999556,
+      "recovery_rate": 0.286667,
+      "seed": 101,
+      "strategy": "contextual_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 292,
+      "contacts": 0,
+      "intervention_cost_minor": 10220,
+      "net_recovered_minor": 29327276,
+      "recovered_minor": 29337496,
+      "recovery_rate": 0.301397,
+      "seed": 101,
+      "strategy": "contextual_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 7662060,
+      "recovered_minor": 7662060,
+      "recovery_rate": 0.257028,
+      "seed": 101,
+      "strategy": "contextual_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 284,
+      "contacts": 351,
+      "intervention_cost_minor": 121870,
+      "net_recovered_minor": 54678168,
+      "recovered_minor": 54800038,
+      "recovery_rate": 0.404,
+      "seed": 101,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 284,
+      "contacts": 159,
+      "intervention_cost_minor": 42850,
+      "net_recovered_minor": 42377043,
+      "recovered_minor": 42419893,
+      "recovery_rate": 0.427146,
+      "seed": 101,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 192,
+      "intervention_cost_minor": 79020,
+      "net_recovered_minor": 12301125,
+      "recovered_minor": 12380145,
+      "recovery_rate": 0.35743,
+      "seed": 101,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 27477584,
+      "recovered_minor": 27477584,
+      "recovery_rate": 0.236,
+      "seed": 202,
+      "strategy": "no_recovery",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 21031733,
+      "recovered_minor": 21031733,
+      "recovery_rate": 0.241121,
+      "seed": 202,
+      "strategy": "no_recovery",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 6445851,
+      "recovered_minor": 6445851,
+      "recovery_rate": 0.223256,
+      "seed": 202,
+      "strategy": "no_recovery",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 535,
+      "contacts": 215,
+      "intervention_cost_minor": 28400,
+      "net_recovered_minor": 43720126,
+      "recovered_minor": 43748526,
+      "recovery_rate": 0.318667,
+      "seed": 202,
+      "strategy": "fixed_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 535,
+      "contacts": 0,
+      "intervention_cost_minor": 18725,
+      "net_recovered_minor": 35234566,
+      "recovered_minor": 35253291,
+      "recovery_rate": 0.327103,
+      "seed": 202,
+      "strategy": "fixed_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 215,
+      "intervention_cost_minor": 9675,
+      "net_recovered_minor": 8485560,
+      "recovered_minor": 8495235,
+      "recovery_rate": 0.297674,
+      "seed": 202,
+      "strategy": "fixed_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 282,
+      "contacts": 396,
+      "intervention_cost_minor": 119390,
+      "net_recovered_minor": 48177371,
+      "recovered_minor": 48296761,
+      "recovery_rate": 0.362667,
+      "seed": 202,
+      "strategy": "rules",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 282,
+      "contacts": 190,
+      "intervention_cost_minor": 18925,
+      "net_recovered_minor": 35303092,
+      "recovered_minor": 35322017,
+      "recovery_rate": 0.340187,
+      "seed": 202,
+      "strategy": "rules",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 206,
+      "intervention_cost_minor": 100465,
+      "net_recovered_minor": 12874279,
+      "recovered_minor": 12974744,
+      "recovery_rate": 0.418605,
+      "seed": 202,
+      "strategy": "rules",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 312,
+      "contacts": 0,
+      "intervention_cost_minor": 10920,
+      "net_recovered_minor": 34444722,
+      "recovered_minor": 34455642,
+      "recovery_rate": 0.277333,
+      "seed": 202,
+      "strategy": "contextual_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 312,
+      "contacts": 0,
+      "intervention_cost_minor": 10920,
+      "net_recovered_minor": 27998871,
+      "recovered_minor": 28009791,
+      "recovery_rate": 0.299065,
+      "seed": 202,
+      "strategy": "contextual_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 6445851,
+      "recovered_minor": 6445851,
+      "recovery_rate": 0.223256,
+      "seed": 202,
+      "strategy": "contextual_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 299,
+      "contacts": 346,
+      "intervention_cost_minor": 149255,
+      "net_recovered_minor": 54340474,
+      "recovered_minor": 54489729,
+      "recovery_rate": 0.442667,
+      "seed": 202,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 299,
+      "contacts": 180,
+      "intervention_cost_minor": 44590,
+      "net_recovered_minor": 42878903,
+      "recovered_minor": 42923493,
+      "recovery_rate": 0.463551,
+      "seed": 202,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 166,
+      "intervention_cost_minor": 104665,
+      "net_recovered_minor": 11461571,
+      "recovered_minor": 11566236,
+      "recovery_rate": 0.390698,
+      "seed": 202,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 27142409,
+      "recovered_minor": 27142409,
+      "recovery_rate": 0.218667,
+      "seed": 303,
+      "strategy": "no_recovery",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 20414951,
+      "recovered_minor": 20414951,
+      "recovery_rate": 0.203358,
+      "seed": 303,
+      "strategy": "no_recovery",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 6727458,
+      "recovered_minor": 6727458,
+      "recovery_rate": 0.257009,
+      "seed": 303,
+      "strategy": "no_recovery",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 536,
+      "contacts": 214,
+      "intervention_cost_minor": 28390,
+      "net_recovered_minor": 42330989,
+      "recovered_minor": 42359379,
+      "recovery_rate": 0.338667,
+      "seed": 303,
+      "strategy": "fixed_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 536,
+      "contacts": 0,
+      "intervention_cost_minor": 18760,
+      "net_recovered_minor": 33329574,
+      "recovered_minor": 33348334,
+      "recovery_rate": 0.348881,
+      "seed": 303,
+      "strategy": "fixed_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 214,
+      "intervention_cost_minor": 9630,
+      "net_recovered_minor": 9001415,
+      "recovered_minor": 9011045,
+      "recovery_rate": 0.313084,
+      "seed": 303,
+      "strategy": "fixed_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 258,
+      "contacts": 405,
+      "intervention_cost_minor": 92075,
+      "net_recovered_minor": 39010698,
+      "recovered_minor": 39102773,
+      "recovery_rate": 0.350667,
+      "seed": 303,
+      "strategy": "rules",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 258,
+      "contacts": 207,
+      "intervention_cost_minor": 18585,
+      "net_recovered_minor": 26178899,
+      "recovered_minor": 26197484,
+      "recovery_rate": 0.304104,
+      "seed": 303,
+      "strategy": "rules",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 198,
+      "intervention_cost_minor": 73490,
+      "net_recovered_minor": 12831799,
+      "recovered_minor": 12905289,
+      "recovery_rate": 0.46729,
+      "seed": 303,
+      "strategy": "rules",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 292,
+      "contacts": 0,
+      "intervention_cost_minor": 10220,
+      "net_recovered_minor": 28196712,
+      "recovered_minor": 28206932,
+      "recovery_rate": 0.266667,
+      "seed": 303,
+      "strategy": "contextual_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 292,
+      "contacts": 0,
+      "intervention_cost_minor": 10220,
+      "net_recovered_minor": 21469254,
+      "recovered_minor": 21479474,
+      "recovery_rate": 0.270522,
+      "seed": 303,
+      "strategy": "contextual_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 6727458,
+      "recovered_minor": 6727458,
+      "recovery_rate": 0.257009,
+      "seed": 303,
+      "strategy": "contextual_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 276,
+      "contacts": 351,
+      "intervention_cost_minor": 145750,
+      "net_recovered_minor": 53397772,
+      "recovered_minor": 53543522,
+      "recovery_rate": 0.441333,
+      "seed": 303,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 276,
+      "contacts": 192,
+      "intervention_cost_minor": 68035,
+      "net_recovered_minor": 41655409,
+      "recovered_minor": 41723444,
+      "recovery_rate": 0.451493,
+      "seed": 303,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 159,
+      "intervention_cost_minor": 77715,
+      "net_recovered_minor": 11742363,
+      "recovered_minor": 11820078,
+      "recovery_rate": 0.415888,
+      "seed": 303,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 31258287,
+      "recovered_minor": 31258287,
+      "recovery_rate": 0.245333,
+      "seed": 404,
+      "strategy": "no_recovery",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 22974073,
+      "recovered_minor": 22974073,
+      "recovery_rate": 0.24165,
+      "seed": 404,
+      "strategy": "no_recovery",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 8284214,
+      "recovered_minor": 8284214,
+      "recovery_rate": 0.253112,
+      "seed": 404,
+      "strategy": "no_recovery",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 509,
+      "contacts": 241,
+      "intervention_cost_minor": 28660,
+      "net_recovered_minor": 45194121,
+      "recovered_minor": 45222781,
+      "recovery_rate": 0.330667,
+      "seed": 404,
+      "strategy": "fixed_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 509,
+      "contacts": 0,
+      "intervention_cost_minor": 17815,
+      "net_recovered_minor": 35265410,
+      "recovered_minor": 35283225,
+      "recovery_rate": 0.355599,
+      "seed": 404,
+      "strategy": "fixed_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 241,
+      "intervention_cost_minor": 10845,
+      "net_recovered_minor": 9928711,
+      "recovered_minor": 9939556,
+      "recovery_rate": 0.278008,
+      "seed": 404,
+      "strategy": "fixed_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 230,
+      "contacts": 452,
+      "intervention_cost_minor": 108080,
+      "net_recovered_minor": 50649953,
+      "recovered_minor": 50758033,
+      "recovery_rate": 0.38,
+      "seed": 404,
+      "strategy": "rules",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 230,
+      "contacts": 231,
+      "intervention_cost_minor": 18940,
+      "net_recovered_minor": 35620627,
+      "recovered_minor": 35639567,
+      "recovery_rate": 0.371316,
+      "seed": 404,
+      "strategy": "rules",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 221,
+      "intervention_cost_minor": 89140,
+      "net_recovered_minor": 15029326,
+      "recovered_minor": 15118466,
+      "recovery_rate": 0.39834,
+      "seed": 404,
+      "strategy": "rules",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 275,
+      "contacts": 0,
+      "intervention_cost_minor": 9625,
+      "net_recovered_minor": 31234250,
+      "recovered_minor": 31243875,
+      "recovery_rate": 0.253333,
+      "seed": 404,
+      "strategy": "contextual_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 275,
+      "contacts": 0,
+      "intervention_cost_minor": 9625,
+      "net_recovered_minor": 22950036,
+      "recovered_minor": 22959661,
+      "recovery_rate": 0.253438,
+      "seed": 404,
+      "strategy": "contextual_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 8284214,
+      "recovered_minor": 8284214,
+      "recovery_rate": 0.253112,
+      "seed": 404,
+      "strategy": "contextual_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 252,
+      "contacts": 376,
+      "intervention_cost_minor": 154965,
+      "net_recovered_minor": 52632404,
+      "recovered_minor": 52787369,
+      "recovery_rate": 0.425333,
+      "seed": 404,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 252,
+      "contacts": 191,
+      "intervention_cost_minor": 64270,
+      "net_recovered_minor": 38217002,
+      "recovered_minor": 38281272,
+      "recovery_rate": 0.444008,
+      "seed": 404,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 185,
+      "intervention_cost_minor": 90695,
+      "net_recovered_minor": 14415402,
+      "recovered_minor": 14506097,
+      "recovery_rate": 0.385892,
+      "seed": 404,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 21657868,
+      "recovered_minor": 21657868,
+      "recovery_rate": 0.177333,
+      "seed": 505,
+      "strategy": "no_recovery",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 15858529,
+      "recovered_minor": 15858529,
+      "recovery_rate": 0.169591,
+      "seed": 505,
+      "strategy": "no_recovery",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 5799339,
+      "recovered_minor": 5799339,
+      "recovery_rate": 0.194093,
+      "seed": 505,
+      "strategy": "no_recovery",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 513,
+      "contacts": 237,
+      "intervention_cost_minor": 28620,
+      "net_recovered_minor": 39419645,
+      "recovered_minor": 39448265,
+      "recovery_rate": 0.310667,
+      "seed": 505,
+      "strategy": "fixed_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 513,
+      "contacts": 0,
+      "intervention_cost_minor": 17955,
+      "net_recovered_minor": 30077850,
+      "recovered_minor": 30095805,
+      "recovery_rate": 0.327485,
+      "seed": 505,
+      "strategy": "fixed_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 237,
+      "intervention_cost_minor": 10665,
+      "net_recovered_minor": 9341795,
+      "recovered_minor": 9352460,
+      "recovery_rate": 0.274262,
+      "seed": 505,
+      "strategy": "fixed_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 253,
+      "contacts": 401,
+      "intervention_cost_minor": 89145,
+      "net_recovered_minor": 42687476,
+      "recovered_minor": 42776621,
+      "recovery_rate": 0.333333,
+      "seed": 505,
+      "strategy": "rules",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 253,
+      "contacts": 186,
+      "intervention_cost_minor": 17785,
+      "net_recovered_minor": 30689003,
+      "recovered_minor": 30706788,
+      "recovery_rate": 0.317739,
+      "seed": 505,
+      "strategy": "rules",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 215,
+      "intervention_cost_minor": 71360,
+      "net_recovered_minor": 11998473,
+      "recovered_minor": 12069833,
+      "recovery_rate": 0.367089,
+      "seed": 505,
+      "strategy": "rules",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 275,
+      "contacts": 0,
+      "intervention_cost_minor": 9625,
+      "net_recovered_minor": 34141221,
+      "recovered_minor": 34150846,
+      "recovery_rate": 0.258667,
+      "seed": 505,
+      "strategy": "contextual_retry",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 275,
+      "contacts": 0,
+      "intervention_cost_minor": 9625,
+      "net_recovered_minor": 28341882,
+      "recovered_minor": 28351507,
+      "recovery_rate": 0.288499,
+      "seed": 505,
+      "strategy": "contextual_retry",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 0,
+      "intervention_cost_minor": 0,
+      "net_recovered_minor": 5799339,
+      "recovered_minor": 5799339,
+      "recovery_rate": 0.194093,
+      "seed": 505,
+      "strategy": "contextual_retry",
+      "vertical": "checkout"
+    },
+    {
+      "attempts": 257,
+      "contacts": 361,
+      "intervention_cost_minor": 124745,
+      "net_recovered_minor": 54367217,
+      "recovered_minor": 54491962,
+      "recovery_rate": 0.405333,
+      "seed": 505,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "aggregate"
+    },
+    {
+      "attempts": 257,
+      "contacts": 177,
+      "intervention_cost_minor": 45895,
+      "net_recovered_minor": 41194441,
+      "recovered_minor": 41240336,
+      "recovery_rate": 0.413255,
+      "seed": 505,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "subscription"
+    },
+    {
+      "attempts": 0,
+      "contacts": 184,
+      "intervention_cost_minor": 78850,
+      "net_recovered_minor": 13172776,
+      "recovered_minor": 13251626,
+      "recovery_rate": 0.388186,
+      "seed": 505,
+      "strategy": "learned_nba_intermediate",
+      "vertical": "checkout"
+    }
+  ],
+  "dataset_size_per_seed": 5000,
+  "evaluation_version": "phase24-evaluation-v1",
+  "integrity": {
+    "all_checks_passed": true,
+    "checks": [
+      {
+        "actual_size": 5000,
+        "configured_size": 5000,
+        "hidden_feature_leak": false,
+        "seed": 101,
+        "test_sha256": "9E5C8332D05D33A4B05E7DACA8AAB603ED3514F62BDF2BAE1DC616AB12301DE0"
+      },
+      {
+        "actual_size": 5000,
+        "configured_size": 5000,
+        "hidden_feature_leak": false,
+        "seed": 202,
+        "test_sha256": "44F303551FB6C3DF601CBBB1E5E7B55E5E70B234E51F1B6937E7AE86DA2878ED"
+      },
+      {
+        "actual_size": 5000,
+        "configured_size": 5000,
+        "hidden_feature_leak": false,
+        "seed": 303,
+        "test_sha256": "F8E67A58D06F8E3C6E500EAE47F3D9AB6A087F5252317CE5E911339C2F70FFCD"
+      },
+      {
+        "actual_size": 5000,
+        "configured_size": 5000,
+        "hidden_feature_leak": false,
+        "seed": 404,
+        "test_sha256": "AC4DB35FD46285CC8D6A2F91DBDDB9D46DF22EA123FB36C3B3A7F97DDFDD23F8"
+      },
+      {
+        "actual_size": 5000,
+        "configured_size": 5000,
+        "hidden_feature_leak": false,
+        "seed": 505,
+        "test_sha256": "E99E82B42B4A5B943F68320B321914E5BC1AE80078E2DDE644B02B6738E021E3"
+      }
+    ],
+    "distinct_test_hashes": 5
+  },
+  "limitations": [
+    "Synthetic potential outcomes support policy comparison, not production causal claims.",
+    "Confidence intervals summarize seed variation only."
+  ],
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "statistics": {
+    "contextual_retry": {
+      "aggregate": {
+        "attempts": {
+          "ci95_lower": 275.77149658375885,
+          "ci95_upper": 302.62850341624113,
+          "maximum": 312.0,
+          "mean": 289.2,
+          "minimum": 275.0,
+          "stddev": 15.319921670818033
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 9652.00238043156,
+          "ci95_upper": 10591.99761956844,
+          "maximum": 10920.0,
+          "mean": 10122.0,
+          "minimum": 9625.0,
+          "stddev": 536.1972584786312
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 30045159.798513878,
+          "ci95_upper": 35957336.60148612,
+          "maximum": 36989336.0,
+          "mean": 33001248.2,
+          "minimum": 28196712.0,
+          "stddev": 3372456.435317171
+        },
+        "recovered_minor": {
+          "ci95_lower": 30055191.865024038,
+          "ci95_upper": 35967548.53497596,
+          "maximum": 36999556.0,
+          "mean": 33011370.2,
+          "minimum": 28206932.0,
+          "stddev": 3372559.036029792
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.2566261631311132,
+          "ci95_upper": 0.28044063686888676,
+          "maximum": 0.286667,
+          "mean": 0.2685334,
+          "minimum": 0.253333,
+          "stddev": 0.01358438319541967
+        }
+      },
+      "checkout": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 6117255.852958077,
+          "ci95_upper": 7850312.947041924,
+          "maximum": 8284214.0,
+          "mean": 6983784.4,
+          "minimum": 5799339.0,
+          "stddev": 988579.9671580949
+        },
+        "recovered_minor": {
+          "ci95_lower": 6117255.852958077,
+          "ci95_upper": 7850312.947041924,
+          "maximum": 8284214.0,
+          "mean": 6983784.4,
+          "minimum": 5799339.0,
+          "stddev": 988579.9671580949
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.2125334999445981,
+          "ci95_upper": 0.2612657000554019,
+          "maximum": 0.257028,
+          "mean": 0.2368996,
+          "minimum": 0.194093,
+          "stddev": 0.02779808983185715
+        }
+      },
+      "subscription": {
+        "attempts": {
+          "ci95_lower": 275.77149658375885,
+          "ci95_upper": 302.62850341624113,
+          "maximum": 312.0,
+          "mean": 289.2,
+          "minimum": 275.0,
+          "stddev": 15.319921670818033
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 9652.00238043156,
+          "ci95_upper": 10591.99761956844,
+          "maximum": 10920.0,
+          "mean": 10122.0,
+          "minimum": 9625.0,
+          "stddev": 536.1972584786312
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 22906706.15898513,
+          "ci95_upper": 29128221.44101487,
+          "maximum": 29327276.0,
+          "mean": 26017463.8,
+          "minimum": 21469254.0,
+          "stddev": 3548910.9932837426
+        },
+        "recovered_minor": {
+          "ci95_lower": 22916715.185562454,
+          "ci95_upper": 29138456.414437547,
+          "maximum": 29337496.0,
+          "mean": 26027585.8,
+          "minimum": 21479474.0,
+          "stddev": 3549039.8791269874
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.26475185806466284,
+          "ci95_upper": 0.3004165419353372,
+          "maximum": 0.301397,
+          "mean": 0.2825842,
+          "minimum": 0.253438,
+          "stddev": 0.020344045288486767
+        }
+      }
+    },
+    "fixed_retry": {
+      "aggregate": {
+        "attempts": {
+          "ci95_lower": 504.9074846050112,
+          "ci95_upper": 532.6925153949887,
+          "maximum": 536.0,
+          "mean": 518.8,
+          "minimum": 501.0,
+          "stddev": 15.84929020492716
+        },
+        "contacts": {
+          "ci95_lower": 217.3074846050112,
+          "ci95_upper": 245.09251539498877,
+          "maximum": 249.0,
+          "mean": 231.2,
+          "minimum": 214.0,
+          "stddev": 15.84929020492716
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 28423.074846050113,
+          "ci95_upper": 28700.925153949887,
+          "maximum": 28740.0,
+          "mean": 28562.0,
+          "minimum": 28390.0,
+          "stddev": 158.4929020492716
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 41048546.639781386,
+          "ci95_upper": 45154962.96021861,
+          "maximum": 45194121.0,
+          "mean": 43101754.8,
+          "minimum": 39419645.0,
+          "stddev": 2342404.601125561
+        },
+        "recovered_minor": {
+          "ci95_lower": 41077077.390570164,
+          "ci95_upper": 45183556.20942983,
+          "maximum": 45222781.0,
+          "mean": 43130316.8,
+          "minimum": 39448265.0,
+          "stddev": 2342440.251819713
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.31333154603883673,
+          "ci95_upper": 0.33306885396116326,
+          "maximum": 0.338667,
+          "mean": 0.3232002,
+          "minimum": 0.310667,
+          "stddev": 0.011258663828359024
+        }
+      },
+      "checkout": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 217.3074846050112,
+          "ci95_upper": 245.09251539498877,
+          "maximum": 249.0,
+          "mean": 231.2,
+          "minimum": 214.0,
+          "stddev": 15.84929020492716
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 9778.836807225505,
+          "ci95_upper": 11029.163192774495,
+          "maximum": 11205.0,
+          "mean": 10404.0,
+          "minimum": 9630.0,
+          "stddev": 713.2180592217222
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 8356550.254036456,
+          "ci95_upper": 9597236.145963542,
+          "maximum": 9928711.0,
+          "mean": 8976893.2,
+          "minimum": 8126985.0,
+          "stddev": 707718.8757841634
+        },
+        "recovered_minor": {
+          "ci95_lower": 8366900.245502719,
+          "ci95_upper": 9607694.15449728,
+          "maximum": 9939556.0,
+          "mean": 8987297.2,
+          "minimum": 8138190.0,
+          "stddev": 707780.4914743694
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.2630251867501798,
+          "ci95_upper": 0.30339081324982026,
+          "maximum": 0.313084,
+          "mean": 0.283208,
+          "minimum": 0.253012,
+          "stddev": 0.023025582859072198
+        }
+      },
+      "subscription": {
+        "attempts": {
+          "ci95_lower": 504.9074846050112,
+          "ci95_upper": 532.6925153949887,
+          "maximum": 536.0,
+          "mean": 518.8,
+          "minimum": 501.0,
+          "stddev": 15.84929020492716
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 17671.761961175394,
+          "ci95_upper": 18644.238038824606,
+          "maximum": 18760.0,
+          "mean": 18158.0,
+          "minimum": 17535.0,
+          "stddev": 554.7251571724506
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 31878895.542970628,
+          "ci95_upper": 36370827.657029375,
+          "maximum": 36716908.0,
+          "mean": 34124861.6,
+          "minimum": 30077850.0,
+          "stddev": 2562312.6421810435
+        },
+        "recovered_minor": {
+          "ci95_lower": 31897141.928070176,
+          "ci95_upper": 36388897.27192983,
+          "maximum": 36734443.0,
+          "mean": 34143019.6,
+          "minimum": 30095805.0,
+          "stddev": 2562211.807951052
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.32993293074807556,
+          "ci95_upper": 0.3534146692519244,
+          "maximum": 0.355599,
+          "mean": 0.34167379999999997,
+          "minimum": 0.327103,
+          "stddev": 0.013394582531755137
+        }
+      }
+    },
+    "learned_nba_intermediate": {
+      "aggregate": {
+        "attempts": {
+          "ci95_lower": 256.6191138040443,
+          "ci95_upper": 290.58088619595577,
+          "maximum": 299.0,
+          "mean": 273.6,
+          "minimum": 252.0,
+          "stddev": 19.37266114915553
+        },
+        "contacts": {
+          "ci95_lower": 346.53646331300934,
+          "ci95_upper": 367.46353668699066,
+          "maximum": 376.0,
+          "mean": 357.0,
+          "minimum": 346.0,
+          "stddev": 11.937336386313323
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 126156.15656128377,
+          "ci95_upper": 152477.84343871623,
+          "maximum": 154965.0,
+          "mean": 139317.0,
+          "minimum": 121870.0,
+          "stddev": 15014.561515408966
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 53140023.553847946,
+          "ci95_upper": 54626390.446152054,
+          "maximum": 54678168.0,
+          "mean": 53883207.0,
+          "minimum": 52632404.0,
+          "stddev": 847861.5843615042
+        },
+        "recovered_minor": {
+          "ci95_lower": 53289390.806601495,
+          "ci95_upper": 54755657.193398505,
+          "maximum": 54800038.0,
+          "mean": 54022524.0,
+          "minimum": 52787369.0,
+          "stddev": 836395.7433676358
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.40734188250526565,
+          "ci95_upper": 0.4401245174947343,
+          "maximum": 0.442667,
+          "mean": 0.4237332,
+          "minimum": 0.404,
+          "stddev": 0.01870005110153444
+        }
+      },
+      "checkout": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 164.9378540214202,
+          "ci95_upper": 189.46214597857977,
+          "maximum": 192.0,
+          "mean": 177.2,
+          "minimum": 159.0,
+          "stddev": 13.989281611290838
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 76016.51720072233,
+          "ci95_upper": 96361.48279927767,
+          "maximum": 104665.0,
+          "mean": 86189.0,
+          "minimum": 77715.0,
+          "stddev": 11605.287264863373
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 11568362.94982805,
+          "ci95_upper": 13668931.850171952,
+          "maximum": 14415402.0,
+          "mean": 12618647.4,
+          "minimum": 11461571.0,
+          "stddev": 1198218.0746405472
+        },
+        "recovered_minor": {
+          "ci95_lower": 11655902.024349941,
+          "ci95_upper": 13753770.77565006,
+          "maximum": 14506097.0,
+          "mean": 12704836.4,
+          "minimum": 11566236.0,
+          "stddev": 1196677.8407601188
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.36942509886084574,
+          "ci95_upper": 0.40581250113915424,
+          "maximum": 0.415888,
+          "mean": 0.3876188,
+          "minimum": 0.35743,
+          "stddev": 0.020756302300747098
+        }
+      },
+      "subscription": {
+        "attempts": {
+          "ci95_lower": 256.6191138040443,
+          "ci95_upper": 290.58088619595577,
+          "maximum": 299.0,
+          "mean": 273.6,
+          "minimum": 252.0,
+          "stddev": 19.37266114915553
+        },
+        "contacts": {
+          "ci95_lower": 168.08254362073407,
+          "ci95_upper": 191.51745637926595,
+          "maximum": 192.0,
+          "mean": 179.8,
+          "minimum": 159.0,
+          "stddev": 13.367871932360812
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 42598.45905718583,
+          "ci95_upper": 63657.54094281417,
+          "maximum": 68035.0,
+          "mean": 53128.0,
+          "minimum": 42850.0,
+          "stddev": 12012.637408163122
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 39666888.40199318,
+          "ci95_upper": 42862230.798006825,
+          "maximum": 42878903.0,
+          "mean": 41264559.6,
+          "minimum": 38217002.0,
+          "stddev": 1822704.7981820314
+        },
+        "recovered_minor": {
+          "ci95_lower": 39726346.897687465,
+          "ci95_upper": 42909028.30231254,
+          "maximum": 42923493.0,
+          "mean": 41317687.6,
+          "minimum": 38281272.0,
+          "stddev": 1815482.6457821897
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.4224517583529337,
+          "ci95_upper": 0.45732944164706635,
+          "maximum": 0.463551,
+          "mean": 0.4398906,
+          "minimum": 0.413255,
+          "stddev": 0.019895120087599368
+        }
+      }
+    },
+    "no_recovery": {
+      "aggregate": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 24171887.156957123,
+          "ci95_upper": 30353341.643042874,
+          "maximum": 31258287.0,
+          "mean": 27262614.4,
+          "minimum": 21657868.0,
+          "stddev": 3526059.2935481532
+        },
+        "recovered_minor": {
+          "ci95_lower": 24171887.156957123,
+          "ci95_upper": 30353341.643042874,
+          "maximum": 31258287.0,
+          "mean": 27262614.4,
+          "minimum": 21657868.0,
+          "stddev": 3526059.2935481532
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.19776996014948128,
+          "ci95_upper": 0.2438300398505187,
+          "maximum": 0.245333,
+          "mean": 0.2208,
+          "minimum": 0.177333,
+          "stddev": 0.02627384419912701
+        }
+      },
+      "checkout": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 6117255.852958077,
+          "ci95_upper": 7850312.947041924,
+          "maximum": 8284214.0,
+          "mean": 6983784.4,
+          "minimum": 5799339.0,
+          "stddev": 988579.9671580949
+        },
+        "recovered_minor": {
+          "ci95_lower": 6117255.852958077,
+          "ci95_upper": 7850312.947041924,
+          "maximum": 8284214.0,
+          "mean": 6983784.4,
+          "minimum": 5799339.0,
+          "stddev": 988579.9671580949
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.2125334999445981,
+          "ci95_upper": 0.2612657000554019,
+          "maximum": 0.257028,
+          "mean": 0.2368996,
+          "minimum": 0.194093,
+          "stddev": 0.02779808983185715
+        }
+      },
+      "subscription": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 17956096.01004218,
+          "ci95_upper": 22601563.98995782,
+          "maximum": 22974073.0,
+          "mean": 20278830.0,
+          "minimum": 15858529.0,
+          "stddev": 2649893.4159158175
+        },
+        "recovered_minor": {
+          "ci95_lower": 17956096.01004218,
+          "ci95_upper": 22601563.98995782,
+          "maximum": 22974073.0,
+          "mean": 20278830.0,
+          "minimum": 15858529.0,
+          "stddev": 2649893.4159158175
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.18720018242147615,
+          "ci95_upper": 0.23971861757852383,
+          "maximum": 0.24165,
+          "mean": 0.2134594,
+          "minimum": 0.169591,
+          "stddev": 0.029957854868131
+        }
+      }
+    },
+    "rules": {
+      "aggregate": {
+        "attempts": {
+          "ci95_lower": 240.3237370382511,
+          "ci95_upper": 272.8762629617489,
+          "maximum": 282.0,
+          "mean": 256.6,
+          "minimum": 230.0,
+          "stddev": 18.568791021496256
+        },
+        "contacts": {
+          "ci95_lower": 392.8379895759566,
+          "ci95_upper": 432.36201042404343,
+          "maximum": 452.0,
+          "mean": 412.6,
+          "minimum": 396.0,
+          "stddev": 22.54550953072474
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 91769.1984712666,
+          "ci95_upper": 113346.8015287334,
+          "maximum": 119390.0,
+          "mean": 102558.0,
+          "minimum": 89145.0,
+          "stddev": 12308.415109184447
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 41647010.20777154,
+          "ci95_upper": 51853686.59222846,
+          "maximum": 53226244.0,
+          "mean": 46750348.4,
+          "minimum": 39010698.0,
+          "stddev": 5822148.5255069975
+        },
+        "recovered_minor": {
+          "ci95_lower": 41742366.63937278,
+          "ci95_upper": 51963446.160627216,
+          "maximum": 53330344.0,
+          "mean": 46852906.4,
+          "minimum": 39102773.0,
+          "stddev": 5830364.442080597
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.3437875880145054,
+          "ci95_upper": 0.37727921198549463,
+          "maximum": 0.38,
+          "mean": 0.3605334,
+          "minimum": 0.333333,
+          "stddev": 0.019104476498977934
+        }
+      },
+      "checkout": {
+        "attempts": {
+          "ci95_lower": 0.0,
+          "ci95_upper": 0.0,
+          "maximum": 0.0,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "stddev": 0.0
+        },
+        "contacts": {
+          "ci95_lower": 203.0345050271317,
+          "ci95_upper": 224.9654949728683,
+          "maximum": 230.0,
+          "mean": 214.0,
+          "minimum": 198.0,
+          "stddev": 12.509996003196804
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 73690.94450378547,
+          "ci95_upper": 94687.05549621453,
+          "maximum": 100465.0,
+          "mean": 84189.0,
+          "minimum": 71360.0,
+          "stddev": 11976.71720464335
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 12118925.415430313,
+          "ci95_upper": 14104851.384569688,
+          "maximum": 15029326.0,
+          "mean": 13111888.4,
+          "minimum": 11998473.0,
+          "stddev": 1132822.8227749474
+        },
+        "recovered_minor": {
+          "ci95_lower": 12198764.813275663,
+          "ci95_upper": 14193389.986724338,
+          "maximum": 15118466.0,
+          "mean": 13196077.4,
+          "minimum": 12069833.0,
+          "stddev": 1137785.0707815164
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.37098163177748905,
+          "ci95_upper": 0.4405519682225109,
+          "maximum": 0.46729,
+          "mean": 0.4057668,
+          "minimum": 0.367089,
+          "stddev": 0.03968469426239793
+        }
+      },
+      "subscription": {
+        "attempts": {
+          "ci95_lower": 240.3237370382511,
+          "ci95_upper": 272.8762629617489,
+          "maximum": 282.0,
+          "mean": 256.6,
+          "minimum": 230.0,
+          "stddev": 18.568791021496256
+        },
+        "contacts": {
+          "ci95_lower": 180.33305236225823,
+          "ci95_upper": 216.86694763774176,
+          "maximum": 231.0,
+          "mean": 198.6,
+          "minimum": 179.0,
+          "stddev": 20.839865642561133
+        },
+        "intervention_cost_minor": {
+          "ci95_lower": 17814.806750672655,
+          "ci95_upper": 18923.193249327345,
+          "maximum": 18940.0,
+          "mean": 18369.0,
+          "minimum": 17610.0,
+          "stddev": 632.2519276364446
+        },
+        "net_recovered_minor": {
+          "ci95_lower": 28902474.998729423,
+          "ci95_upper": 38374445.00127058,
+          "maximum": 40400679.0,
+          "mean": 33638460.0,
+          "minimum": 26178899.0,
+          "stddev": 5403053.266969612
+        },
+        "recovered_minor": {
+          "ci95_lower": 28920964.178564154,
+          "ci95_upper": 38392693.82143585,
+          "maximum": 40418289.0,
+          "mean": 33656829.0,
+          "minimum": 26197484.0,
+          "stddev": 5402916.159683907
+        },
+        "recovery_rate": {
+          "ci95_lower": 0.3140263142260128,
+          "ci95_upper": 0.3694120857739872,
+          "maximum": 0.37525,
+          "mean": 0.3417192,
+          "minimum": 0.304104,
+          "stddev": 0.03159345667539403
+        }
+      }
+    }
+  }
+}

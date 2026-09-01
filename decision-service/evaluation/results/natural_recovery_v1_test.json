@@ -1,0 +1,22 @@
+{
+  "algorithm": "gradient_boosting",
+  "dataset_sha256": "CC1A248AF3E1026761DC60CED0394FD89FD784646DC73F659AEC69E2BBB763F2",
+  "dataset_size": 750,
+  "feature_version": "natural-features-v1",
+  "metrics": {
+    "average_precision": 0.263388,
+    "brier_score": 0.169173,
+    "by_action": {
+      "WAIT": {
+        "brier_score": 0.169173,
+        "roc_auc": 0.537887
+      }
+    },
+    "expected_calibration_error": 0.031537,
+    "precision_at_0_5": 0.0,
+    "recall_at_0_5": 0.0,
+    "roc_auc": 0.537887,
+    "simple_ranker_realized_net_minor": 23934707
+  },
+  "model_version": "natural-recovery-v1"
+}

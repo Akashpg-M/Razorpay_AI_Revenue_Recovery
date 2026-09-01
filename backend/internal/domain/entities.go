@@ -22,25 +22,26 @@ type Merchant struct {
 }
 
 type MerchantPolicy struct {
-	ID                             ID              `json:"id"`
-	MerchantID                     ID              `json:"merchant_id"`
-	Objective                      string          `json:"objective"`
-	MaxRetries                     int             `json:"max_retries"`
-	MaxContactsPerDay              int             `json:"max_contacts_per_day"`
-	MaxContactsPerWeek             int             `json:"max_contacts_per_week"`
-	MinContactIntervalMinutes      int             `json:"min_contact_interval_minutes"`
-	RecoveryWindowHours            int             `json:"recovery_window_hours"`
-	QuietHours                     json.RawMessage `json:"quiet_hours"`
-	AllowedActions                 []ActionType    `json:"allowed_actions"`
-	AllowedChannels                []string        `json:"allowed_channels"`
-	HighValueThresholdMinor        int64           `json:"high_value_threshold_minor"`
-	LowConfidenceThreshold         float64         `json:"low_confidence_threshold"`
-	MinimumEconomicValueMinor      int64           `json:"minimum_economic_value_minor"`
-	MaximumIncentiveMinor          int64           `json:"maximum_incentive_minor"`
-	RequiresHighValueHumanApproval bool            `json:"requires_high_value_human_approval"`
-	Version                        int             `json:"version"`
-	CreatedAt                      time.Time       `json:"created_at"`
-	UpdatedAt                      time.Time       `json:"updated_at"`
+	ID                             ID                           `json:"id"`
+	MerchantID                     ID                           `json:"merchant_id"`
+	Objective                      string                       `json:"objective"`
+	MaxRetries                     int                          `json:"max_retries"`
+	MaxContactsPerDay              int                          `json:"max_contacts_per_day"`
+	MaxContactsPerWeek             int                          `json:"max_contacts_per_week"`
+	MinContactIntervalMinutes      int                          `json:"min_contact_interval_minutes"`
+	RecoveryWindowHours            int                          `json:"recovery_window_hours"`
+	QuietHours                     json.RawMessage              `json:"quiet_hours"`
+	AllowedActions                 []ActionType                 `json:"allowed_actions"`
+	AllowedChannels                []string                     `json:"allowed_channels"`
+	HighValueThresholdMinor        int64                        `json:"high_value_threshold_minor"`
+	LowConfidenceThreshold         float64                      `json:"low_confidence_threshold"`
+	MinimumEconomicValueMinor      int64                        `json:"minimum_economic_value_minor"`
+	MaximumIncentiveMinor          int64                        `json:"maximum_incentive_minor"`
+	RequiresHighValueHumanApproval bool                         `json:"requires_high_value_human_approval"`
+	Version                        int                          `json:"version"`
+	CreatedAt                      time.Time                    `json:"created_at"`
+	UpdatedAt                      time.Time                    `json:"updated_at"`
+	OptimizationProfile            *MerchantOptimizationProfile `json:"optimization_profile,omitempty"`
 }
 
 type Customer struct {
@@ -134,6 +135,7 @@ type ActionPrediction struct {
 	IncrementalUplift          float64         `json:"incremental_uplift"`
 	ExpectedNetValueMinor      int64           `json:"expected_net_value_minor"`
 	ModelVersionID             *ID             `json:"model_version_id,omitempty"`
+	ModelVersion               string          `json:"model_version"`
 	FeatureVersion             string          `json:"feature_version"`
 	Explanation                json.RawMessage `json:"explanation"`
 	CreatedAt                  time.Time       `json:"created_at"`
@@ -164,15 +166,44 @@ type Execution struct {
 }
 
 type PromiseToPay struct {
-	ID         ID              `json:"promise_id"`
-	CaseID     ID              `json:"case_id"`
-	CustomerID ID              `json:"customer_id"`
-	Status     string          `json:"status"`
-	DueAt      time.Time       `json:"due_at"`
-	Confidence float64         `json:"confidence"`
-	Source     json.RawMessage `json:"source"`
-	CreatedAt  time.Time       `json:"created_at"`
-	ResolvedAt *time.Time      `json:"resolved_at,omitempty"`
+	ID                    ID              `json:"promise_id"`
+	CaseID                ID              `json:"case_id"`
+	CustomerID            ID              `json:"customer_id"`
+	Status                string          `json:"status"`
+	DueAt                 time.Time       `json:"due_at"`
+	Confidence            float64         `json:"confidence"`
+	Source                json.RawMessage `json:"source"`
+	CreatedAt             time.Time       `json:"created_at"`
+	ResolvedAt            *time.Time      `json:"resolved_at,omitempty"`
+	PromisedAmountMinor   *int64          `json:"promised_amount_minor,omitempty"`
+	ExtractorVersion      string          `json:"extractor_version"`
+	ExtractionTimestamp   *time.Time      `json:"extraction_timestamp,omitempty"`
+	SourceResponseID      *ID             `json:"source_response_id,omitempty"`
+	FulfilledAt           *time.Time      `json:"fulfilled_at,omitempty"`
+	BrokenAt              *time.Time      `json:"broken_at,omitempty"`
+	ExpiredAt             *time.Time      `json:"expired_at,omitempty"`
+	CancelledAt           *time.Time      `json:"cancelled_at,omitempty"`
+	VerificationReference string          `json:"verification_reference,omitempty"`
+}
+
+type MerchantOptimizationProfile struct {
+	ID                      ID           `json:"profile_id"`
+	MerchantID              ID           `json:"merchant_id"`
+	Objective               string       `json:"objective"`
+	RevenueWeightBPS        int64        `json:"revenue_weight_bps"`
+	RetentionWeightBPS      int64        `json:"retention_weight_bps"`
+	ContactPenaltyWeightBPS int64        `json:"contact_penalty_weight_bps"`
+	CostPenaltyWeightBPS    int64        `json:"cost_penalty_weight_bps"`
+	FatiguePenaltyWeightBPS int64        `json:"fatigue_penalty_weight_bps"`
+	RiskPenaltyWeightBPS    int64        `json:"risk_penalty_weight_bps"`
+	EscalationPreference    string       `json:"escalation_preference"`
+	AllowedActions          []ActionType `json:"allowed_actions"`
+	AllowedChannels         []string     `json:"allowed_channels"`
+	MinimumNERVMinor        int64        `json:"minimum_nerv_minor"`
+	DiscountBudgetMinor     int64        `json:"discount_budget_minor"`
+	HumanReviewBudgetMinor  int64        `json:"human_review_budget_minor"`
+	ConfigurationVersion    int          `json:"configuration_version"`
+	CreatedAt               time.Time    `json:"created_at"`
 }
 
 type WebhookEvent struct {
