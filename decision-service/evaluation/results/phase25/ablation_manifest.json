@@ -1,0 +1,44 @@
+{
+  "ablation_contract": "Each configuration changes only the named variable family; all share exact case IDs and potential outcomes.",
+  "artifacts": {
+    "natural_sha256": "F60830F98F1EADC27017A085E949AE982D6B1F2B74B6D19E1A2D174941C55C09",
+    "outcome_sha256": "25C94AA9BEAD6A6CDBB067C781FFA8C3CD4648086ABC916DC74A242051D7316C"
+  },
+  "configurations": [
+    "full_nba_agent_v1",
+    "without_customer_context",
+    "without_merchant_context",
+    "without_natural_recovery_model",
+    "without_fatigue_cost",
+    "without_non_retry_actions",
+    "without_ptp",
+    "without_economic_gate",
+    "without_policy_aware_optimization",
+    "without_calibration"
+  ],
+  "evaluation_version": "phase25-paired-ablation-v1",
+  "generated_cases": 25000,
+  "heldout_cases": 3750,
+  "paired_case_identity_verified": true,
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "test_sha256": {
+    "101": "9E5C8332D05D33A4B05E7DACA8AAB603ED3514F62BDF2BAE1DC616AB12301DE0",
+    "202": "44F303551FB6C3DF601CBBB1E5E7B55E5E70B234E51F1B6937E7AE86DA2878ED",
+    "303": "F8E67A58D06F8E3C6E500EAE47F3D9AB6A087F5252317CE5E911339C2F70FFCD",
+    "404": "AC4DB35FD46285CC8D6A2F91DBDDB9D46DF22EA123FB36C3B3A7F97DDFDD23F8",
+    "505": "E99E82B42B4A5B943F68320B321914E5BC1AE80078E2DDE644B02B6738E021E3"
+  },
+  "versions": {
+    "feature": "features-v1",
+    "merchant_profile": "evaluation-default-profile-v1",
+    "natural_model": "natural-recovery-v1",
+    "optimizer": "nba-v2-profiled",
+    "outcome_model": "outcome-v1"
+  }
+}

@@ -9,7 +9,28 @@ import (
 	"revenue-recovery/backend/internal/domain"
 )
 
-const RuleVersion = "attribution-v1"
+const RuleVersion = "attribution-v2"
+
+// Precedence is part of the versioned attribution contract. Exact provider
+// evidence wins over temporal inference; ambiguous overlaps remain visible in
+// the evidence payload rather than being silently re-ordered.
+var Precedence = []string{"EXACT_PROVIDER_REFERENCE", "PTP", "RETRY", "DIRECT_ACTION", "NATURAL", "UNKNOWN"}
+
+type EvidenceCandidate struct {
+	Name     string
+	Category Category
+}
+
+func ResolveCandidates(candidates ...EvidenceCandidate) Category {
+	for _, name := range Precedence {
+		for _, candidate := range candidates {
+			if candidate.Name == name {
+				return candidate.Category
+			}
+		}
+	}
+	return Unknown
+}
 
 type Category string
 

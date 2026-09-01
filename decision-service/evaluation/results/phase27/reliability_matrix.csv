@@ -1,0 +1,15 @@
+fault,events_delivered,worker_attempts,claims,reclaims,provider_calls,external_effects,duplicate_effects,duplicates_blocked,reconciliations,final_action_state,final_case_state,pass
+api_retry,0,2,2,1,1,1,0,0,0,COMPLETED,SCHEDULED,true
+concurrent_workers,0,2,2,1,1,1,0,0,0,COMPLETED,SCHEDULED,true
+duplicate_customer_response,2,0,0,0,0,0,0,1,0,NOT_EXECUTED,SCHEDULED,true
+duplicate_scheduled_job,0,2,2,1,1,1,0,0,0,COMPLETED,SCHEDULED,true
+duplicate_webhook,10,1,1,0,1,1,0,9,0,COMPLETED,SCHEDULED,true
+expired_worker_lease,0,2,2,1,1,1,0,0,0,COMPLETED,SCHEDULED,true
+late_payment_event,2,0,0,0,0,0,0,0,0,NOT_EXECUTED,SCHEDULED,true
+network_timeout_after_provider_succeeds,0,2,2,1,1,1,0,0,1,COMPLETED,SCHEDULED,true
+network_timeout_before_provider_execution,0,1,1,0,1,0,0,0,0,COMPLETED,SCHEDULED,true
+out_of_order_event,2,0,0,0,0,0,0,0,0,NOT_EXECUTED,SCHEDULED,true
+redis_unavailable,0,0,1,0,0,0,0,0,0,NOT_EXECUTED,SCHEDULED,true
+stale_scheduled_action,0,0,1,0,0,0,0,0,0,SUPPRESSED,SCHEDULED,true
+worker_crash_after_external_effect,0,2,2,1,1,1,0,0,0,COMPLETED,SCHEDULED,true
+worker_crash_before_external_effect,0,0,1,0,0,0,0,0,0,NOT_EXECUTED,SCHEDULED,true

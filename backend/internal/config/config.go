@@ -12,6 +12,7 @@ type Config struct {
 	RazorpayKeySecret     string
 	RazorpayWebhookSecret string
 	RazorpayAPIURL        string
+	EvaluationResultsPath string
 }
 
 func Load() Config {
@@ -37,6 +38,7 @@ func Load() Config {
 		RazorpayKeySecret:     getEnv("RAZORPAY_KEY_SECRET", ""),
 		RazorpayWebhookSecret: getEnv("RAZORPAY_WEBHOOK_SECRET", ""),
 		RazorpayAPIURL:        getEnv("RAZORPAY_API_URL", "https://api.razorpay.com"),
+		EvaluationResultsPath: getEnv("EVALUATION_RESULTS_PATH", "../decision-service/evaluation/results"),
 	}
 }
 

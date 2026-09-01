@@ -1,0 +1,9 @@
+{
+  "all_passed": true,
+  "correctly_blocked_or_escalated_or_stopped": 22,
+  "evaluation_version": "phase26-safety-v1",
+  "restricted_scenarios": 22,
+  "safety_pass_rate": 1,
+  "unsafe_attempts": 0,
+  "unsafe_external_side_effects": 0
+}

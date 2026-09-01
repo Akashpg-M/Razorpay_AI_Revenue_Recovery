@@ -125,10 +125,26 @@ func (w *Worker) RunOnce(ctx context.Context) (*executor.Result, error) {
 		return nil, nil
 	}
 
-	freshPolicy := policy.Evaluate(decisionContext, scheduled.DecisionID, decisionContext.Case.Version, authorization.Candidate, authorization.Gate, now)
+	freshPolicy := policy.Evaluate(decisionContext, scheduled.DecisionID, authorization.DecisionCaseVersion, authorization.Candidate, authorization.Gate, now)
 	if freshPolicy.Decision != "APPROVE" {
 		_ = w.repository.MarkSuppressed(ctx, *scheduled, "POLICY_RECHECK_"+freshPolicy.Decision, now)
 		return nil, nil
+	}
+	// A retry may follow a provider success whose response was lost. Reconcile
+	// the stable provider idempotency key before making another external call.
+	if scheduled.AttemptCount > 1 {
+		if reconciled, reconcileErr := w.registry.Reconcile(ctx, scheduled.Action, scheduled.IdempotencyKey); reconcileErr == nil && reconciled.Status != "" {
+			if err = w.repository.MarkExecuting(ctx, *scheduled, now); err != nil {
+				return nil, err
+			}
+			reconciled.ExecutionID = domain.ID(id.New())
+			reconciled.Action = scheduled.Action
+			reconciled.IdempotencyKey = scheduled.IdempotencyKey
+			if err = w.repository.CompleteExecution(ctx, *scheduled, reconciled, w.now().UTC()); err != nil {
+				return &reconciled, err
+			}
+			return &reconciled, nil
+		}
 	}
 	if err = w.repository.MarkExecuting(ctx, *scheduled, now); err != nil {
 		return nil, err

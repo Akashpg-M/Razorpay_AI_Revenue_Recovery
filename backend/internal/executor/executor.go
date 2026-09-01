@@ -47,6 +47,14 @@ func (r *Registry) Execute(ctx context.Context, request Request) (Result, error)
 	}
 	return Result{ExecutionID: request.ExecutionID, Action: request.Action, Status: "FAILED", IdempotencyKey: request.IdempotencyKey, FailureClass: "UNSUPPORTED_ACTION", Retryable: false}, errors.New("no executor supports action")
 }
+func (r *Registry) Reconcile(ctx context.Context, action domain.ActionType, idempotencyKey string) (Result, error) {
+	for _, candidate := range r.executors {
+		if candidate.Supports(action) {
+			return candidate.Reconcile(ctx, idempotencyKey)
+		}
+	}
+	return Result{}, errors.New("no executor supports reconciliation")
+}
 
 type EmailDeliveryStore interface {
 	CaptureEmail(context.Context, Request, string, json.RawMessage) (string, bool, error)

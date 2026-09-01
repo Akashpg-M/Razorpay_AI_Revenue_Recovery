@@ -15,7 +15,8 @@ from evaluation.metrics import evaluate
 from features.pipeline import from_simulator
 from simulation.generator import CHECKOUT_ACTIONS, SUBSCRIPTION_ACTIONS
 
-OPTIMIZER_VERSION = "nba-v1"
+OPTIMIZER_VERSION = "nba-v2-profiled"
+FINAL_STRATEGY_NAME = "full_nba_agent_v1"
 COST_MODEL_VERSION = "cost-v1"
 ECONOMIC_GATE_VERSION = "economic-gate-v1"
 POLICY_VERSION = "policy-v1"
@@ -67,7 +68,7 @@ def eligible_actions(observable: dict[str, Any]) -> tuple[str, ...]:
 @dataclass
 class FrozenNBA:
     decisions: dict[str, Decision]
-    name: str = "learned_nba_intermediate"
+    name: str = FINAL_STRATEGY_NAME
     version: str = OPTIMIZER_VERSION
     def decide(self, observable: dict[str, Any]) -> Decision:
         return self.decisions[observable["case_id"]]
@@ -89,7 +90,7 @@ def run(dataset: Path, outcome_artifact: Path, natural_artifact: Path, baseline_
 
     decisions, action_counts = {}, Counter()
     negative_candidates = negative_avoided = waits = economic_blocks = policy_denials = 0
-    selected_nerv_total = 0
+    selected_nerv_total = 0; portfolio_candidates = []
     for index, row in enumerate(rows):
         ranked = rank_candidates(row["observable"], by_case[index], float(natural_probabilities[index]))
         selected = ranked[0]
@@ -100,6 +101,7 @@ def run(dataset: Path, outcome_artifact: Path, natural_artifact: Path, baseline_
         action = selected["action"]
         waits += action == "WAIT"; selected_nerv_total += selected["nerv_minor"]; action_counts[action] += 1
         decisions[row["observable"]["case_id"]] = Decision(action=action, reason="maximum deterministic NERV")
+        portfolio_candidates.append({"case_id":row["observable"]["case_id"],"sequence":index,"action":action,"expected_nerv_minor":selected["nerv_minor"],"expected_incremental_value_minor":selected["gross_incremental_value_minor"],"expected_cost_minor":selected["channel_cost_minor"]+selected["operational_cost_minor"]+selected["incentive_cost_minor"],"is_contact":action in CONTACT_ACTIONS,"is_retry":action.startswith("RETRY")})
 
     result = evaluate(rows, FrozenNBA(decisions), seed)
     for metrics in result["metrics"].values():
@@ -116,6 +118,7 @@ def run(dataset: Path, outcome_artifact: Path, natural_artifact: Path, baseline_
                                    "This is intermediate policy evaluation, not causal production attribution.",
                                    "Merchant thresholds and channel availability are not present in the synthetic observable schema."],
         "incremental_attributed_recovered_value_minor": None,
+        "portfolio_candidates": portfolio_candidates,
     })
     baselines = json.loads(baseline_path.read_text(encoding="utf-8"))["baselines"]
     result["baseline_comparison"] = [{"baseline": b["baseline"], "recovered_minor": b["metrics"]["aggregate"]["total_revenue_recovered_minor"],
@@ -126,7 +129,7 @@ def run(dataset: Path, outcome_artifact: Path, natural_artifact: Path, baseline_
     aggregate = result["metrics"]["aggregate"]
     lines = ["# Intermediate NBA held-out evaluation", "", f"Dataset SHA-256: `{result['dataset_sha256']}`", "",
              "| Strategy | Recovered (minor) | Interventions |", "|---|---:|---:|",
-             f"| learned_nba_intermediate | {aggregate['total_revenue_recovered_minor']} | {aggregate['recovery_attempts'] + aggregate['customer_contacts']} |"]
+             f"| {FINAL_STRATEGY_NAME} | {aggregate['total_revenue_recovered_minor']} | {aggregate['recovery_attempts'] + aggregate['customer_contacts']} |"]
     lines += [f"| {item['baseline']} | {item['recovered_minor']} | {item['interventions']} |" for item in result["baseline_comparison"]]
     lines += ["", "This result is synthetic and intermediate; it is not a production causal-attribution claim.", ""]
     markdown.write_text("\n".join(lines), encoding="utf-8")

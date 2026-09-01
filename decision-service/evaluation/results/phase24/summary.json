@@ -1,13 +1,215 @@
 {
   "artifacts": {
     "natural": {
-      "path": "models\\candidates\\phase21\\natural_recovery_v1.joblib",
+      "path": "models/candidates/phase21/natural_recovery_v1.joblib",
       "sha256": "F60830F98F1EADC27017A085E949AE982D6B1F2B74B6D19E1A2D174941C55C09"
     },
     "outcome": {
-      "path": "models\\candidates\\phase21\\outcome_v1.joblib",
+      "path": "models/candidates/phase21/outcome_v1.joblib",
       "sha256": "25C94AA9BEAD6A6CDBB067C781FFA8C3CD4648086ABC916DC74A242051D7316C"
     }
+  },
+  "budget_comparison": {
+    "aggregate": {
+      "fcfs_expected_nerv_minor": 50746039,
+      "greedy_expected_nerv_minor": 85622714,
+      "greedy_gain_minor": 34876675,
+      "greedy_gain_percent": 68.727876
+    },
+    "comparison_version": "same-budget-allocation-v1",
+    "per_seed": [
+      {
+        "expected_nerv_gain_minor": 6340154,
+        "fcfs": {
+          "budget": {
+            "contacts": 175,
+            "retries": 142,
+            "spend_minor": 122835
+          },
+          "expected_incremental_value_minor": 12050289,
+          "expected_nerv_minor": 11801314,
+          "policy": "first_come_first_served",
+          "selected_cases": 432,
+          "used": {
+            "contacts": 175,
+            "retries": 142,
+            "spend_minor": 120781
+          }
+        },
+        "greedy": {
+          "budget": {
+            "contacts": 175,
+            "retries": 142,
+            "spend_minor": 122835
+          },
+          "expected_incremental_value_minor": 18324384,
+          "expected_nerv_minor": 18141468,
+          "policy": "greedy_nerv_efficiency",
+          "selected_cases": 432,
+          "used": {
+            "contacts": 175,
+            "retries": 142,
+            "spend_minor": 14900
+          }
+        },
+        "seed": 101
+      },
+      {
+        "expected_nerv_gain_minor": 6576195,
+        "fcfs": {
+          "budget": {
+            "contacts": 173,
+            "retries": 149,
+            "spend_minor": 137564
+          },
+          "expected_incremental_value_minor": 10920395,
+          "expected_nerv_minor": 10663382,
+          "policy": "first_come_first_served",
+          "selected_cases": 427,
+          "used": {
+            "contacts": 173,
+            "retries": 149,
+            "spend_minor": 131965
+          }
+        },
+        "greedy": {
+          "budget": {
+            "contacts": 173,
+            "retries": 149,
+            "spend_minor": 137564
+          },
+          "expected_incremental_value_minor": 17442538,
+          "expected_nerv_minor": 17239577,
+          "policy": "greedy_nerv_efficiency",
+          "selected_cases": 427,
+          "used": {
+            "contacts": 173,
+            "retries": 149,
+            "spend_minor": 15290
+          }
+        },
+        "seed": 202
+      },
+      {
+        "expected_nerv_gain_minor": 6381318,
+        "fcfs": {
+          "budget": {
+            "contacts": 175,
+            "retries": 138,
+            "spend_minor": 133908
+          },
+          "expected_incremental_value_minor": 10534973,
+          "expected_nerv_minor": 10275073,
+          "policy": "first_come_first_served",
+          "selected_cases": 436,
+          "used": {
+            "contacts": 175,
+            "retries": 138,
+            "spend_minor": 132816
+          }
+        },
+        "greedy": {
+          "budget": {
+            "contacts": 175,
+            "retries": 138,
+            "spend_minor": 133908
+          },
+          "expected_incremental_value_minor": 16851640,
+          "expected_nerv_minor": 16656391,
+          "policy": "greedy_nerv_efficiency",
+          "selected_cases": 436,
+          "used": {
+            "contacts": 175,
+            "retries": 138,
+            "spend_minor": 14850
+          }
+        },
+        "seed": 303
+      },
+      {
+        "expected_nerv_gain_minor": 6454628,
+        "fcfs": {
+          "budget": {
+            "contacts": 188,
+            "retries": 126,
+            "spend_minor": 184993
+          },
+          "expected_incremental_value_minor": 8980068,
+          "expected_nerv_minor": 8676712,
+          "policy": "first_come_first_served",
+          "selected_cases": 436,
+          "used": {
+            "contacts": 188,
+            "retries": 126,
+            "spend_minor": 184684
+          }
+        },
+        "greedy": {
+          "budget": {
+            "contacts": 188,
+            "retries": 126,
+            "spend_minor": 184993
+          },
+          "expected_incremental_value_minor": 15305581,
+          "expected_nerv_minor": 15131340,
+          "policy": "greedy_nerv_efficiency",
+          "selected_cases": 436,
+          "used": {
+            "contacts": 188,
+            "retries": 126,
+            "spend_minor": 15260
+          }
+        },
+        "seed": 404
+      },
+      {
+        "expected_nerv_gain_minor": 9124380,
+        "fcfs": {
+          "budget": {
+            "contacts": 180,
+            "retries": 128,
+            "spend_minor": 82805
+          },
+          "expected_incremental_value_minor": 9511381,
+          "expected_nerv_minor": 9329558,
+          "policy": "first_come_first_served",
+          "selected_cases": 406,
+          "used": {
+            "contacts": 156,
+            "retries": 118,
+            "spend_minor": 82804
+          }
+        },
+        "greedy": {
+          "budget": {
+            "contacts": 180,
+            "retries": 128,
+            "spend_minor": 82805
+          },
+          "expected_incremental_value_minor": 18646906,
+          "expected_nerv_minor": 18453938,
+          "policy": "greedy_nerv_efficiency",
+          "selected_cases": 440,
+          "used": {
+            "contacts": 180,
+            "retries": 128,
+            "spend_minor": 14935
+          }
+        },
+        "seed": 505
+      }
+    ]
+  },
+  "case_counts": {
+    "generated": 25000,
+    "heldout_evaluated_per_strategy": 3750,
+    "heldout_per_seed": [
+      750,
+      750,
+      750,
+      750,
+      750
+    ]
   },
   "chart_rows": [
     {
@@ -150,7 +352,7 @@
       "recovered_minor": 54800038,
       "recovery_rate": 0.404,
       "seed": 101,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "aggregate"
     },
     {
@@ -161,7 +363,7 @@
       "recovered_minor": 42419893,
       "recovery_rate": 0.427146,
       "seed": 101,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "subscription"
     },
     {
@@ -172,7 +374,7 @@
       "recovered_minor": 12380145,
       "recovery_rate": 0.35743,
       "seed": 101,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "checkout"
     },
     {
@@ -315,7 +517,7 @@
       "recovered_minor": 54489729,
       "recovery_rate": 0.442667,
       "seed": 202,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "aggregate"
     },
     {
@@ -326,7 +528,7 @@
       "recovered_minor": 42923493,
       "recovery_rate": 0.463551,
       "seed": 202,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "subscription"
     },
     {
@@ -337,7 +539,7 @@
       "recovered_minor": 11566236,
       "recovery_rate": 0.390698,
       "seed": 202,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "checkout"
     },
     {
@@ -480,7 +682,7 @@
       "recovered_minor": 53543522,
       "recovery_rate": 0.441333,
       "seed": 303,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "aggregate"
     },
     {
@@ -491,7 +693,7 @@
       "recovered_minor": 41723444,
       "recovery_rate": 0.451493,
       "seed": 303,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "subscription"
     },
     {
@@ -502,7 +704,7 @@
       "recovered_minor": 11820078,
       "recovery_rate": 0.415888,
       "seed": 303,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "checkout"
     },
     {
@@ -645,7 +847,7 @@
       "recovered_minor": 52787369,
       "recovery_rate": 0.425333,
       "seed": 404,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "aggregate"
     },
     {
@@ -656,7 +858,7 @@
       "recovered_minor": 38281272,
       "recovery_rate": 0.444008,
       "seed": 404,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "subscription"
     },
     {
@@ -667,7 +869,7 @@
       "recovered_minor": 14506097,
       "recovery_rate": 0.385892,
       "seed": 404,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "checkout"
     },
     {
@@ -810,7 +1012,7 @@
       "recovered_minor": 54491962,
       "recovery_rate": 0.405333,
       "seed": 505,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "aggregate"
     },
     {
@@ -821,7 +1023,7 @@
       "recovered_minor": 41240336,
       "recovery_rate": 0.413255,
       "seed": 505,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "subscription"
     },
     {
@@ -832,45 +1034,50 @@
       "recovered_minor": 13251626,
       "recovery_rate": 0.388186,
       "seed": 505,
-      "strategy": "learned_nba_intermediate",
+      "strategy": "full_nba_agent_v1",
       "vertical": "checkout"
     }
   ],
   "dataset_size_per_seed": 5000,
-  "evaluation_version": "phase24-evaluation-v1",
+  "evaluation_version": "phase24-evaluation-v2",
   "integrity": {
     "all_checks_passed": true,
     "checks": [
       {
-        "actual_size": 5000,
+        "actual_generated_size": 5000,
+        "actual_heldout_size": 750,
         "configured_size": 5000,
         "hidden_feature_leak": false,
         "seed": 101,
         "test_sha256": "9E5C8332D05D33A4B05E7DACA8AAB603ED3514F62BDF2BAE1DC616AB12301DE0"
       },
       {
-        "actual_size": 5000,
+        "actual_generated_size": 5000,
+        "actual_heldout_size": 750,
         "configured_size": 5000,
         "hidden_feature_leak": false,
         "seed": 202,
         "test_sha256": "44F303551FB6C3DF601CBBB1E5E7B55E5E70B234E51F1B6937E7AE86DA2878ED"
       },
       {
-        "actual_size": 5000,
+        "actual_generated_size": 5000,
+        "actual_heldout_size": 750,
         "configured_size": 5000,
         "hidden_feature_leak": false,
         "seed": 303,
         "test_sha256": "F8E67A58D06F8E3C6E500EAE47F3D9AB6A087F5252317CE5E911339C2F70FFCD"
       },
       {
-        "actual_size": 5000,
+        "actual_generated_size": 5000,
+        "actual_heldout_size": 750,
         "configured_size": 5000,
         "hidden_feature_leak": false,
         "seed": 404,
         "test_sha256": "AC4DB35FD46285CC8D6A2F91DBDDB9D46DF22EA123FB36C3B3A7F97DDFDD23F8"
       },
       {
-        "actual_size": 5000,
+        "actual_generated_size": 5000,
+        "actual_heldout_size": 750,
         "configured_size": 5000,
         "hidden_feature_leak": false,
         "seed": 505,
@@ -881,7 +1088,7 @@
   },
   "limitations": [
     "Synthetic potential outcomes support policy comparison, not production causal claims.",
-    "Confidence intervals summarize seed variation only."
+    "Intervals quantify variation across the configured deterministic simulation seeds; they are not production-population confidence claims."
   ],
   "seeds": [
     101,
@@ -1195,7 +1402,7 @@
         }
       }
     },
-    "learned_nba_intermediate": {
+    "full_nba_agent_v1": {
       "aggregate": {
         "attempts": {
           "ci95_lower": 256.6191138040443,
@@ -1651,5 +1858,6 @@
         }
       }
     }
-  }
+  },
+  "strategy_name": "full_nba_agent_v1"
 }

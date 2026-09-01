@@ -12,7 +12,7 @@
   },
   "baseline": "rules",
   "baseline_version": "rules-v1",
-  "dataset_path": "evaluation\\results\\phase24\\seed_505\\data\\test.jsonl",
+  "dataset_path": "evaluation/results/phase24/seed_505/data/test.jsonl",
   "dataset_sha256": "E99E82B42B4A5B943F68320B321914E5BC1AE80078E2DDE644B02B6738E021E3",
   "dataset_size": 750,
   "evaluation_timestamp": "2026-01-01T00:00:00+00:00",

@@ -39,3 +39,5 @@ tmp/
 # Evaluation/generated data
 simulation/generated/
 evaluation/results/*.tmp
+
+self/

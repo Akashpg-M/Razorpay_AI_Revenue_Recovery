@@ -63,9 +63,25 @@ func (p *Postgres) AttributeRecovery(ctx context.Context, input attribution.Obse
 	}
 	_ = emailWindow
 	record := attribution.Record{ID: domain.ID(id.New()), CaseID: input.CaseID, RecoveredAmountMinor: input.RecoveredAmountMinor, PaymentReference: input.PaymentReference, Category: attribution.Unknown, EvidenceStrength: "INSUFFICIENT", RuleVersion: attribution.RuleVersion, ObservedAt: input.ObservedAt, CreatedAt: input.ObservedAt.UTC()}
-	evidence := map[string]any{"rule_precedence": []string{"PTP", "RETRY", "DIRECT_ACTION", "NATURAL", "UNKNOWN"}}
+	evidence := map[string]any{"rule_precedence": attribution.Precedence, "overlap_resolution": "highest_precedence_evidence_wins"}
+	var exactActionID, exactExecutionID domain.ID
+	var exactActionType domain.ActionType
+	exactErr := tx.QueryRow(ctx, `SELECT a.id,e.id,a.action_type FROM executions e JOIN recovery_actions a ON a.id=e.action_id WHERE e.case_id=$1 AND e.provider_reference=$2 AND e.status IN('SUCCEEDED','OUTCOME_PENDING','RECOVERY_CONFIRMED') ORDER BY e.completed_at DESC LIMIT 1`, input.CaseID, input.PaymentReference).Scan(&exactActionID, &exactExecutionID, &exactActionType)
+	if exactErr == nil {
+		record.Category = attribution.DirectAction
+		if exactActionType == domain.ActionRetryNow || exactActionType == domain.ActionRetryLater {
+			record.Category = attribution.Retry
+		}
+		record.ActionID = &exactActionID
+		record.ExecutionID = &exactExecutionID
+		record.EvidenceStrength = "STRONG"
+		evidence["matched_provider_reference"] = input.PaymentReference
+		evidence["matched_action"] = exactActionType
+	} else if !errors.Is(exactErr, pgx.ErrNoRows) {
+		return record, false, exactErr
+	}
 	promise, promiseErr := scanPromise(tx.QueryRow(ctx, `SELECT `+promiseColumns+` FROM promises_to_pay WHERE case_id=$1 AND status IN('ACTIVE','FULFILLED') AND due_at BETWEEN $2::timestamptz-make_interval(mins=>$3) AND $2::timestamptz+make_interval(mins=>$3) ORDER BY due_at LIMIT 1`, input.CaseID, input.ObservedAt, ptpWindow))
-	if promiseErr == nil {
+	if record.Category == attribution.Unknown && promiseErr == nil {
 		record.Category = attribution.Promise
 		record.PromiseID = &promise.ID
 		record.EvidenceStrength = "STRONG"
@@ -124,7 +140,7 @@ func (p *Postgres) AttributeRecovery(ctx context.Context, input attribution.Obse
 	if err != nil {
 		return record, false, err
 	}
-	if promiseErr == nil && promise.Status == "ACTIVE" {
+	if record.Category == attribution.Promise && promiseErr == nil && promise.Status == "ACTIVE" {
 		_, err = transitionPromiseTx(ctx, tx, promise, "FULFILLED", "ATTRIBUTED_PAYMENT", input.CorrelationID, input.PaymentReference, input.ObservedAt)
 		if err != nil {
 			return record, false, err

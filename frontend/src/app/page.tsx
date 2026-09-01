@@ -1,69 +1,17 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Nav } from "@/components/nav";
+import { backendJSON } from "@/lib/api";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+type Metric = { aggregate?:{net_recovered_minor?:{mean?:number}} };
+type Summary = { operational:{mode:string;revenue_at_risk_minor:number;recovered_minor:number;natural_recovered_minor:number;agent_attributed_minor:number;active_cases:number;cases:Array<{case_id:string;merchant_id:string;leak_type:string;amount_at_risk_minor:number;current_state:string}>}; synthetic_evaluation:{statistics?:Record<string,Metric>;case_counts?:{heldout_evaluated_per_strategy?:number}};budget_comparison:{aggregate?:{greedy_gain_minor?:number;fcfs_expected_nerv_minor?:number;greedy_expected_nerv_minor?:number}};reconciliation:Record<string,unknown> };
+const money=(minor:number=0)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(minor/100);
+export default async function Home(){
+ const data=await backendJSON<Summary>("/api/v1/dashboard"); const op=data?.operational; const synthetic=data?.synthetic_evaluation; const strategies=synthetic?.statistics?Object.entries(synthetic.statistics).map(([name,value])=>({name,net:value.aggregate?.net_recovered_minor?.mean??0})).sort((a,b)=>b.net-a.net):[]; const max=Math.max(1,...strategies.map(x=>x.net)); const budget=data?.budget_comparison?.aggregate;
+ return <><Nav/><main className="shell"><section className="hero"><div><div className="eyebrow">AI REVENUE RECOVERY · NEXT-BEST-ACTION</div><h1>Recover more revenue.<br/><em>Know exactly why.</em></h1><p>Stateful recovery orchestration with economic optimization, bounded autonomy, and a permanent decision trail.</p></div><div className="heroSignal"><span>System posture</span><strong>Bounded & explainable</strong><small>Every action re-authorized at execution</small></div></section>
+ <div className="sectionHead"><div><span className="dataMode">{op?.mode??"OPERATIONAL DATA UNAVAILABLE"}</span><h2>Today’s recovery position</h2></div><span>{op?.active_cases??0} active cases</span></div>
+ <section className="kpis"><article><small>Revenue at risk</small><strong>{money(op?.revenue_at_risk_minor)}</strong><span>Across persisted cases</span></article><article className="green"><small>Recovered</small><strong>{money(op?.recovered_minor)}</strong><span>Observed payment outcomes</span></article><article><small>Agent-attributed</small><strong>{money(op?.agent_attributed_minor)}</strong><span>Direct, retry & promise evidence</span></article><article><small>Natural recovery</small><strong>{money(op?.natural_recovered_minor)}</strong><span>Kept separate from agent impact</span></article></section>
+ <section className="split"><article className="panel"><div className="panelTitle"><div><span className="dataMode synthetic">SYNTHETIC EVALUATION</span><h2>NBA against frozen baselines</h2></div><span>{synthetic?.case_counts?.heldout_evaluated_per_strategy??"—"} held-out / strategy</span></div><div className="bars">{strategies.slice(0,6).map(item=><div className="barRow" key={item.name}><label>{item.name.replaceAll("_"," ")}</label><div><i style={{width:`${Math.max(2,item.net/max*100)}%`}}/></div><b>{money(item.net)}</b></div>)}</div><p className="footnote">Seed-variation evaluation on synthetic potential outcomes—not a production causal-uplift claim.</p></article>
+ <article className="panel portfolio"><div className="eyebrow">PORTFOLIO ALLOCATION</div><h2>More value, same budget</h2><div className="gain">+{money(budget?.greedy_gain_minor)}</div><p>Expected NERV gained by greedy allocation versus first-come-first-served under identical spend, contact, and retry constraints.</p><div className="compare"><span>FCFS <b>{money(budget?.fcfs_expected_nerv_minor)}</b></span><span>Optimized <b>{money(budget?.greedy_expected_nerv_minor)}</b></span></div></article></section>
+ <div className="sectionHead"><div><div className="eyebrow">NEXT ACTIONS</div><h2>Cases that need attention</h2></div></div><section className="caseTable"><div className="tr header"><span>Case</span><span>Leak</span><span>At risk</span><span>Status</span><span></span></div>{op?.cases?.length?op.cases.map(item=><div className="tr" key={item.case_id}><span><b>{item.case_id.slice(0,12)}</b><small>{item.merchant_id}</small></span><span>{item.leak_type.replaceAll("_"," ")}</span><span>{money(item.amount_at_risk_minor)}</span><span><i className="statusDot"/>{item.current_state.replaceAll("_"," ")}</span><Link href={`/recovery/${item.case_id}`}>Replay →</Link></div>):<div className="empty">No persisted cases yet. Ingest a test-mode payment failure to populate operational metrics and replay.</div>}</section>
+ </main></>;
 }

@@ -4,7 +4,7 @@ Dataset SHA-256: `E99E82B42B4A5B943F68320B321914E5BC1AE80078E2DDE644B02B6738E021
 
 | Strategy | Recovered (minor) | Interventions |
 |---|---:|---:|
-| learned_nba_intermediate | 54491962 | 618 |
+| full_nba_agent_v1 | 54491962 | 618 |
 | no_recovery | 21657868 | 0 |
 | fixed_retry | 39448265 | 750 |
 | rules | 42776621 | 654 |

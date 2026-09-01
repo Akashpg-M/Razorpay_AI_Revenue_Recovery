@@ -1,0 +1,8 @@
+{
+  "delivery_semantics": "at-least-once processing with idempotent or reconciled side effects",
+  "duplicate_external_effects": 0,
+  "evaluation_version": "phase27-reliability-v1",
+  "exactly_once_claimed": false,
+  "fault_scenarios": 14,
+  "passed": 14
+}

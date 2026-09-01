@@ -1,0 +1,492 @@
+{
+  "contract": {
+    "boundary": "orchestrator.Worker.RunOnce",
+    "target": "zero unsafe external effects in covered scenarios",
+    "unsafe_action_definition": "external execution while current authoritative policy requires DENY, ESCALATE, or STOP",
+    "version": "safety-evaluation-v1"
+  },
+  "results": [
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "valid_control",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 1,
+      "provider_effect_count": 1,
+      "execution_attempt_count": 1,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": true
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "recovered_case",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "STALE_OR_RECOVERED",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "cancelled_subscription",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_STOP",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "expired_recovery_window",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_STOP",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "stale_scheduled_case",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "STALE_OR_RECOVERED",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "stale_decision",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "economic_gate_blocked",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "ECONOMIC_GATE_BLOCKED",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "customer_opt_out",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "maximum_contacts_day",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "maximum_contacts_week",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "minimum_contact_interval",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "active_promise",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "action_not_allowed",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "channel_not_allowed",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "channel_unavailable",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "quiet_hours",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "mandate_revoked",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "invalid_payment_method",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "maximum_retries",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "terminal_case",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_STOP",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "high_value_approval",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_ESCALATE",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "low_confidence",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_ESCALATE",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    },
+    {
+      "suite": "AUTHORIZATION_SAFETY",
+      "scenario": "maximum_incentive",
+      "fault_mode": "policy_or_state_restriction",
+      "passed": true,
+      "external_call_count": 0,
+      "provider_effect_count": 0,
+      "execution_attempt_count": 0,
+      "events_delivered": 0,
+      "claims": 0,
+      "reclaims": 0,
+      "duplicates_blocked": 0,
+      "reconciliation_events": 0,
+      "final_action_state": "",
+      "final_case_state": "",
+      "suppression_reason": "POLICY_RECHECK_DENY",
+      "evidence": {
+        "actual_worker_boundary": true,
+        "expected_external_call": false
+      }
+    }
+  ]
+}

@@ -78,7 +78,7 @@ func viableContext(now time.Time) recoverycontext.RecoveryDecisionContext {
 		Case:            domain.RecoveryCase{ID: "case-1", CustomerID: "customer-1", CurrentState: domain.StateScheduled, Version: 3, AmountAtRiskMinor: 10000, Currency: "INR", RecoveryDeadline: now.Add(time.Hour)},
 		Diagnosis:       recoverycontext.Diagnosis{Confidence: .9},
 		CustomerProfile: recoverycontext.CustomerProfile{},
-		MerchantContext: recoverycontext.MerchantContext{MaxRetries: 3, MaxContactsPerDay: 3, MaxContactsPerWeek: 5, MaximumIncentiveMinor: 0, Timezone: "UTC"},
+		MerchantContext: recoverycontext.MerchantContext{AllowedChannels: []string{"email"}, MaxRetries: 3, MaxContactsPerDay: 3, MaxContactsPerWeek: 5, MaximumIncentiveMinor: 0, Timezone: "UTC"},
 		PaymentState:    recoverycontext.PaymentState{AvailableChannels: []string{"email"}},
 	}
 }
@@ -86,7 +86,7 @@ func viableContext(now time.Time) recoverycontext.RecoveryDecisionContext {
 func repositoryFor(action domain.ActionType) *fakeRepository {
 	return &fakeRepository{
 		scheduled:     ScheduledAction{ID: "scheduled-1", CaseID: "case-1", DecisionID: "decision-1", RecoveryActionID: "action-1", Action: action, Status: "CLAIMED", AttemptCount: 1, MaxAttempts: 3, IdempotencyKey: "key", CaseVersionAtSchedule: 3},
-		authorization: Authorization{DecisionCaseVersion: 1, Candidate: optimizer.Candidate{Action: action, NERVMinor: 100}, Gate: economicgate.Result{Decision: "ALLOW"}},
+		authorization: Authorization{DecisionCaseVersion: 3, Candidate: optimizer.Candidate{Action: action, NERVMinor: 100}, Gate: economicgate.Result{Decision: "ALLOW"}},
 	}
 }
 

@@ -1,0 +1,191 @@
+{
+  "aggregate": {
+    "fcfs_expected_nerv_minor": 50746039,
+    "greedy_expected_nerv_minor": 85622714,
+    "greedy_gain_minor": 34876675,
+    "greedy_gain_percent": 68.727876
+  },
+  "comparison_version": "same-budget-allocation-v1",
+  "per_seed": [
+    {
+      "expected_nerv_gain_minor": 6340154,
+      "fcfs": {
+        "budget": {
+          "contacts": 175,
+          "retries": 142,
+          "spend_minor": 122835
+        },
+        "expected_incremental_value_minor": 12050289,
+        "expected_nerv_minor": 11801314,
+        "policy": "first_come_first_served",
+        "selected_cases": 432,
+        "used": {
+          "contacts": 175,
+          "retries": 142,
+          "spend_minor": 120781
+        }
+      },
+      "greedy": {
+        "budget": {
+          "contacts": 175,
+          "retries": 142,
+          "spend_minor": 122835
+        },
+        "expected_incremental_value_minor": 18324384,
+        "expected_nerv_minor": 18141468,
+        "policy": "greedy_nerv_efficiency",
+        "selected_cases": 432,
+        "used": {
+          "contacts": 175,
+          "retries": 142,
+          "spend_minor": 14900
+        }
+      },
+      "seed": 101
+    },
+    {
+      "expected_nerv_gain_minor": 6576195,
+      "fcfs": {
+        "budget": {
+          "contacts": 173,
+          "retries": 149,
+          "spend_minor": 137564
+        },
+        "expected_incremental_value_minor": 10920395,
+        "expected_nerv_minor": 10663382,
+        "policy": "first_come_first_served",
+        "selected_cases": 427,
+        "used": {
+          "contacts": 173,
+          "retries": 149,
+          "spend_minor": 131965
+        }
+      },
+      "greedy": {
+        "budget": {
+          "contacts": 173,
+          "retries": 149,
+          "spend_minor": 137564
+        },
+        "expected_incremental_value_minor": 17442538,
+        "expected_nerv_minor": 17239577,
+        "policy": "greedy_nerv_efficiency",
+        "selected_cases": 427,
+        "used": {
+          "contacts": 173,
+          "retries": 149,
+          "spend_minor": 15290
+        }
+      },
+      "seed": 202
+    },
+    {
+      "expected_nerv_gain_minor": 6381318,
+      "fcfs": {
+        "budget": {
+          "contacts": 175,
+          "retries": 138,
+          "spend_minor": 133908
+        },
+        "expected_incremental_value_minor": 10534973,
+        "expected_nerv_minor": 10275073,
+        "policy": "first_come_first_served",
+        "selected_cases": 436,
+        "used": {
+          "contacts": 175,
+          "retries": 138,
+          "spend_minor": 132816
+        }
+      },
+      "greedy": {
+        "budget": {
+          "contacts": 175,
+          "retries": 138,
+          "spend_minor": 133908
+        },
+        "expected_incremental_value_minor": 16851640,
+        "expected_nerv_minor": 16656391,
+        "policy": "greedy_nerv_efficiency",
+        "selected_cases": 436,
+        "used": {
+          "contacts": 175,
+          "retries": 138,
+          "spend_minor": 14850
+        }
+      },
+      "seed": 303
+    },
+    {
+      "expected_nerv_gain_minor": 6454628,
+      "fcfs": {
+        "budget": {
+          "contacts": 188,
+          "retries": 126,
+          "spend_minor": 184993
+        },
+        "expected_incremental_value_minor": 8980068,
+        "expected_nerv_minor": 8676712,
+        "policy": "first_come_first_served",
+        "selected_cases": 436,
+        "used": {
+          "contacts": 188,
+          "retries": 126,
+          "spend_minor": 184684
+        }
+      },
+      "greedy": {
+        "budget": {
+          "contacts": 188,
+          "retries": 126,
+          "spend_minor": 184993
+        },
+        "expected_incremental_value_minor": 15305581,
+        "expected_nerv_minor": 15131340,
+        "policy": "greedy_nerv_efficiency",
+        "selected_cases": 436,
+        "used": {
+          "contacts": 188,
+          "retries": 126,
+          "spend_minor": 15260
+        }
+      },
+      "seed": 404
+    },
+    {
+      "expected_nerv_gain_minor": 9124380,
+      "fcfs": {
+        "budget": {
+          "contacts": 180,
+          "retries": 128,
+          "spend_minor": 82805
+        },
+        "expected_incremental_value_minor": 9511381,
+        "expected_nerv_minor": 9329558,
+        "policy": "first_come_first_served",
+        "selected_cases": 406,
+        "used": {
+          "contacts": 156,
+          "retries": 118,
+          "spend_minor": 82804
+        }
+      },
+      "greedy": {
+        "budget": {
+          "contacts": 180,
+          "retries": 128,
+          "spend_minor": 82805
+        },
+        "expected_incremental_value_minor": 18646906,
+        "expected_nerv_minor": 18453938,
+        "policy": "greedy_nerv_efficiency",
+        "selected_cases": 440,
+        "used": {
+          "contacts": 180,
+          "retries": 128,
+          "spend_minor": 14935
+        }
+      },
+      "seed": 505
+    }
+  ]
+}

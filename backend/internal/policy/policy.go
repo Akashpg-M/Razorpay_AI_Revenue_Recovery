@@ -25,7 +25,7 @@ type Result struct {
 	CreatedAt      time.Time         `json:"created_at"`
 }
 
-var contacts = map[domain.ActionType]bool{domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true, domain.ActionRetention: true}
+var contacts = map[domain.ActionType]bool{domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true, domain.ActionWaitForPromiseToPay: true, domain.ActionRetention: true}
 var retries = map[domain.ActionType]bool{domain.ActionRetryNow: true, domain.ActionRetryLater: true}
 
 func Evaluate(ctx recoverycontext.RecoveryDecisionContext, decisionID domain.ID, decisionCaseVersion int64, candidate optimizer.Candidate, gate economicgate.Result, now time.Time) Result {
@@ -43,6 +43,8 @@ func Evaluate(ctx recoverycontext.RecoveryDecisionContext, decisionID domain.ID,
 	add(&stop, "RECOVERY_WINDOW_EXPIRED", !ctx.Case.RecoveryDeadline.After(now))
 	add(&deny, "STALE_DECISION", ctx.Case.Version != decisionCaseVersion)
 	add(&deny, "ECONOMIC_GATE_BLOCKED", gate.Decision != "ALLOW")
+	add(&deny, "ACTION_NOT_ALLOWED", len(ctx.MerchantContext.AllowedActions) > 0 && !containsAction(ctx.MerchantContext.AllowedActions, candidate.Action))
+	add(&deny, "CHANNEL_NOT_ALLOWED", contacts[candidate.Action] && len(ctx.MerchantContext.AllowedChannels) == 0)
 	add(&deny, "CUSTOMER_OPT_OUT", ctx.CustomerProfile.OptedOut && contacts[candidate.Action])
 	retryCount, dayContacts, weekContacts, lastContact, lastRetry := history(ctx.RecentActions, now)
 	add(&deny, "MAX_RETRIES", retries[candidate.Action] && retryCount >= ctx.MerchantContext.MaxRetries)
@@ -72,6 +74,14 @@ func Evaluate(ctx recoverycontext.RecoveryDecisionContext, decisionID domain.ID,
 		reasons = escalate
 	}
 	return Result{DecisionID: decisionID, CaseID: ctx.Case.ID, CaseVersion: ctx.Case.Version, SelectedAction: candidate.Action, PolicyVersion: Version, Decision: decision, ReasonCodes: reasons, Checks: checks, CreatedAt: now.UTC()}
+}
+func containsAction(actions []domain.ActionType, wanted domain.ActionType) bool {
+	for _, action := range actions {
+		if action == wanted {
+			return true
+		}
+	}
+	return false
 }
 func history(actions []recoverycontext.RecentAction, now time.Time) (retry, day, week int, lastContact, lastRetry time.Time) {
 	for _, action := range actions {

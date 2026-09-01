@@ -82,6 +82,9 @@ services:
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
       RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
       RAZORPAY_API_URL: ${RAZORPAY_API_URL:-https://api.razorpay.com}
+      EVALUATION_RESULTS_PATH: /evaluation/results
+    volumes:
+      - ./decision-service/evaluation/results:/evaluation/results:ro
     ports:
       - "${BACKEND_PORT}:8080"
     depends_on:
@@ -134,6 +137,7 @@ services:
       context: ./frontend
     environment:
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+      BACKEND_INTERNAL_URL: http://backend:8080
     ports:
       - "${FRONTEND_PORT}:3000"
     depends_on:

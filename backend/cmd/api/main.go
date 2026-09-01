@@ -28,6 +28,7 @@ import (
 	"revenue-recovery/backend/internal/portfolio"
 	"revenue-recovery/backend/internal/promises"
 	"revenue-recovery/backend/internal/recovery"
+	"revenue-recovery/backend/internal/reporting"
 	"revenue-recovery/backend/internal/responses"
 	"revenue-recovery/backend/internal/store"
 )
@@ -191,6 +192,12 @@ func main() {
 	modelRegistryHandlers.Register(router.Group("/api/v1"))
 	workflowHandlers := apihttp.NewWorkflow(recoveryRepository)
 	workflowHandlers.Register(router.Group("/api/v1"))
+	resilienceHandlers := apihttp.NewResilience(recoveryRepository, cfg.Environment)
+	resilienceHandlers.Register(router.Group("/api/v1"))
+	dashboardHandlers := apihttp.NewDashboard(reporting.NewService(recoveryRepository, cfg.EvaluationResultsPath))
+	dashboardHandlers.Register(router.Group("/api/v1"))
+	replayHandlers := apihttp.NewReplay(recoveryRepository)
+	replayHandlers.Register(router.Group("/api/v1"))
 
 	logger.Info(
 		"backend_starting",

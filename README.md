@@ -6,7 +6,7 @@ This repository now contains a stateful recovery domain, immutable audit history
 
 - `backend`: Go/Gin API and PostgreSQL-backed recovery aggregate.
 - `decision-service`: FastAPI health service plus deterministic synthetic simulator.
-- `frontend`: Next.js scaffold.
+- `frontend`: Next.js business dashboard, resilience lab, and persisted recovery-case replay.
 - `infra/migrations`: PostgreSQL schema and append-only audit protections.
 
 ## Recovery lifecycle API
@@ -77,6 +77,29 @@ python -m simulation.generate --seed 42 --dataset-size 5000 --output-dir simulat
 `--merchant-mix`, `--subscription-failure-distribution`, and
 `--checkout-failure-distribution` accept either an inline JSON object or the path
 to a JSON file. All weights must be non-negative and sum to `1.0`.
+
+## Evaluation and reviewer UI
+
+Run the corrected full evaluation and paired ablations from `decision-service`:
+
+```powershell
+python -m evaluation.full_evaluation --dataset-size 5000 --seeds 101 202 303 404 505
+python -m evaluation.ablations --dataset-size 5000 --seeds 101 202 303 404 505
+```
+
+Generate the authorization and reliability matrices from `backend`:
+
+```powershell
+go run ./cmd/evaluation ../decision-service/evaluation/results
+```
+
+After `docker compose up -d --build`, open:
+
+- `http://localhost:3000/` — operational and synthetic business dashboard.
+- `http://localhost:3000/resilience` — development-only backend fault injection.
+- `http://localhost:3000/recovery/{case_id}` — replay from persisted decisions and audit records.
+
+The dashboard labels operational/test-mode data separately from synthetic evaluation. Synthetic results are reproducible simulator measurements and are not presented as production causal uplift.
 
 This writes `train.jsonl`, `validation.jsonl`, `test.jsonl`, and `dataset_report.json`. Each row separates `observable` features from evaluation-only `_ground_truth`. Strategies and feature pipelines must never receive `_ground_truth`.
 
