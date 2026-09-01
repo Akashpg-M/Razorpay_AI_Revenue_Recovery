@@ -1,0 +1,24 @@
+﻿{
+    "schema_version":  "verification-summary-v1",
+    "generated_at":  "2026-09-01T11:44:17.8617605Z",
+    "status":  "PASS",
+    "checks":  {
+                   "go_format":  "PASS",
+                   "go_vet":  "PASS",
+                   "go_test":  "PASS",
+                   "go_build":  "PASS",
+                   "python_tests":  "PASS",
+                   "frontend_image":  "PASS",
+                   "frontend_lint_build":  "PASS"
+               },
+    "invariant_groups":  [
+                             "domain_state_machine",
+                             "ml_data_integrity",
+                             "eligibility_optimizer",
+                             "economic_policy_safety",
+                             "workflow_reliability",
+                             "promise_to_pay",
+                             "attribution",
+                             "human_review"
+                         ]
+}

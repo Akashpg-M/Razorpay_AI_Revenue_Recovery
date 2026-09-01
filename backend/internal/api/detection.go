@@ -9,6 +9,7 @@ import (
 
 	"revenue-recovery/backend/internal/detection"
 	"revenue-recovery/backend/internal/integrations/razorpay"
+	"revenue-recovery/backend/internal/metrics"
 )
 
 type Detection struct {
@@ -63,6 +64,7 @@ func (h *Detection) razorpayWebhook(c *gin.Context) {
 	}
 	result, duplicate, err := h.razorpay.Ingest(c.Request.Context(), body, c.GetHeader("X-Razorpay-Signature"), c.GetHeader("X-Razorpay-Event-Id"))
 	if err != nil {
+		metrics.Default.Inc("recovery_webhooks_total", map[string]string{"provider": "razorpay", "result": "rejected"})
 		status := http.StatusUnprocessableEntity
 		if err == razorpay.ErrInvalidSignature {
 			status = http.StatusUnauthorized
@@ -70,5 +72,10 @@ func (h *Detection) razorpayWebhook(c *gin.Context) {
 		problem(c, status, "webhook_rejected", err)
 		return
 	}
+	resultLabel := "accepted"
+	if duplicate {
+		resultLabel = "duplicate"
+	}
+	metrics.Default.Inc("recovery_webhooks_total", map[string]string{"provider": "razorpay", "result": resultLabel})
 	c.JSON(http.StatusOK, gin.H{"duplicate": duplicate, "result": result})
 }

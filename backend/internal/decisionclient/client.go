@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"revenue-recovery/backend/internal/correlation"
 	"strings"
 	"time"
 )
@@ -36,6 +37,12 @@ type Client struct {
 	httpClient *http.Client
 }
 
+func addCorrelation(ctx context.Context, req *http.Request) {
+	if value := correlation.From(ctx); value != "" {
+		req.Header.Set("X-Correlation-ID", value)
+	}
+}
+
 func New(baseURL string) *Client {
 	return &Client{
 		baseURL: strings.TrimRight(baseURL, "/"),
@@ -57,6 +64,7 @@ func (c *Client) Health(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	addCorrelation(ctx, req)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -84,6 +92,7 @@ func (c *Client) PredictOutcomes(ctx context.Context, input PredictionRequest) (
 		return PredictionResponse{}, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	addCorrelation(ctx, req)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return PredictionResponse{}, err
@@ -109,6 +118,7 @@ func (c *Client) PredictNatural(ctx context.Context, decisionContext any) (Natur
 		return NaturalPredictionResponse{}, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	addCorrelation(ctx, req)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return NaturalPredictionResponse{}, err

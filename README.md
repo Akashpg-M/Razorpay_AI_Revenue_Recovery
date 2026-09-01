@@ -1,4 +1,8 @@
-# AI Revenue Recovery Agent
+# RecoverOS — AI Revenue Recovery Agent
+
+RecoverOS is an explainable, stateful next-best-action system for recovering failed subscription and checkout revenue. Its differentiator is bounded optimization: observable-only predictions and expected net recovery value choose an action, while deterministic policy, human review, execution-time reauthorization, and immutable events retain control.
+
+All measured results in this repository come from the deterministic synthetic simulator unless explicitly labeled persisted Test Mode data. They are not production causal-uplift claims.
 
 This repository now contains a stateful recovery domain, immutable audit history, and a deterministic synthetic evaluation environment. It remains independent of Razorpay, AI, and ML integrations at this stage.
 
@@ -210,6 +214,15 @@ POST /api/v1/predict/natural
 ```
 
 The Docker Compose stack includes a separate durable worker. See [the Phase 11-16 implementation report](docs/PHASE_11_16_IMPLEMENTATION.md) for model metrics, equations, policy rules, execution semantics, provider limitations, held-out comparison, and exact reproduction commands.
+
+## Phases 31–34: operations, observability, verification, freeze
+
+- `GET /api/v1/operations/recovery-queue` and `POST .../:id/review` provide durable approve/reject/defer/stop workflows with stale-approval blocking.
+- `GET /api/v1/observability` and service `/metrics` endpoints expose durable operational truth and low-cardinality runtime telemetry.
+- `scripts/verify.ps1` (Windows) or `make verify` / `scripts/verify.sh` (POSIX) runs the regression layers and writes `evaluation/results/phase33/verification_summary.json`.
+- `/operations`, `/observability`, and case replay form the reviewer control plane.
+
+Start from a fresh clone by copying `.env.example` to `.env`, then run `docker compose up -d --build`. Migrations run automatically and readiness requires schema `phase_34`; no manual database edits are required for startup. Detailed guides live in [Architecture](docs/ARCHITECTURE.md), [Operations](docs/OPERATIONS.md), [Observability](docs/OBSERVABILITY.md), [Security](docs/SECURITY.md), and [Demo](docs/DEMO.md).
 
 ## Phases 17-24: learning and portfolio optimization
 

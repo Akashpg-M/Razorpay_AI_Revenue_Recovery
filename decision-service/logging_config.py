@@ -13,6 +13,11 @@ class JsonFormatter(logging.Formatter):
             "logger": record.name,
         }
 
+        for key in ("service", "event", "correlation_id", "route", "method", "status", "duration_ms", "error_class"):
+            value = getattr(record, key, None)
+            if value is not None:
+                payload[key] = value
+
         return json.dumps(payload)
 
 

@@ -13,6 +13,8 @@ type Config struct {
 	RazorpayWebhookSecret string
 	RazorpayAPIURL        string
 	EvaluationResultsPath string
+	FrontendOrigin        string
+	WorkerHealthPort      string
 }
 
 func Load() Config {
@@ -39,6 +41,8 @@ func Load() Config {
 		RazorpayWebhookSecret: getEnv("RAZORPAY_WEBHOOK_SECRET", ""),
 		RazorpayAPIURL:        getEnv("RAZORPAY_API_URL", "https://api.razorpay.com"),
 		EvaluationResultsPath: getEnv("EVALUATION_RESULTS_PATH", "../decision-service/evaluation/results"),
+		FrontendOrigin:        getEnv("FRONTEND_ORIGIN", "http://localhost:3000"),
+		WorkerHealthPort:      getEnv("WORKER_HEALTH_PORT", "8082"),
 	}
 }
 

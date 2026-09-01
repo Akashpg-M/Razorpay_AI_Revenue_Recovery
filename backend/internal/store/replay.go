@@ -48,6 +48,7 @@ func (p *Postgres) GetReplay(ctx context.Context, caseID domain.ID) (replay.View
 		{&value.Schedules, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM scheduled_actions WHERE case_id=$1 ORDER BY created_at,id) x`},
 		{&value.Executions, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM executions WHERE case_id=$1 ORDER BY started_at,id) x`},
 		{&value.Promises, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM promises_to_pay WHERE case_id=$1 ORDER BY created_at,id) x`},
+		{&value.HumanReviews, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM human_review_records WHERE case_id=$1 ORDER BY created_at,id) x`},
 		{&value.Attributions, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM recovery_attributions WHERE case_id=$1 ORDER BY observed_at,id) x`},
 	}
 	for _, query := range queries {

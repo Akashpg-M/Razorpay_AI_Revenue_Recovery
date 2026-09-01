@@ -18,6 +18,7 @@ type View struct {
 	Schedules         []json.RawMessage   `json:"schedules"`
 	Executions        []json.RawMessage   `json:"executions"`
 	Promises          []json.RawMessage   `json:"promises_to_pay"`
+	HumanReviews      []json.RawMessage   `json:"human_reviews"`
 	Attributions      []json.RawMessage   `json:"attributions"`
 	Provenance        map[string]any      `json:"provenance"`
 }

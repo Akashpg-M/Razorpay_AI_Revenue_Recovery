@@ -41,6 +41,13 @@ const (
 	EventCustomerResponded     EventType = "CUSTOMER_RESPONDED"
 	EventRecoveryAttributed    EventType = "RECOVERY_ATTRIBUTED"
 	EventFeedbackRecorded      EventType = "FEEDBACK_RECORDED"
+	EventHumanReviewRequested  EventType = "HUMAN_REVIEW_REQUESTED"
+	EventOperatorApproved      EventType = "OPERATOR_APPROVED"
+	EventOperatorRejected      EventType = "OPERATOR_REJECTED"
+	EventOperatorDeferred      EventType = "OPERATOR_DEFERRED"
+	EventOperatorStopped       EventType = "OPERATOR_STOPPED"
+	EventPolicyRevalidated     EventType = "POLICY_REVALIDATED"
+	EventStaleApproval         EventType = "STALE_APPROVAL"
 )
 
 var validEventTypes = map[EventType]struct{}{
@@ -56,6 +63,8 @@ var validEventTypes = map[EventType]struct{}{
 	EventDecisionCreated:   {}, EventEconomicGateAllowed: {}, EventEconomicGateBlocked: {},
 	EventPolicyEvaluated: {}, EventActionSuppressed: {}, EventCustomerResponded: {},
 	EventRecoveryAttributed: {}, EventFeedbackRecorded: {},
+	EventHumanReviewRequested: {}, EventOperatorApproved: {}, EventOperatorRejected: {},
+	EventOperatorDeferred: {}, EventOperatorStopped: {}, EventPolicyRevalidated: {}, EventStaleApproval: {},
 }
 
 func (t EventType) IsValid() bool {

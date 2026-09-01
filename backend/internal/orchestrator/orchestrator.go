@@ -125,7 +125,12 @@ func (w *Worker) RunOnce(ctx context.Context) (*executor.Result, error) {
 		return nil, nil
 	}
 
-	freshPolicy := policy.Evaluate(decisionContext, scheduled.DecisionID, authorization.DecisionCaseVersion, authorization.Candidate, authorization.Gate, now)
+	// ScheduleDecision already atomically proved the originating decision fresh,
+	// then advanced the aggregate through POLICY_REVIEW and SCHEDULED. The
+	// scheduled case-version check above protects against every later mutation.
+	// Compare policy to the current scheduled aggregate version here; comparing
+	// to the pre-schedule decision version would reject every legitimate action.
+	freshPolicy := policy.Evaluate(decisionContext, scheduled.DecisionID, decisionContext.Case.Version, authorization.Candidate, authorization.Gate, now)
 	if freshPolicy.Decision != "APPROVE" {
 		_ = w.repository.MarkSuppressed(ctx, *scheduled, "POLICY_RECHECK_"+freshPolicy.Decision, now)
 		return nil, nil

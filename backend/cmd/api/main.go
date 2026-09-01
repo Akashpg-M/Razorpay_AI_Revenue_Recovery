@@ -15,6 +15,7 @@ import (
 	"revenue-recovery/backend/internal/budget"
 	"revenue-recovery/backend/internal/config"
 	recoverycontext "revenue-recovery/backend/internal/context"
+	"revenue-recovery/backend/internal/correlation"
 	"revenue-recovery/backend/internal/decisionclient"
 	"revenue-recovery/backend/internal/decisioning"
 	"revenue-recovery/backend/internal/detection"
@@ -23,7 +24,10 @@ import (
 	"revenue-recovery/backend/internal/intelligence"
 	"revenue-recovery/backend/internal/logging"
 	"revenue-recovery/backend/internal/merchantprofile"
+	"revenue-recovery/backend/internal/metrics"
 	"revenue-recovery/backend/internal/modelregistry"
+	"revenue-recovery/backend/internal/observability"
+	"revenue-recovery/backend/internal/operations"
 	"revenue-recovery/backend/internal/orchestrator"
 	"revenue-recovery/backend/internal/portfolio"
 	"revenue-recovery/backend/internal/promises"
@@ -70,7 +74,12 @@ func main() {
 	router := gin.New()
 
 	router.Use(gin.Recovery())
+	router.Use(cors(cfg.FrontendOrigin))
+	router.Use(correlation.Middleware())
 	router.Use(requestLogger(logger))
+	router.GET("/metrics", func(c *gin.Context) {
+		c.Data(http.StatusOK, "text/plain; version=0.0.4", []byte(metrics.Default.Prometheus()))
+	})
 
 	router.GET("/health/live", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -100,13 +109,19 @@ func main() {
 		}
 
 		if err := redisClient.Ping(checkCtx).Err(); err != nil {
-			checks["redis"] = "error"
-			ready = false
+			checks["redis"] = "optional_unavailable"
 		}
 
 		if err := decisionClient.Health(checkCtx); err != nil {
 			checks["decision_service"] = "error"
 			ready = false
+		}
+		var schema string
+		if err := db.QueryRow(checkCtx, `SELECT value FROM platform_metadata WHERE key='schema_version'`).Scan(&schema); err != nil || schema != "phase_34" {
+			checks["schema"] = "migration_required"
+			ready = false
+		} else {
+			checks["schema"] = schema
 		}
 
 		status := http.StatusOK
@@ -198,6 +213,10 @@ func main() {
 	dashboardHandlers.Register(router.Group("/api/v1"))
 	replayHandlers := apihttp.NewReplay(recoveryRepository)
 	replayHandlers.Register(router.Group("/api/v1"))
+	operationsHandlers := apihttp.NewOperations(operations.NewService(recoveryRepository, contextService))
+	operationsHandlers.Register(router.Group("/api/v1"))
+	observabilityHandlers := apihttp.NewObservability(observability.New(recoveryRepository))
+	observabilityHandlers.Register(router.Group("/api/v1"))
 
 	logger.Info(
 		"backend_starting",
@@ -221,17 +240,40 @@ func requestLogger(logger *slog.Logger) gin.HandlerFunc {
 		start := time.Now()
 
 		c.Next()
+		route := c.FullPath()
+		if route == "" {
+			route = "unmatched"
+		}
+		metrics.Default.Inc("recovery_http_requests_total", map[string]string{"method": c.Request.Method, "route": route, "status": http.StatusText(c.Writer.Status())})
+		metrics.Default.Observe("recovery_http_request", map[string]string{"route": route}, time.Since(start))
 
 		logger.Info(
 			"http_request",
 			"method",
 			c.Request.Method,
-			"path",
-			c.Request.URL.Path,
+			"route", route,
+			"correlation_id", correlation.From(c.Request.Context()),
 			"status",
 			c.Writer.Status(),
 			"duration_ms",
 			time.Since(start).Milliseconds(),
 		)
+	}
+}
+
+func cors(origin string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetHeader("Origin") == origin {
+			c.Header("Access-Control-Allow-Origin", origin)
+			c.Header("Vary", "Origin")
+			c.Header("Access-Control-Allow-Headers", "Content-Type, X-Correlation-ID")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		}
+		if c.Request.Method == http.MethodOptions {
+			c.Status(http.StatusNoContent)
+			c.Abort()
+			return
+		}
+		c.Next()
 	}
 }

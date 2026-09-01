@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"revenue-recovery/backend/internal/domain"
+	"revenue-recovery/backend/internal/operations"
 	"revenue-recovery/backend/internal/recovery"
 )
 
@@ -91,6 +92,8 @@ func handleServiceError(c *gin.Context, err error) {
 		problem(c, http.StatusNotFound, "not_found", err)
 	case errors.Is(err, recovery.ErrConflict):
 		problem(c, http.StatusConflict, "version_conflict", err)
+	case errors.Is(err, operations.ErrNotReviewable), errors.Is(err, operations.ErrStaleApproval):
+		problem(c, http.StatusConflict, "review_conflict", err)
 	case strings.Contains(err.Error(), "invalid recovery case transition"):
 		problem(c, http.StatusUnprocessableEntity, "invalid_state_transition", err)
 	default:

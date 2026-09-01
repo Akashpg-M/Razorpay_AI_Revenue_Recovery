@@ -149,9 +149,9 @@ func RunAuthorizationSuite() []Result {
 			c.Case.RecoveryDeadline = now.Add(-time.Minute)
 		}},
 		{"stale_scheduled_case", func(c *recoverycontext.RecoveryDecisionContext, _ *repository) { c.Case.Version = 4 }},
-		{"stale_decision", func(_ *recoverycontext.RecoveryDecisionContext, r *repository) {
-			r.authorization.DecisionCaseVersion = 2
-		}},
+		// A decision that becomes stale after scheduling necessarily changes the
+		// aggregate version; the schedule-era version is the worker boundary.
+		{"stale_decision", func(c *recoverycontext.RecoveryDecisionContext, _ *repository) { c.Case.Version++ }},
 		{"economic_gate_blocked", func(_ *recoverycontext.RecoveryDecisionContext, r *repository) {
 			r.authorization.Gate.Decision = "BLOCK"
 		}},
@@ -248,7 +248,7 @@ func RunFaultScenario(name string) Result {
 		_, _ = orchestrator.NewWorker(repo, contexts{value: ctx}, executor.NewRegistry(external), "fault-lab").RunOnce(context.Background())
 		result.Passed = external.effects == 0 && repo.suppressed != ""
 	case "stale_nba_decision":
-		repo.authorization.DecisionCaseVersion = 2
+		ctx.Case.Version++
 		_, _ = orchestrator.NewWorker(repo, contexts{value: ctx}, executor.NewRegistry(external), "fault-lab").RunOnce(context.Background())
 		result.Passed = external.effects == 0 && repo.suppressed == "POLICY_RECHECK_DENY"
 	case "customer_pays_before_scheduled_action":

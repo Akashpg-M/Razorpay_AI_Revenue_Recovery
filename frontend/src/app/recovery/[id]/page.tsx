@@ -1,6 +1,6 @@
 import { Nav } from "@/components/nav";import { backendJSON } from "@/lib/api";import { notFound } from "next/navigation";
 type Row=Record<string,unknown>;
-type Replay={case:Row;merchant:Row;events:Row[];decisions:Row[];candidates:Row[];economic_gates:Row[];policy_evaluations:Row[];actions:Row[];schedules:Row[];executions:Row[];promises_to_pay:Row[];attributions:Row[];provenance:Row};
+type Replay={case:Row;merchant:Row;events:Row[];decisions:Row[];candidates:Row[];economic_gates:Row[];policy_evaluations:Row[];actions:Row[];schedules:Row[];executions:Row[];promises_to_pay:Row[];human_reviews:Row[];attributions:Row[];provenance:Row};
 const money=(value:unknown=0)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(value)/100);const latest=<T,>(a:T[])=>a?.[a.length-1];
 function JsonBlock({value}:{value:unknown}){return <pre>{JSON.stringify(value,null,2)}</pre>}
 export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;const data=await backendJSON<Replay>(`/api/v1/recovery-cases/${id}/replay`);if(!data)notFound();const decision=latest(data.decisions);const selected=data.candidates.find(x=>x.action===decision?.selected_action);const gate=latest(data.economic_gates);const policy=latest(data.policy_evaluations);const execution=latest(data.executions);const attribution=latest(data.attributions);

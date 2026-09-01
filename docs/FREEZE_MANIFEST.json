@@ -1,0 +1,22 @@
+{
+  "manifest_version": "freeze-manifest-v1",
+  "generated_at": "2026-09-01T11:40:00Z",
+  "git_base_commit": "8cc9a00262c712ff763310b2df7a60d11605cea0",
+  "working_tree_changes_included": true,
+  "schema_version": "phase_34",
+  "simulator": {"version":"1.0.0","feature_version":"synthetic-observable-v1","seed":42,"test_population_sha256":"CC1A248AF3E1026761DC60CED0394FD89FD784646DC73F659AEC69E2BBB763F2"},
+  "outcome_model": {"version":"outcome-v1","feature_version":"features-v1","sha256":"25C94AA9BEAD6A6CDBB067C781FFA8C3CD4648086ABC916DC74A242051D7316C"},
+  "natural_model": {"version":"natural-recovery-v1","feature_version":"natural-features-v1","sha256":"F60830F98F1EADC27017A085E949AE982D6B1F2B74B6D19E1A2D174941C55C09"},
+  "optimizer_version": "nba-v2-profiled",
+  "cost_model_version": "cost-v1",
+  "economic_gate_version": "economic-gate-v1",
+  "policy_version": "policy-v1",
+  "attribution_version": "attribution-v2",
+  "ptp_extractor_version": "ptp-extractor-v1",
+  "portfolio_algorithm": "portfolio-priority-v1",
+  "budget_algorithms": ["budget-greedy-v1","budget-fcfs-v1"],
+  "evaluation": {"version":"phase26-30-resilience-v1","configuration":"five-seed frozen synthetic evaluation plus authorization and reliability matrices"},
+  "verification": {"status":"PASS","artifact":"evaluation/results/phase33/verification_summary.json"},
+  "claim_scope": "synthetic evaluation and Razorpay Test Mode",
+  "production_causal_uplift_claimed": false
+}
