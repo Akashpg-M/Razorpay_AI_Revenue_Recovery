@@ -62,7 +62,7 @@ func (r *repository) ClaimDue(context.Context, string, time.Time, time.Duration)
 	value.AttemptCount = r.claims
 	return &value, nil
 }
-func (r *repository) LoadAuthorization(context.Context, domain.ID) (orchestrator.Authorization, error) {
+func (r *repository) LoadAuthorization(context.Context, domain.ID, domain.ID) (orchestrator.Authorization, error) {
 	return r.authorization, nil
 }
 func (r *repository) MarkExecuting(context.Context, orchestrator.ScheduledAction, time.Time) error {

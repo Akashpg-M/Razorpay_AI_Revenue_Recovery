@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"revenue-recovery/backend/internal/attribution"
 	"revenue-recovery/backend/internal/detection"
 	"revenue-recovery/backend/internal/domain"
 )
@@ -57,10 +58,29 @@ type DetectionService interface {
 	Detect(context.Context, detection.Adapter, json.RawMessage, string) (detection.Result, error)
 }
 
+type RecoveryObserver interface {
+	Observe(context.Context, attribution.ObserveInput) (attribution.Record, bool, error)
+}
+
+type PaymentLinkCaseResolver interface {
+	ResolvePaymentLinkCase(context.Context, string, string, domain.ID, domain.ID, domain.ID) (domain.ID, error)
+}
+
+type IngestResult struct {
+	Case               *domain.RecoveryCase `json:"recovery_case,omitempty"`
+	Created            bool                 `json:"created,omitempty"`
+	RiskDetected       bool                 `json:"risk_detected,omitempty"`
+	Outcome            string               `json:"outcome,omitempty"`
+	Attribution        *attribution.Record  `json:"attribution,omitempty"`
+	AttributionCreated bool                 `json:"attribution_created,omitempty"`
+}
+
 type Ingestor struct {
 	verifier *Verifier
 	store    WebhookStore
 	detector DetectionService
+	observer RecoveryObserver
+	resolver PaymentLinkCaseResolver
 	adapter  detection.SubscriptionAdapter
 	now      func() time.Time
 }
@@ -70,53 +90,107 @@ func NewIngestor(secret string, store WebhookStore, detector DetectionService) *
 		adapter: detection.SubscriptionAdapter{Provider: "razorpay"}, now: time.Now}
 }
 
-func (i *Ingestor) Ingest(ctx context.Context, body []byte, signature, eventID string) (detection.Result, bool, error) {
+func (i *Ingestor) SetRecoveryObserver(observer RecoveryObserver, resolver PaymentLinkCaseResolver) {
+	i.observer = observer
+	i.resolver = resolver
+}
+
+func (i *Ingestor) Ingest(ctx context.Context, body []byte, signature, eventID string) (IngestResult, bool, error) {
 	if eventID == "" {
-		return detection.Result{}, false, errors.New("X-Razorpay-Event-Id is required")
+		return IngestResult{}, false, errors.New("X-Razorpay-Event-Id is required")
 	}
 	if err := i.verifier.Verify(body, signature); err != nil {
-		var envelope webhookEnvelope
-		_ = json.Unmarshal(body, &envelope)
-		now := i.now().UTC()
-		_, _ = i.store.InsertWebhook(ctx, WebhookRecord{ID: eventID, ProviderEventID: eventID, EventType: envelope.Event,
-			SignatureStatus: "INVALID", ProcessingStatus: "IGNORED", Payload: json.RawMessage(body), ProviderReferences: json.RawMessage(`{}`), ReceivedAt: now})
-		return detection.Result{}, false, err
+		// Never reserve an event ID for an unauthenticated request. Otherwise an
+		// attacker (or a bad test) can make the later genuine delivery look like a
+		// duplicate and permanently suppress it.
+		return IngestResult{}, false, err
 	}
-	event, eventType, references, err := NormalizeWebhook(body)
-	if err != nil {
-		return detection.Result{}, false, err
+	var envelope webhookEnvelope
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return IngestResult{}, false, fmt.Errorf("decode Razorpay webhook: %w", err)
 	}
+	if envelope.Event == "" {
+		return IngestResult{}, false, errors.New("Razorpay webhook event is required")
+	}
+	references := webhookReferences(envelope)
 	now := i.now().UTC()
-	normalized, _ := json.Marshal(event)
-	record := WebhookRecord{ID: eventID, ProviderEventID: eventID, EventType: eventType, SignatureStatus: "VERIFIED",
+	record := WebhookRecord{ID: eventID, ProviderEventID: eventID, EventType: envelope.Event, SignatureStatus: "VERIFIED",
 		ProcessingStatus: "RECEIVED", Payload: json.RawMessage(body), ProviderReferences: references, ReceivedAt: now}
 	created, err := i.store.InsertWebhook(ctx, record)
 	if err != nil {
-		return detection.Result{}, false, err
+		return IngestResult{}, false, err
 	}
 	if !created {
-		return detection.Result{}, true, nil
+		return IngestResult{}, true, nil
 	}
-	result, err := i.detector.Detect(ctx, i.adapter, normalized, eventID)
-	status := "PROCESSED"
+	if envelope.Event == "payment_link.paid" {
+		result, observeErr := i.observePaymentLinkPaid(ctx, envelope, eventID)
+		return result, false, i.finish(ctx, eventID, observeErr)
+	}
+	event, _, _, err := NormalizeWebhook(body)
 	if err != nil {
+		return IngestResult{}, false, i.finish(ctx, eventID, err)
+	}
+	normalized, _ := json.Marshal(event)
+	result, err := i.detector.Detect(ctx, i.adapter, normalized, eventID)
+	return IngestResult{Case: &result.Case, Created: result.Created, RiskDetected: result.RiskDetected}, false, i.finish(ctx, eventID, err)
+}
+
+func (i *Ingestor) finish(ctx context.Context, eventID string, processingErr error) error {
+	status := "PROCESSED"
+	if processingErr != nil {
 		status = "FAILED"
 	}
-	if markErr := i.store.MarkWebhookProcessed(ctx, eventID, status, i.now().UTC()); markErr != nil && err == nil {
-		err = markErr
+	if err := i.store.MarkWebhookProcessed(ctx, eventID, status, i.now().UTC()); err != nil && processingErr == nil {
+		return err
 	}
-	return result, false, err
+	return processingErr
+}
+
+func (i *Ingestor) observePaymentLinkPaid(ctx context.Context, envelope webhookEnvelope, eventID string) (IngestResult, error) {
+	if i.observer == nil || i.resolver == nil {
+		return IngestResult{}, errors.New("Razorpay recovery attribution is not configured")
+	}
+	link := envelope.Payload.PaymentLink.Entity
+	if link.ID == "" {
+		return IngestResult{}, errors.New("payment_link.paid payload is missing payment_link.entity.id")
+	}
+	merchantID := domain.ID(noteString(link.Notes["merchant_id"]))
+	customerID := domain.ID(noteString(link.Notes["customer_id"]))
+	noteCaseID := domain.ID(noteString(link.Notes["recovery_case_id"]))
+	caseID, err := i.resolver.ResolvePaymentLinkCase(ctx, link.ID, link.ReferenceID, noteCaseID, merchantID, customerID)
+	if err != nil {
+		return IngestResult{}, fmt.Errorf("resolve recovery case for Razorpay payment link: %w", err)
+	}
+	amount := envelope.Payload.Payment.Entity.Amount
+	if amount <= 0 {
+		amount = link.AmountPaid
+	}
+	observedAt := time.Unix(envelope.CreatedAt, 0).UTC()
+	if envelope.CreatedAt == 0 {
+		observedAt = i.now().UTC()
+	}
+	record, created, err := i.observer.Observe(ctx, attribution.ObserveInput{CaseID: caseID, RecoveredAmountMinor: amount,
+		PaymentReference: link.ID, ObservedAt: observedAt, CorrelationID: eventID})
+	if err != nil {
+		return IngestResult{}, err
+	}
+	return IngestResult{Outcome: "RECOVERED", Attribution: &record, AttributionCreated: created}, nil
 }
 
 type webhookEnvelope struct {
-	Event   string `json:"event"`
-	Payload struct {
+	Event     string `json:"event"`
+	CreatedAt int64  `json:"created_at"`
+	Payload   struct {
 		Payment struct {
 			Entity providerPayment `json:"entity"`
 		} `json:"payment"`
 		Subscription struct {
 			Entity providerSubscription `json:"entity"`
 		} `json:"subscription"`
+		PaymentLink struct {
+			Entity providerPaymentLink `json:"entity"`
+		} `json:"payment_link"`
 	} `json:"payload"`
 }
 type providerPayment struct {
@@ -132,6 +206,24 @@ type providerSubscription struct {
 	ID     string         `json:"id"`
 	Status string         `json:"status"`
 	Notes  map[string]any `json:"notes"`
+}
+type providerPaymentLink struct {
+	ID          string         `json:"id"`
+	Amount      int64          `json:"amount"`
+	AmountPaid  int64          `json:"amount_paid"`
+	Currency    string         `json:"currency"`
+	Status      string         `json:"status"`
+	ReferenceID string         `json:"reference_id"`
+	Notes       map[string]any `json:"notes"`
+}
+
+func webhookReferences(envelope webhookEnvelope) json.RawMessage {
+	p := envelope.Payload.Payment.Entity
+	s := envelope.Payload.Subscription.Entity
+	l := envelope.Payload.PaymentLink.Entity
+	references, _ := json.Marshal(map[string]string{"payment_id": p.ID, "subscription_id": s.ID, "order_id": p.OrderID,
+		"payment_link_id": l.ID, "payment_link_reference_id": l.ReferenceID})
+	return references
 }
 
 func NormalizeWebhook(body []byte) (detection.SubscriptionEvent, string, json.RawMessage, error) {
@@ -167,10 +259,20 @@ func NormalizeWebhook(body []byte) (detection.SubscriptionEvent, string, json.Ra
 	if p.Currency == "" {
 		p.Currency, _ = notes["currency"].(string)
 	}
-	references, _ := json.Marshal(map[string]string{"payment_id": p.ID, "subscription_id": s.ID, "order_id": p.OrderID})
+	references := webhookReferences(envelope)
 	return detection.SubscriptionEvent{EventType: internalType, MerchantID: domain.ID(merchantID), CustomerID: domain.ID(customerID),
 		AmountMinor: p.Amount, Currency: p.Currency, PaymentID: p.ID, SubscriptionID: s.ID, OrderID: p.OrderID,
 		FailureCode: p.ErrorCode, OccurredAt: occurred, RecoveryWindowHours: 168}, envelope.Event, references, nil
+}
+
+func noteString(value any) string {
+	if value == nil {
+		return ""
+	}
+	if text, ok := value.(string); ok {
+		return text
+	}
+	return fmt.Sprint(value)
 }
 
 func noteInt64(value any) int64 {

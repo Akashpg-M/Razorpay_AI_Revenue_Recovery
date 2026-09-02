@@ -14,3 +14,13 @@ func TestSnapshotDerivesActionableAlerts(t *testing.T) {
 		t.Fatalf("got %d alerts, err=%v", len(value.Alerts), err)
 	}
 }
+
+func TestSnapshotReturnsEmptyAlertCollectionInsteadOfNil(t *testing.T) {
+	value, err := New(fakeStore{Snapshot{}}).Snapshot(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if value.Alerts == nil || len(value.Alerts) != 0 {
+		t.Fatalf("alerts must be an empty non-nil collection: %#v", value.Alerts)
+	}
+}

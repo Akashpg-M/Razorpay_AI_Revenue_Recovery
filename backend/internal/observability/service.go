@@ -51,6 +51,11 @@ func (s *Service) Snapshot(ctx context.Context) (Snapshot, error) {
 	if err != nil {
 		return v, err
 	}
+	// Keep the JSON contract stable: an empty collection must be [] rather
+	// than null so API consumers can safely iterate it.
+	if v.Alerts == nil {
+		v.Alerts = []Alert{}
+	}
 	v.GeneratedAt = s.now().UTC()
 	if v.Queue.MaxLagSeconds > 300 {
 		v.Alerts = append(v.Alerts, Alert{"QUEUE_LAG_HIGH", "warning", "Oldest due action is more than five minutes late"})

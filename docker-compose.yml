@@ -81,7 +81,9 @@ services:
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
       RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      RAZORPAY_WEBHOOK_PUBLIC_URL: ${RAZORPAY_WEBHOOK_PUBLIC_URL:-}
       RAZORPAY_API_URL: ${RAZORPAY_API_URL:-https://api.razorpay.com}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-local}
       EVALUATION_RESULTS_PATH: /evaluation/results
     volumes:
       - ./decision-service/evaluation/results:/evaluation/results:ro
@@ -126,6 +128,7 @@ services:
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
       RAZORPAY_API_URL: ${RAZORPAY_API_URL:-https://api.razorpay.com}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-local}
     depends_on:
       migrate:
         condition: service_completed_successfully

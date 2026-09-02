@@ -13,17 +13,16 @@ import (
 	"revenue-recovery/backend/internal/orchestrator"
 )
 
-type DecisionScheduler interface {
-	Schedule(context.Context, decisioning.Snapshot) (*orchestrator.ScheduledAction, error)
+type DecisionCoordinator interface {
+	Decide(context.Context, domain.ID) (decisioning.Snapshot, *orchestrator.ScheduledAction, error)
 }
 
 type Decision struct {
-	service   *decisioning.Service
-	scheduler DecisionScheduler
+	coordinator DecisionCoordinator
 }
 
-func NewDecision(service *decisioning.Service, scheduler DecisionScheduler) *Decision {
-	return &Decision{service: service, scheduler: scheduler}
+func NewDecision(coordinator DecisionCoordinator) *Decision {
+	return &Decision{coordinator: coordinator}
 }
 
 func (h *Decision) Register(router *gin.RouterGroup) {
@@ -32,7 +31,7 @@ func (h *Decision) Register(router *gin.RouterGroup) {
 
 func (h *Decision) decide(c *gin.Context) {
 	started := time.Now()
-	snapshot, err := h.service.Decide(c.Request.Context(), domain.ID(c.Param("id")))
+	snapshot, scheduled, err := h.coordinator.Decide(c.Request.Context(), domain.ID(c.Param("id")))
 	if err != nil {
 		metrics.Default.Inc("recovery_decisions_total", map[string]string{"result": "error"})
 		handleServiceError(c, err)
@@ -40,10 +39,5 @@ func (h *Decision) decide(c *gin.Context) {
 	}
 	metrics.Default.Inc("recovery_decisions_total", map[string]string{"result": snapshot.Policy.Decision, "gate": snapshot.Gate.Decision})
 	metrics.Default.Observe("recovery_decision", map[string]string{"result": snapshot.Policy.Decision}, time.Since(started))
-	scheduled, err := h.scheduler.Schedule(c.Request.Context(), snapshot)
-	if err != nil {
-		handleServiceError(c, err)
-		return
-	}
 	c.JSON(http.StatusCreated, gin.H{"decision": snapshot, "scheduled_action": scheduled})
 }

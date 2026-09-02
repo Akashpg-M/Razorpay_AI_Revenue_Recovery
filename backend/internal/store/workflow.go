@@ -23,7 +23,18 @@ func (p *Postgres) ScheduleDecision(ctx context.Context, snapshot decisioning.Sn
 		return nil, err
 	}
 	defer tx.Rollback(ctx)
+	scheduled, err := scheduleDecisionTx(ctx, tx, snapshot)
+	if err != nil {
+		return nil, err
+	}
+	if err = tx.Commit(ctx); err != nil {
+		return nil, err
+	}
+	return scheduled, nil
+}
 
+func scheduleDecisionTx(ctx context.Context, tx pgx.Tx, snapshot decisioning.Snapshot) (*orchestrator.ScheduledAction, error) {
+	var err error
 	var state domain.CaseState
 	var version int64
 	if err = tx.QueryRow(ctx, `SELECT current_state,version FROM recovery_cases WHERE id=$1 FOR UPDATE`, snapshot.Decision.CaseID).Scan(&state, &version); err != nil {
@@ -51,12 +62,20 @@ func (p *Postgres) ScheduleDecision(ctx context.Context, snapshot decisioning.Sn
 		return nil, err
 	}
 	// Persist both valid state transitions; no implicit ACTION_PENDING -> SCHEDULED jump.
-	if _, err = tx.Exec(ctx, `UPDATE recovery_cases SET current_state='POLICY_REVIEW',version=version+1,updated_at=$2 WHERE id=$1 AND current_state='ACTION_PENDING' AND version=$3`, snapshot.Decision.CaseID, now, version); err != nil {
+	command, err := tx.Exec(ctx, `UPDATE recovery_cases SET current_state='POLICY_REVIEW',version=version+1,updated_at=$2 WHERE id=$1 AND current_state='ACTION_PENDING' AND version=$3`, snapshot.Decision.CaseID, now, version)
+	if err != nil {
 		return nil, err
 	}
+	if command.RowsAffected() != 1 {
+		return nil, recovery.ErrConflict
+	}
 	version++
-	if _, err = tx.Exec(ctx, `UPDATE recovery_cases SET current_state='SCHEDULED',version=version+1,updated_at=$2 WHERE id=$1 AND current_state='POLICY_REVIEW' AND version=$3`, snapshot.Decision.CaseID, now, version); err != nil {
+	command, err = tx.Exec(ctx, `UPDATE recovery_cases SET current_state='SCHEDULED',version=version+1,updated_at=$2 WHERE id=$1 AND current_state='POLICY_REVIEW' AND version=$3`, snapshot.Decision.CaseID, now, version)
+	if err != nil {
 		return nil, err
+	}
+	if command.RowsAffected() != 1 {
+		return nil, recovery.ErrConflict
 	}
 	version++
 
@@ -69,15 +88,19 @@ func (p *Postgres) ScheduleDecision(ctx context.Context, snapshot decisioning.Sn
 	if err != nil {
 		return nil, err
 	}
+	correlationID := string(scheduledID)
+	policyReviewPayload, _ := json.Marshal(map[string]any{"from_state": domain.StateActionPending, "to_state": domain.StatePolicyReview, "decision_id": snapshot.Decision.ID})
+	scheduledStatePayload, _ := json.Marshal(map[string]any{"from_state": domain.StatePolicyReview, "to_state": domain.StateScheduled, "decision_id": snapshot.Decision.ID, "scheduled_action_id": scheduledID})
 	payload, _ := json.Marshal(map[string]any{"decision_id": snapshot.Decision.ID, "scheduled_action_id": scheduledID, "action": snapshot.Decision.Optimization.Selected.Action, "scheduled_for": scheduledFor})
-	events := []domain.RecoveryEvent{{ID: domain.ID(id.New()), CaseID: snapshot.Decision.CaseID, Sequence: sequence, Type: domain.EventActionScheduled, Timestamp: now, Actor: domain.Actor{Type: "SYSTEM", ID: "durable-scheduler-v1"}, Payload: payload, CorrelationID: string(scheduledID)}}
+	events := []domain.RecoveryEvent{
+		{ID: domain.ID(id.New()), CaseID: snapshot.Decision.CaseID, Sequence: sequence, Type: domain.EventStateTransitioned, Timestamp: now, Actor: domain.Actor{Type: "SYSTEM", ID: "durable-scheduler-v1"}, Payload: policyReviewPayload, CorrelationID: correlationID},
+		{ID: domain.ID(id.New()), CaseID: snapshot.Decision.CaseID, Sequence: sequence + 1, Type: domain.EventStateTransitioned, Timestamp: now, Actor: domain.Actor{Type: "SYSTEM", ID: "durable-scheduler-v1"}, Payload: scheduledStatePayload, CorrelationID: correlationID},
+		{ID: domain.ID(id.New()), CaseID: snapshot.Decision.CaseID, Sequence: sequence + 2, Type: domain.EventActionScheduled, Timestamp: now, Actor: domain.Actor{Type: "SYSTEM", ID: "durable-scheduler-v1"}, Payload: payload, CorrelationID: correlationID},
+	}
 	for _, event := range events {
 		if err = insertEvent(ctx, tx, event); err != nil {
 			return nil, err
 		}
-	}
-	if err = tx.Commit(ctx); err != nil {
-		return nil, err
 	}
 	return &orchestrator.ScheduledAction{ID: scheduledID, CaseID: snapshot.Decision.CaseID, DecisionID: snapshot.Decision.ID, PolicyEvaluationID: snapshot.Policy.ID, RecoveryActionID: actionID, Action: snapshot.Decision.Optimization.Selected.Action, Parameters: parameters, ScheduledFor: scheduledFor, Status: "PENDING", MaxAttempts: 3, IdempotencyKey: idempotencyKey, CaseVersionAtSchedule: version}, nil
 }
@@ -101,12 +124,13 @@ func (p *Postgres) ClaimDue(ctx context.Context, workerID string, now time.Time,
 	return &scheduled, err
 }
 
-func (p *Postgres) LoadAuthorization(ctx context.Context, decisionID domain.ID) (orchestrator.Authorization, error) {
+func (p *Postgres) LoadAuthorization(ctx context.Context, decisionID, policyEvaluationID domain.ID) (orchestrator.Authorization, error) {
 	var result orchestrator.Authorization
-	err := p.pool.QueryRow(ctx, `SELECT d.case_version,c.action,c.action_probability,c.natural_probability,c.incremental_uplift,c.gross_incremental_value_minor,c.channel_cost_minor,c.incentive_cost_minor,c.operational_cost_minor,c.fatigue_penalty_minor,c.risk_penalty_minor,c.nerv_minor,c.objective_score_minor,c.ranking_position,c.reason_codes,g.id,g.case_id,g.action,g.nerv_minor,g.threshold_minor,g.result,g.reason_code,g.gate_version,g.created_at
-	FROM recovery_decisions d JOIN recovery_decision_candidates c ON c.decision_id=d.id AND c.action=d.selected_action JOIN economic_gate_evaluations g ON g.decision_id=d.id WHERE d.id=$1`, decisionID).Scan(
+	err := p.pool.QueryRow(ctx, `SELECT d.case_version,c.action,c.action_probability,c.natural_probability,c.incremental_uplift,c.gross_incremental_value_minor,c.channel_cost_minor,c.incentive_cost_minor,c.operational_cost_minor,c.fatigue_penalty_minor,c.risk_penalty_minor,c.nerv_minor,c.objective_score_minor,c.ranking_position,c.reason_codes,g.id,g.case_id,g.action,g.nerv_minor,g.threshold_minor,g.result,g.reason_code,g.gate_version,g.created_at,
+	EXISTS(SELECT 1 FROM policy_evaluations pe WHERE pe.id=$2 AND pe.result='APPROVE' AND 'HUMAN_APPROVAL_SATISFIED'=ANY(pe.reason_codes))
+	FROM recovery_decisions d JOIN recovery_decision_candidates c ON c.decision_id=d.id AND c.action=d.selected_action JOIN economic_gate_evaluations g ON g.decision_id=d.id WHERE d.id=$1`, decisionID, policyEvaluationID).Scan(
 		&result.DecisionCaseVersion, &result.Candidate.Action, &result.Candidate.ActionRecoveryProbability, &result.Candidate.NaturalRecoveryProbability, &result.Candidate.IncrementalUplift, &result.Candidate.GrossIncrementalValueMinor, &result.Candidate.ChannelCostMinor, &result.Candidate.IncentiveCostMinor, &result.Candidate.OperationalCostMinor, &result.Candidate.FatiguePenaltyMinor, &result.Candidate.RiskPenaltyMinor, &result.Candidate.NERVMinor, &result.Candidate.ObjectiveScoreMinor, &result.Candidate.Rank, &result.Candidate.ReasonCodes,
-		&result.Gate.ID, &result.Gate.CaseID, &result.Gate.Action, &result.Gate.NERVMinor, &result.Gate.ThresholdMinor, &result.Gate.Decision, &result.Gate.Reason, &result.Gate.GateVersion, &result.Gate.CreatedAt)
+		&result.Gate.ID, &result.Gate.CaseID, &result.Gate.Action, &result.Gate.NERVMinor, &result.Gate.ThresholdMinor, &result.Gate.Decision, &result.Gate.Reason, &result.Gate.GateVersion, &result.Gate.CreatedAt, &result.HumanApproved)
 	result.Gate.DecisionID = decisionID
 	return result, err
 }

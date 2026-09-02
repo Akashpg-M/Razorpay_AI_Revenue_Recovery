@@ -66,6 +66,20 @@ type Snapshot struct {
 var scoreable = map[domain.ActionType]bool{domain.ActionRetryNow: true, domain.ActionRetryLater: true, domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true, domain.ActionWaitForPromiseToPay: true, domain.ActionRetention: true}
 
 func (s *Service) Decide(ctx context.Context, caseID domain.ID) (Snapshot, error) {
+	snapshot, err := s.Evaluate(ctx, caseID)
+	if err != nil {
+		return Snapshot{}, err
+	}
+	if err = s.store.SaveDecision(ctx, snapshot); err != nil {
+		return Snapshot{}, err
+	}
+	return snapshot, nil
+}
+
+// Evaluate builds a complete immutable decision snapshot without persisting it.
+// The HTTP and worker workflows use this method so the snapshot and any
+// resulting schedule can be committed together by the workflow repository.
+func (s *Service) Evaluate(ctx context.Context, caseID domain.ID) (Snapshot, error) {
 	decisionContext, err := s.contexts.Get(ctx, caseID)
 	if err != nil {
 		return Snapshot{}, err
@@ -99,9 +113,6 @@ func (s *Service) Decide(ctx context.Context, caseID domain.ID) (Snapshot, error
 	policyResult.ID = domain.ID(id.New())
 	policyResult.EconomicGateID = gate.ID
 	snapshot := Snapshot{Decision: decision, Natural: naturalSnapshot, Eligibility: eligible, Gate: gate, Policy: policyResult}
-	if err = s.store.SaveDecision(ctx, snapshot); err != nil {
-		return Snapshot{}, err
-	}
 	return snapshot, nil
 }
 func modelVersion(predictions []decisionclient.OutcomePrediction) string {

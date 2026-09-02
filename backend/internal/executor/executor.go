@@ -13,10 +13,14 @@ import (
 type Request struct {
 	ExecutionID        domain.ID
 	ScheduledActionID  domain.ID
+	RecoveryActionID   domain.ID
+	CaseID             domain.ID
 	Action             domain.ActionType
 	IdempotencyKey     string
 	AmountMinor        int64
 	Currency           string
+	MerchantID         domain.ID
+	CustomerID         domain.ID
 	RecipientReference string
 	Parameters         json.RawMessage
 }
@@ -100,6 +104,7 @@ func (e *EmailExecutor) Reconcile(context.Context, string) (Result, error) {
 
 type PaymentLinkCreator interface {
 	Execute(context.Context, string, razorpay.PaymentLinkRequest) (razorpay.PaymentLink, error)
+	Reconcile(context.Context, string) (razorpay.PaymentLink, error)
 }
 type PaymentLinkExecutor struct {
 	creator PaymentLinkCreator
@@ -113,7 +118,16 @@ func (e *PaymentLinkExecutor) Supports(a domain.ActionType) bool {
 	return a == domain.ActionSendPaymentLink
 }
 func (e *PaymentLinkExecutor) Execute(ctx context.Context, r Request) (Result, error) {
-	link, err := e.creator.Execute(ctx, string(r.ScheduledActionID), razorpay.PaymentLinkRequest{Amount: r.AmountMinor, Currency: r.Currency, ReferenceID: string(r.ScheduledActionID), Description: "Merchant-approved revenue recovery"})
+	link, err := e.creator.Execute(ctx, string(r.RecoveryActionID), razorpay.PaymentLinkRequest{
+		Amount: r.AmountMinor, Currency: r.Currency, ReferenceID: string(r.ScheduledActionID),
+		Description: "Merchant-approved revenue recovery",
+		Notes: map[string]string{
+			"merchant_id":        string(r.MerchantID),
+			"customer_id":        string(r.CustomerID),
+			"recovery_case_id":   string(r.CaseID),
+			"recovery_action_id": string(r.RecoveryActionID),
+		},
+	})
 	if err != nil {
 		class, retryable := classify(err)
 		return Result{ExecutionID: r.ExecutionID, Action: r.Action, Status: "FAILED", IdempotencyKey: r.IdempotencyKey, FailureClass: class, Retryable: retryable}, err
@@ -135,8 +149,35 @@ func classify(err error) (string, bool) {
 	}
 	return "TRANSIENT_PROVIDER_ERROR", true
 }
-func (e *PaymentLinkExecutor) Reconcile(context.Context, string) (Result, error) {
-	return Result{}, errors.New("reconciliation uses payment status adapter")
+func (e *PaymentLinkExecutor) Reconcile(ctx context.Context, recoveryActionID string) (Result, error) {
+	link, err := e.creator.Reconcile(ctx, recoveryActionID)
+	if err != nil {
+		return Result{}, err
+	}
+	return Result{Action: domain.ActionSendPaymentLink, Status: "SUCCEEDED", Provider: "razorpay", ProviderReference: link.ID, ExecutedAt: e.now().UTC()}, nil
+}
+
+type LocalPaymentLinkExecutor struct {
+	store EmailDeliveryStore
+	now   func() time.Time
+}
+
+func NewLocalPaymentLinkExecutor(store EmailDeliveryStore) *LocalPaymentLinkExecutor {
+	return &LocalPaymentLinkExecutor{store: store, now: time.Now}
+}
+func (e *LocalPaymentLinkExecutor) Supports(action domain.ActionType) bool {
+	return action == domain.ActionSendPaymentLink
+}
+func (e *LocalPaymentLinkExecutor) Execute(ctx context.Context, r Request) (Result, error) {
+	safe, _ := json.Marshal(map[string]any{"amount_minor": r.AmountMinor, "currency": r.Currency, "recovery_url": "https://local.invalid/recovery/" + string(r.ScheduledActionID)})
+	reference, _, err := e.store.CaptureEmail(ctx, r, "local-payment-link", safe)
+	if err != nil {
+		return Result{ExecutionID: r.ExecutionID, Action: r.Action, Status: "FAILED", IdempotencyKey: r.IdempotencyKey, FailureClass: "LOCAL_CAPTURE_ERROR"}, err
+	}
+	return Result{ExecutionID: r.ExecutionID, Action: r.Action, Status: "SUCCEEDED", Provider: "local-payment-link", ProviderReference: reference, IdempotencyKey: r.IdempotencyKey, ExecutedAt: e.now().UTC()}, nil
+}
+func (e *LocalPaymentLinkExecutor) Reconcile(context.Context, string) (Result, error) {
+	return Result{}, errors.New("local payment links are transactionally idempotent and need no provider reconciliation")
 }
 
 type RetryProvider interface {

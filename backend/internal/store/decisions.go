@@ -17,6 +17,14 @@ func (p *Postgres) SaveDecision(ctx context.Context, s decisioning.Snapshot) err
 		return err
 	}
 	defer tx.Rollback(ctx)
+	if err = saveDecisionTx(ctx, tx, s); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
+
+func saveDecisionTx(ctx context.Context, tx pgx.Tx, s decisioning.Snapshot) error {
+	var err error
 	var version int64
 	var currentState domain.CaseState
 	if err = tx.QueryRow(ctx, `SELECT version,current_state FROM recovery_cases WHERE id=$1 FOR UPDATE`, s.Decision.CaseID).Scan(&version, &currentState); err != nil {
@@ -90,5 +98,5 @@ func (p *Postgres) SaveDecision(ctx context.Context, s decisioning.Snapshot) err
 			return recovery.ErrConflict
 		}
 	}
-	return tx.Commit(ctx)
+	return nil
 }

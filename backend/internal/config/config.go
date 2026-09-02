@@ -3,18 +3,20 @@ package config
 import "os"
 
 type Config struct {
-	Environment           string
-	Port                  string
-	DatabaseURL           string
-	RedisURL              string
-	DecisionServiceURL    string
-	RazorpayKeyID         string
-	RazorpayKeySecret     string
-	RazorpayWebhookSecret string
-	RazorpayAPIURL        string
-	EvaluationResultsPath string
-	FrontendOrigin        string
-	WorkerHealthPort      string
+	Environment              string
+	Port                     string
+	DatabaseURL              string
+	RedisURL                 string
+	DecisionServiceURL       string
+	RazorpayKeyID            string
+	RazorpayKeySecret        string
+	RazorpayWebhookSecret    string
+	RazorpayWebhookPublicURL string
+	RazorpayAPIURL           string
+	PaymentProvider          string
+	EvaluationResultsPath    string
+	FrontendOrigin           string
+	WorkerHealthPort         string
 }
 
 func Load() Config {
@@ -36,13 +38,15 @@ func Load() Config {
 			"DECISION_SERVICE_URL",
 			"http://localhost:8001",
 		),
-		RazorpayKeyID:         getEnv("RAZORPAY_KEY_ID", ""),
-		RazorpayKeySecret:     getEnv("RAZORPAY_KEY_SECRET", ""),
-		RazorpayWebhookSecret: getEnv("RAZORPAY_WEBHOOK_SECRET", ""),
-		RazorpayAPIURL:        getEnv("RAZORPAY_API_URL", "https://api.razorpay.com"),
-		EvaluationResultsPath: getEnv("EVALUATION_RESULTS_PATH", "../decision-service/evaluation/results"),
-		FrontendOrigin:        getEnv("FRONTEND_ORIGIN", "http://localhost:3000"),
-		WorkerHealthPort:      getEnv("WORKER_HEALTH_PORT", "8082"),
+		RazorpayKeyID:            getEnv("RAZORPAY_KEY_ID", ""),
+		RazorpayKeySecret:        getEnv("RAZORPAY_KEY_SECRET", ""),
+		RazorpayWebhookSecret:    getEnv("RAZORPAY_WEBHOOK_SECRET", ""),
+		RazorpayWebhookPublicURL: getEnv("RAZORPAY_WEBHOOK_PUBLIC_URL", ""),
+		RazorpayAPIURL:           getEnv("RAZORPAY_API_URL", "https://api.razorpay.com"),
+		PaymentProvider:          getEnv("PAYMENT_PROVIDER", "local"),
+		EvaluationResultsPath:    getEnv("EVALUATION_RESULTS_PATH", "../decision-service/evaluation/results"),
+		FrontendOrigin:           getEnv("FRONTEND_ORIGIN", "http://localhost:3000"),
+		WorkerHealthPort:         getEnv("WORKER_HEALTH_PORT", "8082"),
 	}
 }
 

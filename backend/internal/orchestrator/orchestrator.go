@@ -46,12 +46,13 @@ type Authorization struct {
 	DecisionCaseVersion int64
 	Candidate           optimizer.Candidate
 	Gate                economicgate.Result
+	HumanApproved       bool
 }
 
 type Repository interface {
 	ScheduleDecision(context.Context, decisioning.Snapshot) (*ScheduledAction, error)
 	ClaimDue(context.Context, string, time.Time, time.Duration) (*ScheduledAction, error)
-	LoadAuthorization(context.Context, domain.ID) (Authorization, error)
+	LoadAuthorization(context.Context, domain.ID, domain.ID) (Authorization, error)
 	MarkExecuting(context.Context, ScheduledAction, time.Time) error
 	CompleteExecution(context.Context, ScheduledAction, executor.Result, time.Time) error
 	MarkSuppressed(context.Context, ScheduledAction, string, time.Time) error
@@ -74,6 +75,43 @@ func (s *Scheduler) Schedule(ctx context.Context, snapshot decisioning.Snapshot)
 		return nil, nil
 	}
 	return s.repository.ScheduleDecision(ctx, snapshot)
+}
+
+type DecisionEvaluator interface {
+	Evaluate(context.Context, domain.ID) (decisioning.Snapshot, error)
+}
+
+type DecisionWorkflowRepository interface {
+	PrepareForDecision(context.Context, domain.ID, time.Time) error
+	SaveDecisionAndSchedule(context.Context, decisioning.Snapshot) (*ScheduledAction, error)
+}
+
+// DecisionCoordinator establishes the valid pre-decision lifecycle and then
+// commits decision evidence and its schedule in one PostgreSQL transaction.
+// Model calls intentionally happen outside the transaction.
+type DecisionCoordinator struct {
+	evaluator  DecisionEvaluator
+	repository DecisionWorkflowRepository
+	now        func() time.Time
+}
+
+func NewDecisionCoordinator(evaluator DecisionEvaluator, repository DecisionWorkflowRepository) *DecisionCoordinator {
+	return &DecisionCoordinator{evaluator: evaluator, repository: repository, now: time.Now}
+}
+
+func (c *DecisionCoordinator) Decide(ctx context.Context, caseID domain.ID) (decisioning.Snapshot, *ScheduledAction, error) {
+	if err := c.repository.PrepareForDecision(ctx, caseID, c.now().UTC()); err != nil {
+		return decisioning.Snapshot{}, nil, err
+	}
+	snapshot, err := c.evaluator.Evaluate(ctx, caseID)
+	if err != nil {
+		return decisioning.Snapshot{}, nil, err
+	}
+	scheduled, err := c.repository.SaveDecisionAndSchedule(ctx, snapshot)
+	if err != nil {
+		return decisioning.Snapshot{}, nil, err
+	}
+	return snapshot, scheduled, nil
 }
 
 type ContextProvider interface {
@@ -116,7 +154,7 @@ func (w *Worker) RunOnce(ctx context.Context) (*executor.Result, error) {
 		_ = w.repository.MarkSuppressed(ctx, *scheduled, "STALE_OR_RECOVERED", now)
 		return nil, nil
 	}
-	authorization, err := w.repository.LoadAuthorization(ctx, scheduled.DecisionID)
+	authorization, err := w.repository.LoadAuthorization(ctx, scheduled.DecisionID, scheduled.PolicyEvaluationID)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +169,10 @@ func (w *Worker) RunOnce(ctx context.Context) (*executor.Result, error) {
 	// Compare policy to the current scheduled aggregate version here; comparing
 	// to the pre-schedule decision version would reject every legitimate action.
 	freshPolicy := policy.Evaluate(decisionContext, scheduled.DecisionID, decisionContext.Case.Version, authorization.Candidate, authorization.Gate, now)
-	if freshPolicy.Decision != "APPROVE" {
+	// A freshly escalated policy remains executable only when this exact
+	// schedule carries a durable, reauthorized human approval. STOP/DENY and
+	// every state/version change still fail closed.
+	if freshPolicy.Decision != "APPROVE" && !(freshPolicy.Decision == "ESCALATE" && authorization.HumanApproved) {
 		_ = w.repository.MarkSuppressed(ctx, *scheduled, "POLICY_RECHECK_"+freshPolicy.Decision, now)
 		return nil, nil
 	}
@@ -157,10 +198,14 @@ func (w *Worker) RunOnce(ctx context.Context) (*executor.Result, error) {
 	request := executor.Request{
 		ExecutionID:        domain.ID(id.New()),
 		ScheduledActionID:  scheduled.ID,
+		RecoveryActionID:   scheduled.RecoveryActionID,
+		CaseID:             decisionContext.Case.ID,
 		Action:             scheduled.Action,
 		IdempotencyKey:     scheduled.IdempotencyKey,
 		AmountMinor:        decisionContext.Case.AmountAtRiskMinor,
 		Currency:           decisionContext.Case.Currency,
+		MerchantID:         decisionContext.Case.MerchantID,
+		CustomerID:         decisionContext.Case.CustomerID,
 		RecipientReference: string(decisionContext.Case.CustomerID),
 		Parameters:         scheduled.Parameters,
 	}

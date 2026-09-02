@@ -3,6 +3,7 @@ package orchestrator
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 
@@ -31,8 +32,22 @@ func (f *fakeRepository) ClaimDue(context.Context, string, time.Time, time.Durat
 	copy := f.scheduled
 	return &copy, nil
 }
-func (f *fakeRepository) LoadAuthorization(context.Context, domain.ID) (Authorization, error) {
+func (f *fakeRepository) LoadAuthorization(context.Context, domain.ID, domain.ID) (Authorization, error) {
 	return f.authorization, nil
+}
+
+func TestWorkerExecutesFreshHumanApprovedEscalation(t *testing.T) {
+	now := time.Now().UTC()
+	ctx := viableContext(now)
+	ctx.MerchantContext.HighValueThresholdMinor = 100
+	ctx.Case.AmountAtRiskMinor = 100
+	repository := repositoryFor(domain.ActionSendReminder)
+	repository.authorization.HumanApproved = true
+	emails := &emailStore{}
+	worker := NewWorker(repository, fakeContexts{ctx}, executor.NewRegistry(executor.NewEmailExecutor(emails)), "worker-1")
+	if result, err := worker.RunOnce(context.Background()); err != nil || result == nil || emails.calls != 1 {
+		t.Fatalf("human-approved action was not executed: result=%+v err=%v repo=%+v", result, err, repository)
+	}
 }
 func (f *fakeRepository) MarkExecuting(context.Context, ScheduledAction, time.Time) error {
 	f.executing++
@@ -204,3 +219,59 @@ func TestObservationTimeoutStartsFreshDecisionCycle(t *testing.T) {
 }
 
 func structPolicyApprove() policy.Result { return policy.Result{Decision: "APPROVE"} }
+
+type coordinatorEvaluator struct {
+	steps    *[]string
+	snapshot decisioning.Snapshot
+}
+
+func (e coordinatorEvaluator) Evaluate(context.Context, domain.ID) (decisioning.Snapshot, error) {
+	*e.steps = append(*e.steps, "evaluate")
+	return e.snapshot, nil
+}
+
+type coordinatorRepository struct {
+	steps      *[]string
+	prepareErr error
+	scheduled  *ScheduledAction
+}
+
+func (r coordinatorRepository) PrepareForDecision(context.Context, domain.ID, time.Time) error {
+	*r.steps = append(*r.steps, "prepare")
+	return r.prepareErr
+}
+func (r coordinatorRepository) SaveDecisionAndSchedule(_ context.Context, _ decisioning.Snapshot) (*ScheduledAction, error) {
+	*r.steps = append(*r.steps, "atomic-save-and-schedule")
+	return r.scheduled, nil
+}
+
+func TestDecisionCoordinatorPreparesBeforeAtomicDecisionAndSchedule(t *testing.T) {
+	steps := []string{}
+	snapshot := decisioning.Snapshot{Decision: decisioning.Decision{CaseID: "case-1", CaseVersion: 3}}
+	scheduled := &ScheduledAction{ID: "scheduled-1", CaseID: "case-1"}
+	coordinator := NewDecisionCoordinator(coordinatorEvaluator{steps: &steps, snapshot: snapshot}, coordinatorRepository{steps: &steps, scheduled: scheduled})
+	gotSnapshot, gotScheduled, err := coordinator.Decide(context.Background(), "case-1")
+	if err != nil || gotSnapshot.Decision.CaseVersion != 3 || gotScheduled.ID != "scheduled-1" {
+		t.Fatalf("snapshot=%+v scheduled=%+v err=%v", gotSnapshot, gotScheduled, err)
+	}
+	want := []string{"prepare", "evaluate", "atomic-save-and-schedule"}
+	if string(mustJSON(steps)) != string(mustJSON(want)) {
+		t.Fatalf("steps=%v want=%v", steps, want)
+	}
+}
+
+func TestDecisionCoordinatorRejectsStaleLifecycleBeforePersisting(t *testing.T) {
+	steps := []string{}
+	coordinator := NewDecisionCoordinator(coordinatorEvaluator{steps: &steps}, coordinatorRepository{steps: &steps, prepareErr: errors.New("stale")})
+	if _, _, err := coordinator.Decide(context.Background(), "case-1"); err == nil {
+		t.Fatal("expected stale lifecycle failure")
+	}
+	if len(steps) != 1 || steps[0] != "prepare" {
+		t.Fatalf("decision work continued after stale prepare: %v", steps)
+	}
+}
+
+func mustJSON(value any) []byte {
+	result, _ := json.Marshal(value)
+	return result
+}

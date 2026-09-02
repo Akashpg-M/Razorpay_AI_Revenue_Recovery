@@ -1,0 +1,21 @@
+{
+  "event": "payment_link.paid",
+  "payload": {
+    "payment_link": {
+      "entity": {
+        "id": "plink_TX77vuY4TJT8ZX",
+        "status": "paid",
+        "amount": 899900,
+        "currency": "INR"
+      }
+    },
+    "payment": {
+      "entity": {
+        "id": "pay_manual_paid_1788340622",
+        "amount": 899900,
+        "currency": "INR",
+        "status": "captured"
+      }
+    }
+  }
+}

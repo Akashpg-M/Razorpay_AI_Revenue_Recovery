@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -27,16 +28,11 @@ import (
 )
 
 type reassessor struct {
-	decisions *decisioning.Service
-	scheduler *orchestrator.Scheduler
+	decisions *orchestrator.DecisionCoordinator
 }
 
 func (r reassessor) Reassess(ctx context.Context, caseID domain.ID) error {
-	snapshot, err := r.decisions.Decide(ctx, caseID)
-	if err != nil {
-		return err
-	}
-	_, err = r.scheduler.Schedule(ctx, snapshot)
+	_, _, err := r.decisions.Decide(ctx, caseID)
 	return err
 }
 
@@ -56,18 +52,32 @@ func main() {
 	decisionClient := decisionclient.New(cfg.DecisionServiceURL)
 	contextService := recoverycontext.NewService(repository)
 	decisionService := decisioning.NewService(contextService, decisionClient, repository)
-	scheduler := orchestrator.NewScheduler(repository)
+	decisionCoordinator := orchestrator.NewDecisionCoordinator(decisionService, repository)
 
-	razorpayClient := razorpay.NewClient(cfg.RazorpayAPIURL, cfg.RazorpayKeyID, cfg.RazorpayKeySecret)
-	paymentLinks := razorpay.NewPaymentLinkExecutor(razorpayClient, repository)
+	var paymentLinkExecutor executor.Executor
+	switch strings.ToLower(cfg.PaymentProvider) {
+	case "local":
+		paymentLinkExecutor = executor.NewLocalPaymentLinkExecutor(repository)
+	case "razorpay":
+		razorpayClient := razorpay.NewClient(cfg.RazorpayAPIURL, cfg.RazorpayKeyID, cfg.RazorpayKeySecret)
+		if !razorpayClient.Configured() || razorpayClient.Mode() != "test" {
+			logger.Error("razorpay_test_mode_configuration_invalid")
+			return
+		}
+		paymentLinks := razorpay.NewPaymentLinkExecutor(razorpayClient, repository)
+		paymentLinkExecutor = executor.NewPaymentLinkExecutor(paymentLinks)
+	default:
+		logger.Error("payment_provider_invalid", "provider", cfg.PaymentProvider)
+		return
+	}
 	registry := executor.NewRegistry(
 		executor.NewEmailExecutor(repository),
-		executor.NewPaymentLinkExecutor(paymentLinks),
+		paymentLinkExecutor,
 		executor.NewRetryExecutor(repository),
 	)
 	hostname, _ := os.Hostname()
 	worker := orchestrator.NewWorker(repository, contextService, registry, "worker:"+hostname)
-	reassessment := reassessor{decisions: decisionService, scheduler: scheduler}
+	reassessment := reassessor{decisions: decisionCoordinator}
 	worker.SetReassessor(reassessment)
 	promiseService := promises.NewService(repository, reassessment)
 	health := http.NewServeMux()

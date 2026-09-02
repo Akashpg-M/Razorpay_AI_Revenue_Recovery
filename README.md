@@ -2,9 +2,11 @@
 
 RecoverOS is an explainable, stateful next-best-action system for recovering failed subscription and checkout revenue. Its differentiator is bounded optimization: observable-only predictions and expected net recovery value choose an action, while deterministic policy, human review, execution-time reauthorization, and immutable events retain control.
 
+For a complete clean startup using Git Bash and Docker Desktop, follow [STARTUP_GIT_BASH.md](STARTUP_GIT_BASH.md).
+
 All measured results in this repository come from the deterministic synthetic simulator unless explicitly labeled persisted Test Mode data. They are not production causal-uplift claims.
 
-This repository now contains a stateful recovery domain, immutable audit history, and a deterministic synthetic evaluation environment. It remains independent of Razorpay, AI, and ML integrations at this stage.
+This repository contains a stateful recovery domain, immutable audit history, a deterministic synthetic evaluation environment, and an optional fail-closed Razorpay Test Mode Payment Link integration. The default provider remains local.
 
 ## Services
 
@@ -142,7 +144,7 @@ Normalized event endpoints:
 - `POST /api/v1/detection/checkout` with `X-Event-Id`.
 - `POST /api/v1/webhooks/razorpay` with `X-Razorpay-Event-Id` and `X-Razorpay-Signature`.
 
-Set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET` in `.env`. Do not commit their values. The webhook implementation validates HMAC-SHA256 over the unmodified request body, persists signature/processing status, and suppresses duplicate provider event IDs.
+Set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET` in `.env`. Do not commit their values. The webhook implementation validates HMAC-SHA256 over the unmodified request body, persists verified processing status, suppresses duplicate provider event IDs, creates risk from `payment.failed`, and attributes recovery from a correlated `payment_link.paid`. Invalid signatures are rejected without reserving their event ID.
 
 The merchant, customer, latest merchant policy and optional recovery profile must exist before ingesting a provider event. Razorpay payments/subscriptions must carry the corresponding internal `merchant_id` and `customer_id` in `notes`; subscription-only events must additionally provide `amount_minor` and `currency` in notes when no payment entity is included.
 
@@ -155,6 +157,13 @@ https://<public-test-host>/api/v1/webhooks/razorpay
 Payment Link creation and payment lookup are implemented behind `integrations/razorpay.Client`. Normal automated tests use an HTTP test server. Live Test Mode is optional and requires valid credentials and a publicly reachable webhook URL.
 
 Official references: [webhook validation](https://razorpay.com/docs/webhooks/validate-test/), [Payment Links API](https://razorpay.com/docs/api/payments/payment-links/).
+
+See [Razorpay Test Mode integration](docs/RAZORPAY_INTEGRATION.md) for the
+capability matrix, security properties, safe status check, and Dashboard setup.
+
+For the canonical source-backed map of local versus Razorpay execution,
+webhook payload contracts, database effects, and CLI/frontend test procedures,
+see [Payment provider codebase guide](docs/PAYMENT_PROVIDER_CODEBASE_GUIDE.md).
 
 ## Phases 8–9: context and eligibility
 

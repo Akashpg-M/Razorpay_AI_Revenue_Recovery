@@ -11,6 +11,8 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 GOOS=linux \
     go build -o /backend ./cmd/api
 RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 GOOS=linux \
     go build -o /worker ./cmd/worker
+RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 GOOS=linux \
+    go build -o /razorpay-check ./cmd/razorpay-check
 
 
 FROM alpine:3.20
@@ -21,6 +23,7 @@ WORKDIR /app
 
 COPY --from=builder /backend /app/backend
 COPY --from=builder /worker /app/worker
+COPY --from=builder /razorpay-check /app/razorpay-check
 
 EXPOSE 8080
 

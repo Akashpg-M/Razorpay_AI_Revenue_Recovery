@@ -9,8 +9,10 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"revenue-recovery/backend/internal/detection"
+	"revenue-recovery/backend/internal/domain"
 	"revenue-recovery/backend/internal/id"
 	"revenue-recovery/backend/internal/integrations/razorpay"
+	"revenue-recovery/backend/internal/recovery"
 )
 
 func (p *Postgres) InsertWebhook(ctx context.Context, w razorpay.WebhookRecord) (bool, error) {
@@ -38,7 +40,7 @@ func (p *Postgres) GetCheckout(ctx context.Context, checkoutID string) (detectio
 }
 func (p *Postgres) GetPaymentLink(ctx context.Context, actionID string) (razorpay.PaymentLink, bool, error) {
 	var raw []byte
-	err := p.pool.QueryRow(ctx, `SELECT response FROM provider_action_references WHERE action_id=$1 AND provider='razorpay' AND operation='payment_link.create'`, actionID).Scan(&raw)
+	err := p.pool.QueryRow(ctx, `SELECT r.response FROM provider_action_references r JOIN recovery_actions a ON a.id=r.action_id WHERE (r.action_id=$1 OR a.idempotency_key=$1) AND r.provider='razorpay' AND r.operation='payment_link.create'`, actionID).Scan(&raw)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return razorpay.PaymentLink{}, false, nil
 	}
@@ -55,4 +57,44 @@ func (p *Postgres) SavePaymentLink(ctx context.Context, actionID string, link ra
 	_, err := p.pool.Exec(ctx, `INSERT INTO provider_action_references(id,action_id,provider,operation,provider_reference,response)
 		VALUES($1,$2,'razorpay','payment_link.create',$3,$4) ON CONFLICT(action_id,provider,operation) DO NOTHING`, id.New(), actionID, link.ID, raw)
 	return err
+}
+
+// ResolvePaymentLinkCase uses server-side execution data first. Provider notes
+// are a signed correlation fallback, never the primary source of truth.
+func (p *Postgres) ResolvePaymentLinkCase(ctx context.Context, linkID, referenceID string, noteCaseID, merchantID, customerID domain.ID) (domain.ID, error) {
+	var caseID domain.ID
+	err := p.pool.QueryRow(ctx, `SELECT a.case_id FROM provider_action_references r
+		JOIN recovery_actions a ON a.id=r.action_id
+		WHERE r.provider='razorpay' AND r.operation='payment_link.create' AND r.provider_reference=$1
+		ORDER BY r.created_at DESC LIMIT 1`, linkID).Scan(&caseID)
+	if err == nil {
+		return caseID, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return "", err
+	}
+	if referenceID != "" {
+		err = p.pool.QueryRow(ctx, `SELECT case_id FROM scheduled_actions WHERE id=$1`, referenceID).Scan(&caseID)
+		if err == nil {
+			return caseID, nil
+		}
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return "", err
+		}
+	}
+	if noteCaseID == "" {
+		return "", recovery.ErrNotFound
+	}
+	var storedMerchant, storedCustomer domain.ID
+	err = p.pool.QueryRow(ctx, `SELECT merchant_id,customer_id FROM recovery_cases WHERE id=$1`, noteCaseID).Scan(&storedMerchant, &storedCustomer)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", recovery.ErrNotFound
+	}
+	if err != nil {
+		return "", err
+	}
+	if (merchantID != "" && merchantID != storedMerchant) || (customerID != "" && customerID != storedCustomer) {
+		return "", errors.New("Razorpay payment link notes do not match the recovery case")
+	}
+	return noteCaseID, nil
 }
