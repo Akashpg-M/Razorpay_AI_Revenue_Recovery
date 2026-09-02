@@ -121,6 +121,12 @@ func (o *observerStub) Observe(_ context.Context, input attribution.ObserveInput
 	return attribution.Record{ID: "attr_1", CaseID: input.CaseID, PaymentReference: input.PaymentReference}, true, nil
 }
 
+type terminalObserverStub struct{}
+
+func (terminalObserverStub) Observe(context.Context, attribution.ObserveInput) (attribution.Record, bool, error) {
+	return attribution.Record{}, false, attribution.ErrCaseTerminal
+}
+
 func TestPaymentLinkPaidAttributesRecovery(t *testing.T) {
 	body := []byte(`{"event":"payment_link.paid","created_at":1788177600,"payload":{"payment_link":{"entity":{"id":"plink_1","amount_paid":12500,"currency":"INR","status":"paid","reference_id":"scheduled_1","notes":{"merchant_id":"m1","customer_id":"c1","recovery_case_id":"case_1"}}},"payment":{"entity":{"id":"pay_1","amount":12500,"currency":"INR"}}}}`)
 	store := &webhookStore{records: map[string]WebhookRecord{}}
@@ -143,6 +149,20 @@ func TestPaymentLinkPaidAttributesRecovery(t *testing.T) {
 	}
 	if store.records["evt_paid_1"].ProcessingStatus != "PROCESSED" {
 		t.Fatalf("webhook=%+v", store.records["evt_paid_1"])
+	}
+}
+
+func TestPaymentLinkPaidAcknowledgesTerminalCaseWithoutAnotherEffect(t *testing.T) {
+	body := []byte(`{"event":"payment_link.paid","created_at":1788177600,"payload":{"payment_link":{"entity":{"id":"plink_late","amount_paid":12500,"currency":"INR","status":"paid","reference_id":"scheduled_1"}},"payment":{"entity":{"id":"pay_late","amount":12500,"currency":"INR"}}}}`)
+	store := &webhookStore{records: map[string]WebhookRecord{}}
+	ingestor := NewIngestor("secret", store, &detectorStub{})
+	ingestor.SetRecoveryObserver(terminalObserverStub{}, &resolverStub{caseID: "case_terminal"})
+	result, duplicate, err := ingestor.Ingest(context.Background(), body, signature("secret", body), "evt_late")
+	if err != nil || duplicate || result.Outcome != "IGNORED_TERMINAL_CASE" {
+		t.Fatalf("result=%+v duplicate=%v err=%v", result, duplicate, err)
+	}
+	if store.records["evt_late"].ProcessingStatus != "PROCESSED" {
+		t.Fatalf("webhook=%+v", store.records["evt_late"])
 	}
 }
 

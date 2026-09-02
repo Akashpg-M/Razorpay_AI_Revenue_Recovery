@@ -50,6 +50,9 @@ func (p *Postgres) GetReplay(ctx context.Context, caseID domain.ID) (replay.View
 		{&value.Promises, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM promises_to_pay WHERE case_id=$1 ORDER BY created_at,id) x`},
 		{&value.HumanReviews, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM human_review_records WHERE case_id=$1 ORDER BY created_at,id) x`},
 		{&value.Attributions, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM recovery_attributions WHERE case_id=$1 ORDER BY observed_at,id) x`},
+		{&value.ProviderReferences, `SELECT row_to_json(x)::jsonb FROM (SELECT r.* FROM provider_action_references r JOIN recovery_actions a ON a.id=r.action_id WHERE a.case_id=$1 ORDER BY r.created_at,r.id) x`},
+		{&value.WebhookEvents, `SELECT row_to_json(x)::jsonb FROM (SELECT w.* FROM webhook_events w WHERE w.provider_references->>'payment_link_id' IN (SELECT r.provider_reference FROM provider_action_references r JOIN recovery_actions a ON a.id=r.action_id WHERE a.case_id=$1) OR w.provider_references->>'payment_id'=(SELECT source_reference FROM recovery_cases WHERE id=$1) ORDER BY w.received_at,w.id) x`},
+		{&value.FeedbackRecords, `SELECT row_to_json(x)::jsonb FROM (SELECT * FROM feedback_records WHERE case_id=$1 ORDER BY created_at,id) x`},
 	}
 	for _, query := range queries {
 		*query.target, err = p.rawCaseRows(ctx, caseID, query.sql)
@@ -60,10 +63,18 @@ func (p *Postgres) GetReplay(ctx context.Context, caseID domain.ID) (replay.View
 	if len(value.Decisions) > 0 {
 		var latest map[string]any
 		if json.Unmarshal(value.Decisions[len(value.Decisions)-1], &latest) == nil {
-			for _, key := range []string{"context_version", "outcome_model_version", "natural_model_version", "optimizer_version", "merchant_profile_version"} {
+			for _, key := range []string{"context_version", "outcome_model_version", "natural_model_version", "optimizer_version", "cost_model_version", "merchant_profile_version"} {
 				if item, ok := latest[key]; ok {
 					value.Provenance[key] = item
 				}
+			}
+		}
+	}
+	if len(value.EconomicGates) > 0 {
+		var latest map[string]any
+		if json.Unmarshal(value.EconomicGates[len(value.EconomicGates)-1], &latest) == nil {
+			if version, ok := latest["gate_version"]; ok {
+				value.Provenance["economic_gate_version"] = version
 			}
 		}
 	}

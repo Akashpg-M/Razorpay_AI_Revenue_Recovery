@@ -1,7 +1,7 @@
 {
-  "manifest_version": "freeze-manifest-v1",
-  "generated_at": "2026-09-01T11:40:00Z",
-  "git_base_commit": "8cc9a00262c712ff763310b2df7a60d11605cea0",
+  "manifest_version": "freeze-manifest-v2-final-control-plane",
+  "generated_at": "2026-09-02T12:15:00Z",
+  "git_base_commit": "4e2d66f98d05c0eac7a2cdd48906ac3fc736461b",
   "working_tree_changes_included": true,
   "schema_version": "phase_34",
   "simulator": {"version":"1.0.0","feature_version":"synthetic-observable-v1","seed":42,"test_population_sha256":"CC1A248AF3E1026761DC60CED0394FD89FD784646DC73F659AEC69E2BBB763F2"},
@@ -16,7 +16,9 @@
   "portfolio_algorithm": "portfolio-priority-v1",
   "budget_algorithms": ["budget-greedy-v1","budget-fcfs-v1"],
   "evaluation": {"version":"phase26-30-resilience-v1","configuration":"five-seed frozen synthetic evaluation plus authorization and reliability matrices"},
-  "verification": {"status":"PASS","artifact":"evaluation/results/phase33/verification_summary.json"},
+  "verification": {"status":"PASS_WITH_EXTERNAL_PAYMENT_STEP","artifacts":["evaluation/results/phase33/verification_summary.json","evaluation/results/final/backend_closure.json","evaluation/results/final/final_verification.json"],"go_tests":"PASS","go_vet":"PASS","python_tests":"37 PASS","frontend_lint":"PASS","frontend_build":"PASS","docker_compose":"HEALTHY"},
+  "razorpay_test_evidence": {"authenticated":true,"public_tunnel_ready":true,"payment_link_reference":"plink_TXAB1tY0qLM5Uf","case_id":"d4ff7fda-0010-4b8a-acba-46a849000102","state":"WAITING_OUTCOME","completion":"requires hosted Test Mode checkout"},
+  "frontend_control_plane": ["command-center","recoveries","recovery-replay","operations","evaluation","reliability","observability","demo"],
   "claim_scope": "synthetic evaluation and Razorpay Test Mode",
   "production_causal_uplift_claimed": false
 }

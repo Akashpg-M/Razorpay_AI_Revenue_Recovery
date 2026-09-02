@@ -14,6 +14,9 @@ type Operational struct {
 	NaturalRecoveredMinor int64            `json:"natural_recovered_minor"`
 	AgentAttributedMinor  int64            `json:"agent_attributed_minor"`
 	ActiveCases           int64            `json:"active_cases"`
+	CasesAwaitingReview   int64            `json:"cases_awaiting_review"`
+	ActionsScheduled      int64            `json:"actions_scheduled"`
+	RecoveryRate          float64          `json:"recovery_rate"`
 	Cases                 []map[string]any `json:"cases"`
 }
 type Store interface {

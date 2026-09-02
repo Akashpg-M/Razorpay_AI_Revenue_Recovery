@@ -48,6 +48,13 @@ func (p *Postgres) AttributeRecovery(ctx context.Context, input attribution.Obse
 		}
 		return attribution.Record{}, false, err
 	}
+	// A payment observed after a case reached a terminal state must never revive
+	// it or increase recovered revenue a second time. Provider event IDs handle
+	// ordinary webhook retries; this guard also covers distinct, reordered
+	// success notifications for the same case.
+	if state == domain.StateRecovered || state == domain.StateExhausted || state == domain.StateStopped {
+		return attribution.Record{}, false, attribution.ErrCaseTerminal
+	}
 	existing, existingErr := scanAttribution(tx.QueryRow(ctx, `SELECT `+attributionColumns+` FROM recovery_attributions WHERE case_id=$1 AND payment_reference=$2`, input.CaseID, input.PaymentReference))
 	if existingErr == nil {
 		_ = tx.Commit(ctx)

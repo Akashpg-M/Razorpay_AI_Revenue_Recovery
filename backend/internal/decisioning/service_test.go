@@ -59,3 +59,11 @@ func TestCompleteDecisionUsesOneNaturalProbabilityAndPersists(t *testing.T) {
 		t.Fatalf("%+v", result)
 	}
 }
+
+func TestControlOnlyActionsCannotEnterExecutableOptimization(t *testing.T) {
+	for _, action := range []domain.ActionType{domain.ActionWaitForPromiseToPay, domain.ActionRetention} {
+		if scoreable[action] {
+			t.Fatalf("control-only action is scoreable without an executor: %s", action)
+		}
+	}
+}

@@ -63,7 +63,10 @@ type Snapshot struct {
 	Policy      policy.Result       `json:"policy"`
 }
 
-var scoreable = map[domain.ActionType]bool{domain.ActionRetryNow: true, domain.ActionRetryLater: true, domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true, domain.ActionWaitForPromiseToPay: true, domain.ActionRetention: true}
+// Only actions backed by a worker executor may enter the optimizer. Promise
+// waiting and retention remain policy/control concepts; scheduling either as an
+// execution would otherwise create work the worker can never perform.
+var scoreable = map[domain.ActionType]bool{domain.ActionRetryNow: true, domain.ActionRetryLater: true, domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true}
 
 func (s *Service) Decide(ctx context.Context, caseID domain.ID) (Snapshot, error) {
 	snapshot, err := s.Evaluate(ctx, caseID)

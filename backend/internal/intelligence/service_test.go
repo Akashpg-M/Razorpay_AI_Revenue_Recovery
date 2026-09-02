@@ -40,7 +40,7 @@ func (s *predictionStore) SaveActionPredictions(_ context.Context, p []domain.Ac
 }
 func TestPipelinePredictsOnlyEligibleScoreableActionsAndPersists(t *testing.T) {
 	now := time.Now()
-	ctx := recoverycontext.RecoveryDecisionContext{Case: domain.RecoveryCase{ID: "case", LeakType: domain.FailedSubscription, AmountAtRiskMinor: 10000, RecoveryDeadline: now.Add(time.Hour)}, TimingContext: recoverycontext.TimingContext{EvaluatedAt: now}, CustomerProfile: recoverycontext.CustomerProfile{OptedOut: true}, MerchantContext: recoverycontext.MerchantContext{AllowedActions: []domain.ActionType{domain.ActionRetryLater, domain.ActionSendReminder}, AllowedChannels: []string{"EMAIL"}, MaxRetries: 3, MaxContactsPerDay: 3, MaxContactsPerWeek: 5}, PaymentState: recoverycontext.PaymentState{MandateStatus: "ACTIVE", PaymentMethodStatus: "VALID", AvailableChannels: []string{"EMAIL"}}}
+	ctx := recoverycontext.RecoveryDecisionContext{Case: domain.RecoveryCase{ID: "case", LeakType: domain.FailedSubscription, AmountAtRiskMinor: 10000, RecoveryDeadline: now.Add(time.Hour)}, TimingContext: recoverycontext.TimingContext{EvaluatedAt: now}, CustomerProfile: recoverycontext.CustomerProfile{OptedOut: true}, MerchantContext: recoverycontext.MerchantContext{AllowedActions: []domain.ActionType{domain.ActionRetryLater, domain.ActionSendReminder, domain.ActionWaitForPromiseToPay, domain.ActionRetention}, AllowedChannels: []string{"EMAIL"}, MaxRetries: 3, MaxContactsPerDay: 3, MaxContactsPerWeek: 5}, PaymentState: recoverycontext.PaymentState{MandateStatus: "ACTIVE", PaymentMethodStatus: "VALID", AvailableChannels: []string{"EMAIL"}}}
 	p := &predictor{}
 	store := &predictionStore{}
 	result, err := NewService(contexts{ctx}, p, store).Predict(context.Background(), "case")
@@ -48,7 +48,7 @@ func TestPipelinePredictsOnlyEligibleScoreableActionsAndPersists(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, action := range p.received {
-		if action == "SEND_REMINDER" || action == "STOP" || action == "ESCALATE_TO_HUMAN" {
+		if action == "SEND_REMINDER" || action == "STOP" || action == "ESCALATE_TO_HUMAN" || action == "WAIT_FOR_PROMISE_TO_PAY" || action == "RETENTION_ACTION" {
 			t.Fatalf("invalid/control action reached model: %s", action)
 		}
 	}

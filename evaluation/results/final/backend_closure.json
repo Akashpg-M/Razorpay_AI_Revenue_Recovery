@@ -1,0 +1,21 @@
+{
+  "report_version": "backend-closure-v1",
+  "generated_at": "2026-09-02T12:15:00Z",
+  "schema_version": "phase_34",
+  "overall_status": "PASS_WITH_DOCUMENTED_EXTERNAL_STEP",
+  "scenarios": [
+    {"scenario":"high_value_checkout_decision","expected_invariant":"SEND_PAYMENT_LINK wins, gate ALLOW, policy HIGH_VALUE_APPROVAL","observed_result":"PASS: action SEND_PAYMENT_LINK, NERV 105167 minor, gate ALLOW, policy ESCALATE","status":"PASS","evidence_ids":["d4ff7fda-0010-4b8a-acba-46a849000102","50eeb824-4f8d-4be6-80fc-1acc4948d659","e72e6ffc-fb4c-450e-9155-65cd0ed6206d"]},
+    {"scenario":"human_reauthorization_and_schedule","expected_invariant":"Approval cannot bypass fresh policy and creates one durable schedule","observed_result":"PASS: reauthorization APPROVED and one schedule created","status":"PASS","evidence_ids":["bdaf728d-36c9-4d9e-922e-04398281fcfe","fbcd9b58-6d7d-4729-8ee6-2e7c2e43a513"]},
+    {"scenario":"razorpay_test_payment_link","expected_invariant":"Worker creates and persists a real Test Mode link","observed_result":"PASS: execution SUCCEEDED, case WAITING_OUTCOME, provider reference persisted","status":"PASS","evidence_ids":["plink_TXAB1tY0qLM5Uf"]},
+    {"scenario":"cloudflare_signed_webhook","expected_invariant":"Public delivery passes HMAC verification and creates one case","observed_result":"PASS: HTTP success and risk_detected=true","status":"PASS","evidence_ids":["cloudflare-verification-5ffdb25b-47c9-408c-a294-0d1638e19ca3","7f3fb56f-61bf-4f2d-a1c8-f0281f0770bf"]},
+    {"scenario":"invalid_signature_dedupe_poisoning","expected_invariant":"Invalid HMAC returns 401, mutates no state, and cannot reserve the event ID","observed_result":"PASS: verifier runs before InsertWebhook and genuine redelivery succeeds in regression test","status":"PASS","evidence_ids":["TestInvalidSignatureDoesNotPoisonEventID","cd0e37c0-f2e6-4649-a8d5-7ef729ee5138"]},
+    {"scenario":"duplicate_success_idempotency","expected_invariant":"Repeated provider event creates one business effect and one attribution","observed_result":"PASS: event ID and case/payment uniqueness plus ingestion regression","status":"PASS","evidence_ids":["TestWebhookIngestionIsIdempotent","TestPaymentLinkPaidAttributesRecovery"]},
+    {"scenario":"terminal_case_integrity","expected_invariant":"Out-of-order success cannot revive STOPPED/EXHAUSTED or double-count RECOVERED","observed_result":"PASS: terminal attribution guard acknowledges IGNORED_TERMINAL_CASE without a business effect","status":"PASS","evidence_ids":["TestTerminalStatesRejectTransitions","TestPaymentLinkPaidAcknowledgesTerminalCaseWithoutAnotherEffect","ed84919c-9134-4bcc-b027-ab409aa98b52"]},
+    {"scenario":"active_promise","expected_invariant":"Active PTP suppresses contact/retry actions","observed_result":"PASS: WAIT selected and no action scheduled","status":"PASS","evidence_ids":["868b8dc5-fc02-43aa-b1e7-d857065f5826"]},
+    {"scenario":"low_value_gate","expected_invariant":"Economically unviable intervention is blocked","observed_result":"PASS: gate BLOCK, policy DENY, no schedule","status":"PASS","evidence_ids":["39042100-76d8-44fb-8cc4-cba091a48c65"]},
+    {"scenario":"duplicate_webhook","expected_invariant":"Ten deliveries cause at most one provider effect","observed_result":"PASS: 9 duplicates blocked, 1 effect","status":"PASS","evidence_ids":["9f258009-063c-4eb3-827a-4856fd3d4e2b"]},
+    {"scenario":"worker_crash","expected_invariant":"Retry after crash does not duplicate provider effect","observed_result":"PASS: 1 call, 1 effect","status":"PASS","evidence_ids":["c7ece399-050f-4986-bb4e-3806ce78c609"]},
+    {"scenario":"stale_decision","expected_invariant":"Changed case version suppresses old scheduled work before external execution","observed_result":"PASS: STALE_OR_RECOVERED, 0 calls, 0 effects","status":"PASS","evidence_ids":["cd615498-0e4e-4774-885e-a9249ea984d1"]},
+    {"scenario":"fresh_payment_completion","expected_invariant":"Real hosted checkout emits payment_link.paid and reaches RECOVERED","observed_result":"WAITING_OUTCOME: link is ready for the demo operator to complete","status":"EXTERNAL_STEP_REQUIRED","evidence_ids":["d4ff7fda-0010-4b8a-acba-46a849000102","plink_TXAB1tY0qLM5Uf"]}
+  ]
+}

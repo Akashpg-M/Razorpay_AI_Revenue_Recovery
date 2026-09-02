@@ -11,6 +11,8 @@ import (
 
 const RuleVersion = "attribution-v2"
 
+var ErrCaseTerminal = errors.New("recovery case is already terminal")
+
 // Precedence is part of the versioned attribution contract. Exact provider
 // evidence wins over temporal inference; ambiguous overlaps remain visible in
 // the evidence payload rather than being silently re-ordered.

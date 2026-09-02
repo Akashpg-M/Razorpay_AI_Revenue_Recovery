@@ -201,6 +201,8 @@ func main() {
 	responseHandlers.Register(router.Group("/api/v1"))
 	promiseHandlers := apihttp.NewPromises(promiseService)
 	promiseHandlers.Register(router.Group("/api/v1"))
+	demoScenarioHandlers := apihttp.NewDemoScenarios(cfg.Environment, detectionService, detection.CheckoutAdapter{Store: recoveryRepository}, decisionCoordinator, promiseService)
+	demoScenarioHandlers.Register(router.Group("/api/v1"))
 	merchantProfileService := merchantprofile.NewService(recoveryRepository)
 	merchantProfileHandlers := apihttp.NewMerchantProfiles(merchantProfileService)
 	merchantProfileHandlers.Register(router.Group("/api/v1"))

@@ -1,1 +1,1 @@
-{"event":"payment.failed","payload":{"payment":{"entity":{"id":"pay_zrok_test_001","amount":129900,"currency":"INR","error_code":"insufficient_funds","notes":{"merchant_id":"demo-merchant-v1","customer_id":"demo-customer-v1"}}}}}
+{"event":"payment.failed","payload":{"payment":{"entity":{"id":"pay_public_test_001","amount":129900,"currency":"INR","error_code":"insufficient_funds","notes":{"merchant_id":"demo-merchant-v1","customer_id":"demo-customer-v1"}}}}}

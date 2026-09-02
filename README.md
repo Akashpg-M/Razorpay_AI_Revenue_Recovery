@@ -4,6 +4,20 @@ RecoverOS is an explainable, stateful next-best-action system for recovering fai
 
 For a complete clean startup using Git Bash and Docker Desktop, follow [STARTUP_GIT_BASH.md](STARTUP_GIT_BASH.md).
 
+After startup, open `http://localhost:3000/demo` for the guided judge flow. It creates a real PostgreSQL-backed case, runs the actual decision/gate/policy pipeline, sends high-value cases to Operations, and—after approval—lets the worker create a Razorpay Test Mode Payment Link. The page polls persisted replay data through payment observation, attribution, and recovery. Scenario and fault controls are available only when `APP_ENV` is `development`, `demo`, or `test`.
+
+Primary frontend surfaces:
+
+- `/` — operational Command Center, with Razorpay and synthetic evidence separated.
+- `/recoveries` and `/recovery/{id}` — portfolio plus decision, execution, attribution and complete replay evidence.
+- `/operations` — approve/reject/defer/stop with fresh reauthorization and stopping-rule proof.
+- `/evaluation` — held-out synthetic baseline, ablation and capacity-allocation evidence.
+- `/resilience` — guarded deterministic fault scenarios with persisted PASS/FAIL evidence.
+- `/observability` — services, queues, executions, webhook activity and actual provider status.
+- `/demo` — guided primary story and challenge-alignment map.
+
+The canonical final audit and claim boundaries are [docs/FINAL_IMPLEMENTATION_AUDIT.md](docs/FINAL_IMPLEMENTATION_AUDIT.md) and [docs/CLAIMS_AND_EVIDENCE.md](docs/CLAIMS_AND_EVIDENCE.md).
+
 All measured results in this repository come from the deterministic synthetic simulator unless explicitly labeled persisted Test Mode data. They are not production causal-uplift claims.
 
 This repository contains a stateful recovery domain, immutable audit history, a deterministic synthetic evaluation environment, and an optional fail-closed Razorpay Test Mode Payment Link integration. The default provider remains local.

@@ -172,6 +172,9 @@ func (i *Ingestor) observePaymentLinkPaid(ctx context.Context, envelope webhookE
 	}
 	record, created, err := i.observer.Observe(ctx, attribution.ObserveInput{CaseID: caseID, RecoveredAmountMinor: amount,
 		PaymentReference: link.ID, ObservedAt: observedAt, CorrelationID: eventID})
+	if errors.Is(err, attribution.ErrCaseTerminal) {
+		return IngestResult{Outcome: "IGNORED_TERMINAL_CASE"}, nil
+	}
 	if err != nil {
 		return IngestResult{}, err
 	}

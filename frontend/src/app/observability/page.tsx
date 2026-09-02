@@ -1,61 +1,6 @@
-import { Nav } from "@/components/nav";
-import { backendJSON } from "@/lib/api";
-
-type Alert = { code: string; severity: string; message: string };
-type Snapshot = {
-  generated_at: string;
-  schema_version: string;
-  queue: { pending: number; running: number; failed: number; max_lag_seconds: number };
-  execution: { succeeded: number; failed: number; timed_out: number; retrying: number };
-  recovery: {
-    active_cases: number;
-    recovered_cases: number;
-    escalated_cases: number;
-    stopped_cases: number;
-    expired_promises: number;
-  };
-  // Older deployments may encode a nil Go slice as JSON null.
-  alerts: Alert[] | null;
-};
-
-function Intro() {
-  return (
-    <section className="pageIntro">
-      <div className="eyebrow">OPERATIONAL HEALTH</div>
-      <h1>See the system.<br /><em>Before it surprises you.</em></h1>
-      <p>Durable queue lag, execution outcomes, recovery states, promises, schema posture, and derived alerts from persisted truth.</p>
-    </section>
-  );
-}
-
-export default async function Observability() {
-  const snapshot = await backendJSON<Snapshot>("/api/v1/observability");
-  if (!snapshot) {
-    return <><Nav /><main className="shell"><Intro /><div className="notice">Observability snapshot unavailable. Check backend readiness and migrations.</div></main></>;
-  }
-
-  const alerts = Array.isArray(snapshot.alerts) ? snapshot.alerts : [];
-
-  return (
-    <>
-      <Nav />
-      <main className="shell">
-        <Intro />
-        <section className="kpis">
-          <article><small>Queue pending / running</small><strong>{snapshot.queue.pending} / {snapshot.queue.running}</strong><span>Max lag {Math.round(snapshot.queue.max_lag_seconds)}s</span></article>
-          <article><small>Execution success / failed</small><strong>{snapshot.execution.succeeded} / {snapshot.execution.failed}</strong><span>{snapshot.execution.retrying} retrying · {snapshot.execution.timed_out} timeout</span></article>
-          <article><small>Active / recovered</small><strong>{snapshot.recovery.active_cases} / {snapshot.recovery.recovered_cases}</strong><span>{snapshot.recovery.escalated_cases} escalated</span></article>
-          <article><small>Schema</small><strong>{snapshot.schema_version}</strong><span>{new Date(snapshot.generated_at).toLocaleString()}</span></article>
-        </section>
-        <section className="panel alertPanel">
-          <div className="panelTitle"><h2>Active alerts</h2><span>{alerts.length}</span></div>
-          {alerts.length ? alerts.map((alert) => (
-            <div className={`alert ${alert.severity}`} key={alert.code}>
-              <b>{alert.code.replaceAll("_", " ")}</b><span>{alert.message}</span>
-            </div>
-          )) : <div className="healthy">No thresholds breached</div>}
-        </section>
-      </main>
-    </>
-  );
-}
+import{Nav}from"@/components/nav";import{backendJSON}from"@/lib/api";
+type Alert={code:string;severity:string;message:string};type Snapshot={generated_at:string;schema_version:string;queue:{pending:number;running:number;failed:number;max_lag_seconds:number};execution:{succeeded:number;failed:number;timed_out:number;retrying:number};recovery:{active_cases:number;recovered_cases:number;escalated_cases:number;stopped_cases:number;expired_promises:number};webhooks:{received:number;processed:number;failed:number;last_received_at?:string};alerts:Alert[]|null};type Ready={status:string;checks:Record<string,string>};type Provider={selected_provider:string;mode:string;configured:boolean;reachable:boolean;authenticated:boolean;webhook_verification_configured:boolean;external_webhook_delivery_configured:boolean};
+export default async function Observability(){const workerURL=process.env.WORKER_INTERNAL_URL??"http://worker:8082/health/ready";const[x,ready,p,worker]=await Promise.all([backendJSON<Snapshot>("/api/v1/observability"),backendJSON<Ready>("/health/ready"),backendJSON<Provider>("/api/v1/integrations/razorpay/status"),fetch(workerURL,{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null) as Promise<{status?:string}|null>]);if(!x)return <><Nav/><main className="shell"><div className="notice">Observability unavailable.</div></main></>;const alerts=Array.isArray(x.alerts)?x.alerts:[];
+return <><Nav/><main className="shell"><section className="pageIntro"><div className="eyebrow">RUNTIME PROOF</div><h1>See the system.<br/><em>Before it surprises you.</em></h1><p>Health, durable queue state, execution outcomes, webhook activity, recovery state and actionable alerts from persisted truth.</p></section><section className="healthGrid">{[["Backend",ready?.status],["Decision service",ready?.checks?.decision_service],["PostgreSQL",ready?.checks?.postgres],["Redis",ready?.checks?.redis],["Worker",worker?.status],["Schema",x.schema_version]].map(([a,b])=><span key={a}><i className={b==="ok"||b==="ready"?"ok":""}/><small>{a}</small><b>{b??"unavailable"}</b></span>)}</section>
+<section className="kpis"><article><small>Queue pending / running</small><strong>{x.queue.pending} / {x.queue.running}</strong><span>Oldest lag {Math.round(x.queue.max_lag_seconds)}s</span></article><article><small>Execution success / failed</small><strong>{x.execution.succeeded} / {x.execution.failed}</strong><span>{x.execution.retrying} retrying · {x.execution.timed_out} timeout</span></article><article><small>Webhook processed / failed</small><strong>{x.webhooks.processed} / {x.webhooks.failed}</strong><span>{x.webhooks.received} verified deliveries</span></article><article><small>Active / recovered</small><strong>{x.recovery.active_cases} / {x.recovery.recovered_cases}</strong><span>{x.recovery.escalated_cases} escalated · {x.recovery.expired_promises} overdue PTP</span></article></section>
+<section className="split"><article className="panel providerStatus"><span className="dataMode razorpay">PROVIDER STATUS</span><h2>{p?.selected_provider?.toUpperCase()} {p?.mode?.toUpperCase()} MODE</h2>{[["Credentials",p?.configured],["Reachable",p?.reachable],["Authenticated",p?.authenticated],["Webhook signature",p?.webhook_verification_configured],["Public webhook URL",p?.external_webhook_delivery_configured]].map(([k,v])=><span key={String(k)}><b>{String(k)}</b><i className={v?"yes":"no"}>{v?"READY":"MISSING"}</i></span>)}</article><article className="panel alertPanel"><div className="panelTitle"><h2>Active alerts</h2><span>{alerts.length}</span></div>{alerts.length?alerts.map(a=><div className={`alert ${a.severity}`} key={a.code}><b>{a.code.replaceAll("_"," ")}</b><span>{a.message}</span></div>):<div className="healthy">No thresholds breached</div>}<p className="footnote">Queue lag alert: &gt;300s · Execution alert: any failed work · Promise alert: any active promise past due.</p></article></section></main></>}

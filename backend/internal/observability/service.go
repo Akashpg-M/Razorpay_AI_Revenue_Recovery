@@ -11,7 +11,14 @@ type Snapshot struct {
 	Queue         Queue     `json:"queue"`
 	Execution     Execution `json:"execution"`
 	Recovery      Recovery  `json:"recovery"`
+	Webhooks      Webhooks  `json:"webhooks"`
 	Alerts        []Alert   `json:"alerts"`
+}
+type Webhooks struct {
+	Received     int64      `json:"received"`
+	Processed    int64      `json:"processed"`
+	Failed       int64      `json:"failed"`
+	LastReceived *time.Time `json:"last_received_at,omitempty"`
 }
 type Queue struct {
 	Pending       int64   `json:"pending"`

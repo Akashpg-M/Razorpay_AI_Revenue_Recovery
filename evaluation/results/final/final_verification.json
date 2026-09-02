@@ -1,0 +1,24 @@
+{
+  "verification_version": "recoveros-final-v1",
+  "generated_at": "2026-09-02T12:18:00Z",
+  "status": "PASS_WITH_EXTERNAL_PAYMENT_STEP",
+  "checks": [
+    {"name":"go_format","status":"PASS","detail":"All changed Go files processed by gofmt."},
+    {"name":"go_test","status":"PASS","detail":"go test ./..."},
+    {"name":"go_vet","status":"PASS","detail":"go vet ./..."},
+    {"name":"go_build","status":"PASS","detail":"All four commands built with -buildvcs=false; required because the sandbox OS account does not own the Git worktree."},
+    {"name":"python_tests","status":"PASS","detail":"37 unittest cases passed in the pinned Docker image."},
+    {"name":"frontend_lint","status":"PASS","detail":"eslint completed without findings."},
+    {"name":"frontend_build","status":"PASS","detail":"Next.js production compilation, TypeScript, page data, and all 11 routes passed."},
+    {"name":"docker_compose_config","status":"PASS","detail":"docker compose config --quiet"},
+    {"name":"docker_services","status":"PASS","detail":"postgres, redis, decision-service, backend, worker, and frontend healthy."},
+    {"name":"frontend_routes","status":"PASS","detail":"Command Center, Recoveries, Operations, Evaluation, Reliability, Observability, Demo, and dynamic RecoveryCase returned HTTP 200."},
+    {"name":"razorpay_status","status":"PASS","detail":"Provider selected razorpay, mode test, configured/reachable/authenticated true."},
+    {"name":"cloudflare_tunnel","status":"PASS","detail":"Public /health/ready returned 200; signed synthetic webhook passed HMAC and created one case."},
+    {"name":"razorpay_link_execution","status":"PASS","detail":"Human approval and fresh reauthorization produced one durable schedule and real Test Mode Payment Link plink_TXAB1tY0qLM5Uf."},
+    {"name":"hosted_test_payment","status":"EXTERNAL_STEP_REQUIRED","detail":"Case d4ff7fda-0010-4b8a-acba-46a849000102 remains WAITING_OUTCOME until a person completes the Razorpay hosted Test Mode checkout."},
+    {"name":"browser_visual_automation","status":"TOOLING_UNAVAILABLE","detail":"The supplied in-app browser runtime rejected its installed dependency trust path before opening a tab; HTTP and production-render checks passed."}
+  ],
+  "feature_freeze": true,
+  "allowed_post_freeze_changes": ["release-blocking bug fixes","copy improvements","visual polish","documentation fixes","demo reliability fixes"]
+}

@@ -295,6 +295,29 @@ Test Mode event must still be triggered to prove external delivery. The backend
 validates `X-Razorpay-Signature` against the raw body and deduplicates by
 `X-Razorpay-Event-Id`.
 
+For an interstitial-free temporary Cloudflare quick tunnel, install
+`cloudflared`, keep this command running in a separate Git Bash window, and
+copy the generated `https://...trycloudflare.com` hostname:
+
+```bash
+cloudflared tunnel --url http://localhost:8080
+```
+
+Set the Dashboard webhook and `.env` to:
+
+```text
+RAZORPAY_WEBHOOK_PUBLIC_URL=https://GENERATED.trycloudflare.com/api/v1/webhooks/razorpay
+```
+
+Verify the exact tunnel before the demo:
+
+```bash
+curl --fail "https://GENERATED.trycloudflare.com/health/ready"
+```
+
+Quick-tunnel hostnames are temporary. If the tunnel restarts, update both the
+Razorpay Test Mode dashboard and `.env`, then recreate the backend.
+
 If using a free `*.shares.zrok.io` endpoint, test it without browser cookies:
 
 ```bash
@@ -314,7 +337,10 @@ Open these URLs in a browser:
 
 ```text
 http://localhost:3000
+http://localhost:3000/demo
+http://localhost:3000/recoveries
 http://localhost:3000/operations
+http://localhost:3000/evaluation
 http://localhost:3000/observability
 http://localhost:3000/resilience
 http://localhost:3000/recovery/demo-recovered-case-v1

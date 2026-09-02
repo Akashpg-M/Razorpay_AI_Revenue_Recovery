@@ -1,5 +1,7 @@
 # Payment provider and recovery execution codebase guide
 
+> Final-state update (2026-09-02): [FINAL_IMPLEMENTATION_AUDIT.md](FINAL_IMPLEMENTATION_AUDIT.md) is the canonical capability/gap classification and supersedes conflicting historical findings in this long-form guide.
+
 This is the source-backed guide to the current repository. It describes what
 the implementation does today, including limitations and mismatches. It does
 not treat an interface, planned phase, or Razorpay product capability as an

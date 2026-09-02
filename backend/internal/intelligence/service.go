@@ -36,7 +36,7 @@ type Result struct {
 	Predictions []domain.ActionPrediction `json:"predictions"`
 }
 
-var scoreable = map[domain.ActionType]bool{domain.ActionWait: true, domain.ActionRetryNow: true, domain.ActionRetryLater: true, domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true, domain.ActionWaitForPromiseToPay: true, domain.ActionRetention: true}
+var scoreable = map[domain.ActionType]bool{domain.ActionWait: true, domain.ActionRetryNow: true, domain.ActionRetryLater: true, domain.ActionSendReminder: true, domain.ActionSendPaymentLink: true, domain.ActionSendCheckoutRecoveryLink: true, domain.ActionRequestPaymentMethodUpdate: true, domain.ActionSuggestAlternateMethod: true}
 
 func (s *Service) Predict(ctx context.Context, caseID domain.ID) (Result, error) {
 	decisionContext, err := s.contexts.Get(ctx, caseID)

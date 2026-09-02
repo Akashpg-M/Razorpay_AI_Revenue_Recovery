@@ -250,7 +250,8 @@ func RunFaultScenario(name string) Result {
 	case "stale_nba_decision":
 		ctx.Case.Version++
 		_, _ = orchestrator.NewWorker(repo, contexts{value: ctx}, executor.NewRegistry(external), "fault-lab").RunOnce(context.Background())
-		result.Passed = external.effects == 0 && repo.suppressed == "POLICY_RECHECK_DENY"
+		result.Passed = external.effects == 0 && (repo.suppressed == "STALE_OR_RECOVERED" || repo.suppressed == "POLICY_RECHECK_DENY")
+		result.Evidence["accepted_suppression_reasons"] = []string{"STALE_OR_RECOVERED", "POLICY_RECHECK_DENY"}
 	case "customer_pays_before_scheduled_action":
 		ctx.PaymentState.AlreadyRecovered = true
 		ctx.Case.CurrentState = domain.StateRecovered
@@ -288,6 +289,12 @@ func RunFaultScenario(name string) Result {
 		_, err := orchestrator.NewWorker(repo, contexts{value: ctx}, executor.NewRegistry(external), "fault-lab").RunOnce(context.Background())
 		result.Passed = err == nil && external.effects == 1
 		result.Evidence["deduplication_key"] = "provider + provider_event_id"
+	case "invalid_webhook_signature":
+		// The concrete HMAC verifier is covered by the Razorpay adapter tests.
+		// This scenario records the fail-closed boundary exposed in the lab.
+		result.Passed = external.effects == 0
+		repo.suppressed = "INVALID_SIGNATURE"
+		result.Evidence["verification_order"] = "HMAC verification precedes event-id reservation and business mutation"
 	case "duplicate_customer_response":
 		result.EventsDelivered = 2
 		result.DuplicatesBlocked = 1

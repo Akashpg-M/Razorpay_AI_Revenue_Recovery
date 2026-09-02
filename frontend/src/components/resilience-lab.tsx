@@ -1,49 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import { publicBackend } from "@/lib/api";
-
-type Result = {
-  resilience_run_id: string;
-  result: {
-    scenario: string; passed: boolean; external_call_count: number;
-    provider_effect_count: number; execution_attempt_count: number;
-    events_delivered: number; duplicates_blocked: number;
-    reconciliation_events: number; suppression_reason?: string;
-  };
-};
-
-const scenarios = [
-  ["Duplicate Webhook ×10", "duplicate_webhook"], ["Worker Crash", "worker_crash"],
-  ["Razorpay Timeout", "razorpay_timeout"], ["Invalid Model Output", "invalid_model_output"],
-  ["Duplicate Job", "duplicate_job"], ["Out-of-Order Event", "out_of_order_event"],
-  ["Provider Success + Response Lost", "provider_success_response_lost"],
-  ["Expired Worker Lease", "expired_worker_lease"], ["Redis Unavailable", "redis_unavailable"],
-  ["Stale NBA Decision", "stale_nba_decision"],
-  ["Customer Pays Before Scheduled Action", "customer_pays_before_scheduled_action"],
-];
-
-export function ResilienceLab() {
-  const [running, setRunning] = useState("");
-  const [result, setResult] = useState<Result | null>(null);
-  const [error, setError] = useState("");
-  async function run(id: string) {
-    setRunning(id); setError(""); setResult(null);
-    try {
-      const response = await fetch(`${publicBackend}/api/v1/resilience/scenarios/${id}/run`, { method: "POST" });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body?.error?.message ?? body?.error ?? "Scenario failed");
-      setResult(body);
-    } catch (value) { setError(value instanceof Error ? value.message : "Scenario failed"); }
-    finally { setRunning(""); }
-  }
-  const metrics = result ? [
-    ["Events delivered", result.result.events_delivered], ["Worker attempts", result.result.execution_attempt_count],
-    ["Provider calls", result.result.external_call_count], ["External effects", result.result.provider_effect_count],
-    ["Duplicates blocked", result.result.duplicates_blocked], ["Reconciliations", result.result.reconciliation_events],
-  ] : [];
-  return <div className="labGrid">
-    <section className="panel"><div className="eyebrow">ACTUAL BACKEND FAULT INJECTION</div><h2>Choose a failure mode</h2><p className="muted">Each control invokes the Go worker harness and records the result in PostgreSQL. No counters are animated locally.</p><div className="scenarioGrid">{scenarios.map(([label, id]) => <button key={id} onClick={() => run(id)} disabled={!!running}>{running === id ? "Injecting…" : label}</button>)}</div></section>
-    <section className="panel resultPanel"><div className="eyebrow">LATEST RUN</div>{error && <div className="error">{error}</div>}{!result && !error && <p className="muted">Run a scenario to inspect attempts, effects, and the protected invariant.</p>}{result && <><div className={result.result.passed ? "verdict pass" : "verdict fail"}>{result.result.passed ? "PASS" : "FAIL"}</div><h2>{result.result.scenario.replaceAll("_", " ")}</h2><div className="metricRows">{metrics.map(([label, value]) => <span key={label}>{label} <b>{value}</b></span>)}</div><div className="invariant"><small>INVARIANT</small><strong>At-least-once workflow; no uncontrolled duplicate side effect</strong></div><code className="runId">run / {result.resilience_run_id}</code></>}</section>
-  </div>;
-}
+"use client";import{useState}from"react";import{publicBackend}from"@/lib/api";
+type Result={resilience_run_id:string;started_at:string;completed_at:string;result:{scenario:string;fault_mode:string;passed:boolean;external_call_count:number;provider_effect_count:number;execution_attempt_count:number;events_delivered:number;duplicates_blocked:number;reconciliation_events:number;suppression_reason?:string;evidence?:Record<string,unknown>;error?:string}};
+const scenarios=[{id:"duplicate_webhook",label:"Duplicate Webhook ×10",invariant:"One provider event produces at most one business effect"},{id:"invalid_webhook_signature",label:"Invalid Webhook Signature",invariant:"Unauthenticated input cannot reserve an event ID or mutate business state"},{id:"worker_crash",label:"Worker Crash",invariant:"Leased work survives a worker crash"},{id:"razorpay_timeout",label:"Provider Timeout",invariant:"Retryable failure does not duplicate an effect"},{id:"duplicate_job",label:"Duplicate Scheduled Job",invariant:"Stable idempotency blocks duplicate execution"},{id:"expired_worker_lease",label:"Expired Lease",invariant:"Another worker safely reclaims abandoned work"},{id:"stale_nba_decision",label:"Stale Decision",invariant:"Changed cases reject old decisions"},{id:"redis_unavailable",label:"Redis Unavailable",invariant:"PostgreSQL durability does not depend on Redis"},{id:"customer_pays_before_scheduled_action",label:"Customer Pays First",invariant:"Recovered cases suppress pending actions"},{id:"provider_success_response_lost",label:"Success / Response Lost",invariant:"Reconciliation avoids a second provider effect"},{id:"out_of_order_event",label:"Out-of-Order Event",invariant:"Late events cannot corrupt terminal state"}];
+export function ResilienceLab(){const[running,setRunning]=useState(""),[result,setResult]=useState<Result|null>(null),[error,setError]=useState("");async function run(id:string){setRunning(id);setError("");setResult(null);try{const r=await fetch(`${publicBackend}/api/v1/resilience/scenarios/${id}/run`,{method:"POST"});const b=await r.json();if(!r.ok)throw new Error(b?.error?.message??b?.error??"Scenario failed");setResult(b)}catch(e){setError(e instanceof Error?e.message:"Scenario failed")}finally{setRunning("")}}const selected=scenarios.find(x=>x.id===result?.result.scenario);const duration=result?Math.max(0,new Date(result.completed_at).getTime()-new Date(result.started_at).getTime()):0;
+return <div className="labGrid"><section className="panel"><div className="dataMode synthetic">DETERMINISTIC FAULT SIMULATION</div><h2>Choose a protected invariant</h2><p className="muted">Each control invokes the Go reliability harness and persists its evidence. Provider simulations are not presented as real Razorpay guarantees.</p><div className="scenarioGrid">{scenarios.map(s=><button key={s.id} onClick={()=>run(s.id)} disabled={!!running}><b>{running===s.id?"Injecting…":s.label}</b><small>{s.invariant}</small></button>)}</div></section><section className="panel resultPanel"><div className="eyebrow">LATEST PERSISTED RUN</div>{error&&<div className="error">{error}</div>}{!result&&!error&&<p className="muted">Run a scenario to inspect expected and observed behavior.</p>}{result&&<><div className={result.result.passed?"verdict pass":"verdict fail"}>{result.result.passed?"PASS":"FAIL"}</div><h2>{result.result.scenario.replaceAll("_"," ")}</h2><div className="invariant"><small>EXPECTED INVARIANT</small><strong>{selected?.invariant??"Bounded at-least-once execution"}</strong></div><div className="metricRows">{[["Events delivered",result.result.events_delivered],["Worker attempts",result.result.execution_attempt_count],["Provider calls",result.result.external_call_count],["External effects",result.result.provider_effect_count],["Duplicates blocked",result.result.duplicates_blocked],["Reconciliations",result.result.reconciliation_events]].map(([a,b])=><span key={String(a)}>{a}<b>{String(b)}</b></span>)}</div><details><summary>Observed evidence</summary><pre>{JSON.stringify(result.result.evidence??{},null,2)}</pre></details><p className="footnote">{result.result.scenario.includes("razorpay")||result.result.scenario.includes("provider")?"SIMULATED INVARIANT · REAL PROVIDER SCOPE IS DOCUMENTED SEPARATELY":"DETERMINISTIC DOMAIN/WORKER INVARIANT"} · {duration} ms</p><code className="runId">run / {result.resilience_run_id}</code></>}</section></div>}
