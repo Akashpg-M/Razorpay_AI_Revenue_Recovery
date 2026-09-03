@@ -87,7 +87,7 @@ func main() {
 	})
 	health.HandleFunc("/health/ready", func(w http.ResponseWriter, r *http.Request) {
 		var schema string
-		if err := db.QueryRow(r.Context(), `SELECT value FROM platform_metadata WHERE key='schema_version'`).Scan(&schema); err != nil || schema != "phase_34" {
+		if err := db.QueryRow(r.Context(), `SELECT value FROM platform_metadata WHERE key='schema_version'`).Scan(&schema); err != nil || schema != "phase_55" {
 			w.WriteHeader(http.StatusServiceUnavailable)
 			_, _ = w.Write([]byte(`{"service":"worker","status":"not_ready"}`))
 			return

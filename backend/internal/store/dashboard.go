@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Postgres) DashboardOperational(ctx context.Context) (reporting.Operational, error) {
-	value := reporting.Operational{Mode: "OPERATIONAL / LIVE TEST DATA", Cases: []map[string]any{}}
+	value := reporting.Operational{Mode: "OPERATIONAL / LIVE TEST DATA", Cases: []map[string]any{}, RootCauses: []reporting.RootCause{}, ActionSelections: []reporting.ActionSelection{}, RecoveryTimeline: []reporting.RecoveryPoint{}}
 	err := p.pool.QueryRow(ctx, `SELECT COALESCE(SUM(amount_at_risk_minor),0),COALESCE(SUM(recovered_amount_minor),0),
 		COUNT(*) FILTER(WHERE current_state NOT IN('RECOVERED','ESCALATED','EXHAUSTED','STOPPED')),
 		COUNT(*) FILTER(WHERE current_state='ESCALATED'),
@@ -32,5 +32,62 @@ func (p *Postgres) DashboardOperational(ctx context.Context) (reporting.Operatio
 		}
 		value.Cases = append(value.Cases, item)
 	}
-	return value, rows.Err()
+	if err = rows.Err(); err != nil {
+		return value, err
+	}
+	rootRows, err := p.pool.Query(ctx, `SELECT COALESCE(NULLIF(failure_or_leak_context->>'failure_category',''),'UNCLASSIFIED'),COUNT(*),COALESCE(SUM(amount_at_risk_minor),0) FROM recovery_cases GROUP BY 1 ORDER BY 3 DESC,1`)
+	if err != nil {
+		return value, err
+	}
+	for rootRows.Next() {
+		var item reporting.RootCause
+		if err = rootRows.Scan(&item.Cause, &item.Cases, &item.AmountAtRiskMinor); err != nil {
+			rootRows.Close()
+			return value, err
+		}
+		value.RootCauses = append(value.RootCauses, item)
+	}
+	if err = rootRows.Err(); err != nil {
+		rootRows.Close()
+		return value, err
+	}
+	rootRows.Close()
+	actionRows, err := p.pool.Query(ctx, `WITH latest AS (SELECT DISTINCT ON(case_id) case_id,selected_action FROM recovery_decisions ORDER BY case_id,created_at DESC,id DESC) SELECT selected_action,COUNT(*) FROM latest GROUP BY selected_action ORDER BY COUNT(*) DESC,selected_action`)
+	if err != nil {
+		return value, err
+	}
+	for actionRows.Next() {
+		var item reporting.ActionSelection
+		if err = actionRows.Scan(&item.Action, &item.Cases); err != nil {
+			actionRows.Close()
+			return value, err
+		}
+		value.ActionSelections = append(value.ActionSelections, item)
+	}
+	if err = actionRows.Err(); err != nil {
+		actionRows.Close()
+		return value, err
+	}
+	actionRows.Close()
+	timelineRows, err := p.pool.Query(ctx, `SELECT to_char(date_trunc('day',observed_at),'YYYY-MM-DD'),COALESCE(SUM(recovered_amount_minor),0) FROM recovery_attributions GROUP BY 1 ORDER BY 1`)
+	if err != nil {
+		return value, err
+	}
+	var cumulative int64
+	for timelineRows.Next() {
+		var item reporting.RecoveryPoint
+		if err = timelineRows.Scan(&item.Day, &item.RecoveredMinor); err != nil {
+			timelineRows.Close()
+			return value, err
+		}
+		cumulative += item.RecoveredMinor
+		item.CumulativeRecoveredMinor = cumulative
+		value.RecoveryTimeline = append(value.RecoveryTimeline, item)
+	}
+	if err = timelineRows.Err(); err != nil {
+		timelineRows.Close()
+		return value, err
+	}
+	timelineRows.Close()
+	return value, nil
 }

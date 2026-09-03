@@ -128,6 +128,7 @@ type Store interface {
 	CancelPromise(context.Context, domain.ID, string, time.Time) (domain.PromiseToPay, error)
 	ClaimDuePromise(context.Context, string, time.Time, time.Duration) (domain.PromiseToPay, error)
 	ResolveDuePromise(context.Context, domain.ID, time.Time) (domain.PromiseToPay, error)
+	ResolvePromiseForDemo(context.Context, domain.ID, string, time.Time) (domain.PromiseToPay, error)
 }
 type Reassessor interface {
 	Reassess(context.Context, domain.ID) error
@@ -142,6 +143,7 @@ type Service struct {
 func NewService(store Store, reassessor Reassessor) *Service {
 	return &Service{store: store, reassessor: reassessor, now: time.Now, minimumConfidence: .75}
 }
+func (s *Service) SetReassessor(reassessor Reassessor) { s.reassessor = reassessor }
 
 var ErrNoDuePromise = errors.New("no due promise check")
 
@@ -198,6 +200,23 @@ func (s *Service) RunDueCheck(ctx context.Context, workerID string) error {
 		return s.reassessor.Reassess(ctx, resolved.CaseID)
 	}
 	return nil
+}
+
+func (s *Service) ResolveForDemo(ctx context.Context, promiseID domain.ID, outcome string) (domain.PromiseToPay, error) {
+	outcome = strings.ToUpper(strings.TrimSpace(outcome))
+	if outcome != "FULFILLED" && outcome != "BROKEN" {
+		return domain.PromiseToPay{}, errors.New("demo promise outcome must be FULFILLED or BROKEN")
+	}
+	resolved, err := s.store.ResolvePromiseForDemo(ctx, promiseID, outcome, s.now().UTC())
+	if err != nil {
+		return resolved, err
+	}
+	if outcome == "BROKEN" && s.reassessor != nil {
+		if err = s.reassessor.Reassess(ctx, resolved.CaseID); err != nil {
+			return resolved, err
+		}
+	}
+	return resolved, nil
 }
 
 // CreateFromResponse is deliberately deterministic and idempotent through the

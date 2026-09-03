@@ -114,6 +114,11 @@ func (c *DecisionCoordinator) Decide(ctx context.Context, caseID domain.ID) (dec
 	return snapshot, scheduled, nil
 }
 
+func (c *DecisionCoordinator) Reassess(ctx context.Context, caseID domain.ID) error {
+	_, _, err := c.Decide(ctx, caseID)
+	return err
+}
+
 type ContextProvider interface {
 	Get(context.Context, domain.ID) (recoverycontext.RecoveryDecisionContext, error)
 }

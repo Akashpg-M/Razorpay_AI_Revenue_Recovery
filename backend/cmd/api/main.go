@@ -117,7 +117,7 @@ func main() {
 			ready = false
 		}
 		var schema string
-		if err := db.QueryRow(checkCtx, `SELECT value FROM platform_metadata WHERE key='schema_version'`).Scan(&schema); err != nil || schema != "phase_34" {
+		if err := db.QueryRow(checkCtx, `SELECT value FROM platform_metadata WHERE key='schema_version'`).Scan(&schema); err != nil || schema != "phase_55" {
 			checks["schema"] = "migration_required"
 			ready = false
 		} else {
@@ -192,10 +192,11 @@ func main() {
 	intelligenceHandlers.Register(router.Group("/api/v1"))
 	decisionService := decisioning.NewService(contextService, decisionClient, recoveryRepository)
 	decisionCoordinator := orchestrator.NewDecisionCoordinator(decisionService, recoveryRepository)
-	decisionHandlers := apihttp.NewDecision(decisionCoordinator)
+	decisionHandlers := apihttp.NewDecision(decisionCoordinator, decisionService)
 	decisionHandlers.Register(router.Group("/api/v1"))
 	responseService := responses.NewService(recoveryRepository)
 	promiseService := promises.NewService(recoveryRepository, nil)
+	promiseService.SetReassessor(decisionCoordinator)
 	responseService.SetPromiseCreator(promiseService)
 	responseHandlers := apihttp.NewCustomerResponses(responseService)
 	responseHandlers.Register(router.Group("/api/v1"))

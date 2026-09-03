@@ -11,6 +11,8 @@
 | Duplicate and crash failure modes are bounded. | Persisted Reliability runs `9f258009-063c-4eb3-827a-4856fd3d4e2b` (duplicate webhook) and `c7ece399-050f-4986-bb4e-3806ce78c609` (worker crash) passed with one provider effect. | Deterministic Go worker/domain simulations. | These are simulations, not Razorpay availability guarantees. |
 | Batch evaluation measures recovered value against baselines. | Evaluation page reads frozen multi-seed artifacts under `decision-service/evaluation/results/phase24` and ablations under `phase25`. | Synthetic held-out evaluation. | Not production causal evidence. |
 | Audit history is immutable and judge-visible. | Recovery Replay joins events, decisions, candidates, gate, policy, reviews, schedules, executions, provider refs, webhooks, attributions and feedback. Database constraints/triggers enforce sequence and append-only behavior. | Persisted operational cases. | Infrastructure administrators still control the database deployment. |
+| Decision inputs and eligibility are replayable. | Schema `phase_55` persists the observable-only `decision_context` and `eligibility_snapshot` beside every committed NBA decision. The case page shows them without recomputing mutable history. | Decisions created after migration 10. | Older decision rows retain empty compatibility defaults. |
+| Promise failure triggers a fresh decision. | The demo-only Broken control uses the real promise transition, reliability update, `REASSESSING → ACTION_PENDING` path and coordinator; the new decision is visible in replay. | Development/demo/test environments. | The control simulates a customer promise outcome, not a Razorpay payment. |
 
 ## Final demonstration wording
 

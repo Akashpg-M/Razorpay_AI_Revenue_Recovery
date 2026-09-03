@@ -8,16 +8,33 @@ import (
 )
 
 type Operational struct {
-	Mode                  string           `json:"mode"`
-	RevenueAtRiskMinor    int64            `json:"revenue_at_risk_minor"`
-	RecoveredMinor        int64            `json:"recovered_minor"`
-	NaturalRecoveredMinor int64            `json:"natural_recovered_minor"`
-	AgentAttributedMinor  int64            `json:"agent_attributed_minor"`
-	ActiveCases           int64            `json:"active_cases"`
-	CasesAwaitingReview   int64            `json:"cases_awaiting_review"`
-	ActionsScheduled      int64            `json:"actions_scheduled"`
-	RecoveryRate          float64          `json:"recovery_rate"`
-	Cases                 []map[string]any `json:"cases"`
+	Mode                  string            `json:"mode"`
+	RevenueAtRiskMinor    int64             `json:"revenue_at_risk_minor"`
+	RecoveredMinor        int64             `json:"recovered_minor"`
+	NaturalRecoveredMinor int64             `json:"natural_recovered_minor"`
+	AgentAttributedMinor  int64             `json:"agent_attributed_minor"`
+	ActiveCases           int64             `json:"active_cases"`
+	CasesAwaitingReview   int64             `json:"cases_awaiting_review"`
+	ActionsScheduled      int64             `json:"actions_scheduled"`
+	RecoveryRate          float64           `json:"recovery_rate"`
+	Cases                 []map[string]any  `json:"cases"`
+	RootCauses            []RootCause       `json:"root_causes"`
+	ActionSelections      []ActionSelection `json:"action_selections"`
+	RecoveryTimeline      []RecoveryPoint   `json:"recovery_timeline"`
+}
+type RootCause struct {
+	Cause             string `json:"cause"`
+	Cases             int64  `json:"cases"`
+	AmountAtRiskMinor int64  `json:"amount_at_risk_minor"`
+}
+type ActionSelection struct {
+	Action string `json:"action"`
+	Cases  int64  `json:"cases"`
+}
+type RecoveryPoint struct {
+	Day                      string `json:"day"`
+	RecoveredMinor           int64  `json:"recovered_minor"`
+	CumulativeRecoveredMinor int64  `json:"cumulative_recovered_minor"`
 }
 type Store interface {
 	DashboardOperational(context.Context) (Operational, error)

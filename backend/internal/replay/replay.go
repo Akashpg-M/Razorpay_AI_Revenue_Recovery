@@ -18,6 +18,8 @@ type View struct {
 	Schedules          []json.RawMessage   `json:"schedules"`
 	Executions         []json.RawMessage   `json:"executions"`
 	Promises           []json.RawMessage   `json:"promises_to_pay"`
+	PromiseEvents      []json.RawMessage   `json:"promise_events"`
+	PromiseChecks      []json.RawMessage   `json:"promise_checks"`
 	HumanReviews       []json.RawMessage   `json:"human_reviews"`
 	Attributions       []json.RawMessage   `json:"attributions"`
 	ProviderReferences []json.RawMessage   `json:"provider_references"`

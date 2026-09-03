@@ -136,6 +136,14 @@ docker compose ps
 
 Expected long-running services are `postgres`, `redis`, `decision-service`, `backend`, `worker`, and `frontend`. The `migrate` service should show `Exited (0)`; that means migrations completed successfully.
 
+Run the judge-demo preflight after the services become healthy:
+
+```bash
+sh scripts/demo-preflight.sh
+```
+
+The expected readiness schema is `phase_55`.
+
 ## 5. Load the deterministic demo data
 
 The demo dataset is Test Mode-only, contains no real contact data, and is safe to run repeatedly:

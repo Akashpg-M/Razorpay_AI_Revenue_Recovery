@@ -58,6 +58,22 @@ func TestCompleteDecisionUsesOneNaturalProbabilityAndPersists(t *testing.T) {
 	if store.snapshot.Decision.ID == "" || result.Policy.Decision != "APPROVE" {
 		t.Fatalf("%+v", result)
 	}
+	if store.snapshot.Context.FeatureVersion != "recovery-context-v1" || len(store.snapshot.Eligibility.EligibleActions) == 0 {
+		t.Fatal("decision explanation snapshot was not persisted")
+	}
+}
+
+func TestObjectiveComparisonIsExplanationOnly(t *testing.T) {
+	now := time.Now()
+	decisionContext := recoverycontext.RecoveryDecisionContext{FeatureVersion: "recovery-context-v1", Case: domain.RecoveryCase{ID: "c", Version: 1, LeakType: domain.FailedSubscription, AmountAtRiskMinor: 100000, RecoveryDeadline: now.Add(time.Hour)}, Diagnosis: recoverycontext.Diagnosis{Confidence: .9}, MerchantContext: recoverycontext.MerchantContext{AllowedActions: []domain.ActionType{domain.ActionRetryLater}, MaxRetries: 3, MaxContactsPerDay: 3, MaxContactsPerWeek: 5}, PaymentState: recoverycontext.PaymentState{MandateStatus: "ACTIVE", PaymentMethodStatus: "VALID"}, TimingContext: recoverycontext.TimingContext{EvaluatedAt: now}}
+	store := &storeStub{}
+	rows, err := NewService(contextStub{decisionContext}, &predictorStub{}, store).CompareObjectives(context.Background(), "c")
+	if err != nil || len(rows) != 5 {
+		t.Fatalf("comparison: %d %v", len(rows), err)
+	}
+	if store.snapshot.Decision.ID != "" {
+		t.Fatal("explanation-only comparison persisted a decision")
+	}
 }
 
 func TestControlOnlyActionsCannotEnterExecutableOptimization(t *testing.T) {

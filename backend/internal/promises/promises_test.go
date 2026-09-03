@@ -56,6 +56,10 @@ func (f *fakeStore) ResolveDuePromise(_ context.Context, _ domain.ID, _ time.Tim
 	f.promise.Status = f.resolveStatus
 	return f.promise, nil
 }
+func (f *fakeStore) ResolvePromiseForDemo(_ context.Context, _ domain.ID, outcome string, _ time.Time) (domain.PromiseToPay, error) {
+	f.promise.Status = outcome
+	return f.promise, nil
+}
 
 type fakeReassessor struct{ caseID domain.ID }
 
@@ -88,5 +92,14 @@ func TestAmbiguousAndPastPromiseRejected(t *testing.T) {
 	past := now.Add(-time.Hour)
 	if _, err := Extract("", &past, now, time.UTC); err == nil {
 		t.Fatal("expected past rejection")
+	}
+}
+
+func TestDemoBrokenPromiseUsesRealReassessment(t *testing.T) {
+	store := &fakeStore{created: true, promise: domain.PromiseToPay{ID: "p", CaseID: "case-2", Status: "ACTIVE"}}
+	reassessor := &fakeReassessor{}
+	resolved, err := NewService(store, reassessor).ResolveForDemo(context.Background(), "p", "broken")
+	if err != nil || resolved.Status != "BROKEN" || reassessor.caseID != "case-2" {
+		t.Fatalf("%+v %v", resolved, err)
 	}
 }

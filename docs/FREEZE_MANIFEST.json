@@ -3,7 +3,7 @@
   "generated_at": "2026-09-02T12:15:00Z",
   "git_base_commit": "4e2d66f98d05c0eac7a2cdd48906ac3fc736461b",
   "working_tree_changes_included": true,
-  "schema_version": "phase_34",
+  "schema_version": "phase_55",
   "simulator": {"version":"1.0.0","feature_version":"synthetic-observable-v1","seed":42,"test_population_sha256":"CC1A248AF3E1026761DC60CED0394FD89FD784646DC73F659AEC69E2BBB763F2"},
   "outcome_model": {"version":"outcome-v1","feature_version":"features-v1","sha256":"25C94AA9BEAD6A6CDBB067C781FFA8C3CD4648086ABC916DC74A242051D7316C"},
   "natural_model": {"version":"natural-recovery-v1","feature_version":"natural-features-v1","sha256":"F60830F98F1EADC27017A085E949AE982D6B1F2B74B6D19E1A2D174941C55C09"},
@@ -18,7 +18,7 @@
   "evaluation": {"version":"phase26-30-resilience-v1","configuration":"five-seed frozen synthetic evaluation plus authorization and reliability matrices"},
   "verification": {"status":"PASS_WITH_EXTERNAL_PAYMENT_STEP","artifacts":["evaluation/results/phase33/verification_summary.json","evaluation/results/final/backend_closure.json","evaluation/results/final/final_verification.json"],"go_tests":"PASS","go_vet":"PASS","python_tests":"37 PASS","frontend_lint":"PASS","frontend_build":"PASS","docker_compose":"HEALTHY"},
   "razorpay_test_evidence": {"authenticated":true,"public_tunnel_ready":true,"payment_link_reference":"plink_TXAB1tY0qLM5Uf","case_id":"d4ff7fda-0010-4b8a-acba-46a849000102","state":"WAITING_OUTCOME","completion":"requires hosted Test Mode checkout"},
-  "frontend_control_plane": ["command-center","recoveries","recovery-replay","operations","evaluation","reliability","observability","demo"],
+  "frontend_control_plane": ["command-center","recoveries","nine-stage-recovery-pipeline","decision-deep-dive","promise-lifecycle","recovery-replay","operations","evaluation","reliability","observability","reviewer-proof-map","presenter-guide"],
   "claim_scope": "synthetic evaluation and Razorpay Test Mode",
   "production_causal_uplift_claimed": false
 }

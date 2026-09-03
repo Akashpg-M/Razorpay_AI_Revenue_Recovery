@@ -42,11 +42,13 @@ func saveDecisionTx(ctx context.Context, tx pgx.Tx, s decisioning.Snapshot) erro
 	}
 	selected := s.Decision.Optimization.Selected
 	profileSnapshot, _ := json.Marshal(s.Decision.Optimization)
+	decisionContext, _ := json.Marshal(s.Context)
+	eligibilitySnapshot, _ := json.Marshal(s.Eligibility)
 	var profileID any
 	if s.Decision.Optimization.MerchantProfileID != "" {
 		profileID = s.Decision.Optimization.MerchantProfileID
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO recovery_decisions(id,case_id,case_version,optimizer_version,merchant_objective,context_version,outcome_model_version,natural_model_version,cost_model_version,selected_action,selected_nerv_minor,created_at,merchant_profile_id,merchant_profile_version,merchant_profile_snapshot)VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`, s.Decision.ID, s.Decision.CaseID, s.Decision.CaseVersion, s.Decision.Optimization.OptimizerVersion, s.Decision.Optimization.MerchantObjective, s.Decision.ContextVersion, s.Decision.OutcomeModelVersion, s.Decision.NaturalModelVersion, s.Decision.Optimization.CostModelVersion, selected.Action, selected.NERVMinor, s.Decision.Optimization.CreatedAt, profileID, s.Decision.Optimization.MerchantProfileVersion, profileSnapshot)
+	_, err = tx.Exec(ctx, `INSERT INTO recovery_decisions(id,case_id,case_version,optimizer_version,merchant_objective,context_version,outcome_model_version,natural_model_version,cost_model_version,selected_action,selected_nerv_minor,created_at,merchant_profile_id,merchant_profile_version,merchant_profile_snapshot,decision_context,eligibility_snapshot)VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`, s.Decision.ID, s.Decision.CaseID, s.Decision.CaseVersion, s.Decision.Optimization.OptimizerVersion, s.Decision.Optimization.MerchantObjective, s.Decision.ContextVersion, s.Decision.OutcomeModelVersion, s.Decision.NaturalModelVersion, s.Decision.Optimization.CostModelVersion, selected.Action, selected.NERVMinor, s.Decision.Optimization.CreatedAt, profileID, s.Decision.Optimization.MerchantProfileVersion, profileSnapshot, decisionContext, eligibilitySnapshot)
 	if err != nil {
 		return err
 	}

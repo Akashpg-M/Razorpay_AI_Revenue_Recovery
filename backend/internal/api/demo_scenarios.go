@@ -38,6 +38,24 @@ func NewDemoScenarios(environment string, detector *detection.Service, checkout 
 
 func (h *DemoScenarios) Register(router *gin.RouterGroup) {
 	router.POST("/demo/scenarios/:scenario", h.create)
+	router.POST("/demo/promises/:id/:outcome", h.resolvePromise)
+}
+
+func (h *DemoScenarios) resolvePromise(c *gin.Context) {
+	if !h.enabled {
+		c.JSON(http.StatusNotFound, gin.H{"error": "demo controls are disabled"})
+		return
+	}
+	if h.promises == nil {
+		handleServiceError(c, errors.New("promise service is unavailable"))
+		return
+	}
+	resolved, err := h.promises.ResolveForDemo(c.Request.Context(), domain.ID(c.Param("id")), c.Param("outcome"))
+	if err != nil {
+		handleServiceError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"mode": "DEMO_OUTCOME_SIMULATION", "provider_payment_observed": false, "promise": resolved})
 }
 
 func (h *DemoScenarios) create(c *gin.Context) {

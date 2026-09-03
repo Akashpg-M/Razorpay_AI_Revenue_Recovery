@@ -117,6 +117,17 @@ func (p *Postgres) ClaimDuePromise(ctx context.Context, workerID string, now tim
 }
 
 func (p *Postgres) ResolveDuePromise(ctx context.Context, promiseID domain.ID, now time.Time) (domain.PromiseToPay, error) {
+	return p.resolvePromise(ctx, promiseID, "", now)
+}
+
+func (p *Postgres) ResolvePromiseForDemo(ctx context.Context, promiseID domain.ID, outcome string, now time.Time) (domain.PromiseToPay, error) {
+	if outcome != "FULFILLED" && outcome != "BROKEN" {
+		return domain.PromiseToPay{}, errors.New("invalid demo promise outcome")
+	}
+	return p.resolvePromise(ctx, promiseID, outcome, now)
+}
+
+func (p *Postgres) resolvePromise(ctx context.Context, promiseID domain.ID, forcedOutcome string, now time.Time) (domain.PromiseToPay, error) {
 	tx, err := p.pool.Begin(ctx)
 	if err != nil {
 		return domain.PromiseToPay{}, err
@@ -134,10 +145,13 @@ func (p *Postgres) ResolveDuePromise(ctx context.Context, promiseID domain.ID, n
 	if err = tx.QueryRow(ctx, `SELECT current_state,recovery_deadline FROM recovery_cases WHERE id=$1 FOR UPDATE`, promise.CaseID).Scan(&caseState, &deadline); err != nil {
 		return promise, err
 	}
-	target, reason, reference := "BROKEN", "PAYMENT_NOT_OBSERVED", ""
-	if caseState == domain.StateRecovered {
+	target, reason, reference := forcedOutcome, "DEMO_OUTCOME_SIMULATION", "demo-control"
+	if forcedOutcome == "" {
+		target, reason, reference = "BROKEN", "PAYMENT_NOT_OBSERVED", ""
+	}
+	if forcedOutcome == "" && caseState == domain.StateRecovered {
 		target, reason, reference = "FULFILLED", "CASE_RECOVERED", "case-state"
-	} else if !deadline.After(now) {
+	} else if forcedOutcome == "" && !deadline.After(now) {
 		target, reason = "EXPIRED", "RECOVERY_WINDOW_EXPIRED"
 	}
 	resolved, err := transitionPromiseTx(ctx, tx, promise, target, reason, "promise-check:"+string(promise.ID), reference, now)

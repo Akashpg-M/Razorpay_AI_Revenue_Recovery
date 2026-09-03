@@ -1,7 +1,7 @@
 # RecoverOS Final Implementation Audit
 
 Audit date: 2026-09-02  
-Schema: `phase_34`  
+Schema: `phase_55`
 Claim scope: PostgreSQL-backed operational flows, Razorpay Test Mode, and separately labelled synthetic evaluation.
 
 ## Current Razorpay capability
@@ -17,7 +17,7 @@ The primary success path is:
 5. `payment_link.paid` is handled by `observePaymentLinkPaid`. Resolution uses, in order, the persisted Payment Link/reference mapping and validated note identifiers through `store.ResolvePaymentLinkCase`.
 6. `attribution.Service.Observe` calls `store.AttributeRecovery`, which links the payment to the execution/action/decision, inserts `recovery_attributions`, fulfils a matching promise where applicable, records feedback, emits audit events and changes the case to `RECOVERED` in one transaction.
 
-Key tables are `recovery_cases`, `recovery_events`, `recovery_decisions`, `recovery_decision_candidates`, `economic_gate_decisions`, `policy_evaluations`, `recovery_actions`, `scheduled_actions`, `executions`, `provider_action_references`, `webhook_events`, `recovery_attributions`, `feedback_records`, `human_reviews`, and `promises_to_pay`.
+Key tables are `recovery_cases`, `recovery_events`, `recovery_decisions`, `recovery_decision_candidates`, `economic_gate_evaluations`, `policy_evaluations`, `recovery_actions`, `scheduled_actions`, `executions`, `provider_action_references`, `webhook_events`, `recovery_attributions`, `feedback_records`, `human_review_records`, and `promises_to_pay`. Schema `phase_55` additionally freezes the observable decision context and full eligibility snapshot on each decision so later replay is not reconstructed from mutable profiles.
 
 ## Razorpay webhook allowlist
 

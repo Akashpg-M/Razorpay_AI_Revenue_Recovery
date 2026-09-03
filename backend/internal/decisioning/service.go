@@ -56,11 +56,12 @@ type Decision struct {
 	Optimization        optimizer.Result `json:"optimization"`
 }
 type Snapshot struct {
-	Decision    Decision            `json:"decision"`
-	Natural     NaturalSnapshot     `json:"natural_recovery"`
-	Eligibility eligibility.Result  `json:"eligibility"`
-	Gate        economicgate.Result `json:"economic_gate"`
-	Policy      policy.Result       `json:"policy"`
+	Decision    Decision                                `json:"decision"`
+	Natural     NaturalSnapshot                         `json:"natural_recovery"`
+	Context     recoverycontext.RecoveryDecisionContext `json:"decision_context"`
+	Eligibility eligibility.Result                      `json:"eligibility"`
+	Gate        economicgate.Result                     `json:"economic_gate"`
+	Policy      policy.Result                           `json:"policy"`
 }
 
 // Only actions backed by a worker executor may enter the optimizer. Promise
@@ -115,8 +116,54 @@ func (s *Service) Evaluate(ctx context.Context, caseID domain.ID) (Snapshot, err
 	policyResult := policy.Evaluate(decisionContext, decisionID, decisionContext.Case.Version, ranked.Selected, gate, now)
 	policyResult.ID = domain.ID(id.New())
 	policyResult.EconomicGateID = gate.ID
-	snapshot := Snapshot{Decision: decision, Natural: naturalSnapshot, Eligibility: eligible, Gate: gate, Policy: policyResult}
+	snapshot := Snapshot{Decision: decision, Natural: naturalSnapshot, Context: decisionContext, Eligibility: eligible, Gate: gate, Policy: policyResult}
 	return snapshot, nil
+}
+
+type ObjectiveComparison struct {
+	Objective      string                `json:"objective"`
+	SelectedAction domain.ActionType     `json:"selected_action"`
+	NERVMinor      int64                 `json:"net_expected_recovery_value_minor"`
+	ObjectiveScore int64                 `json:"objective_score_minor"`
+	Candidates     []optimizer.Candidate `json:"candidates"`
+}
+
+// CompareObjectives is explanation-only: it evaluates the same observable
+// snapshot and predictions under alternate merchant objectives and never saves
+// a decision or schedules an action.
+func (s *Service) CompareObjectives(ctx context.Context, caseID domain.ID) ([]ObjectiveComparison, error) {
+	decisionContext, err := s.contexts.Get(ctx, caseID)
+	if err != nil {
+		return nil, err
+	}
+	eligible := eligibility.Evaluate(decisionContext)
+	actions := []string{}
+	for _, action := range eligible.EligibleActions {
+		if scoreable[action] {
+			actions = append(actions, string(action))
+		}
+	}
+	natural, err := s.predictor.PredictNatural(ctx, decisionContext)
+	if err != nil {
+		return nil, err
+	}
+	outcomes := decisionclient.PredictionResponse{}
+	if len(actions) > 0 {
+		outcomes, err = s.predictor.PredictOutcomes(ctx, decisionclient.PredictionRequest{Context: decisionContext, EligibleActions: actions})
+		if err != nil {
+			return nil, err
+		}
+	}
+	objectives := []string{"MAXIMIZE_NET_RECOVERY", "MAXIMIZE_RETENTION", "MINIMIZE_CONTACT", "MINIMIZE_RECOVERY_COST", "BALANCED"}
+	rows := make([]ObjectiveComparison, 0, len(objectives))
+	for _, objective := range objectives {
+		variant := decisionContext
+		variant.MerchantContext.RecoveryObjective = objective
+		variant.MerchantContext.OptimizationProfileVersion = 0
+		ranked := optimizer.Rank(variant, outcomes.Predictions, natural.NaturalRecoveryProbability, s.costs, s.now().UTC())
+		rows = append(rows, ObjectiveComparison{Objective: objective, SelectedAction: ranked.Selected.Action, NERVMinor: ranked.Selected.NERVMinor, ObjectiveScore: ranked.Selected.ObjectiveScoreMinor, Candidates: ranked.Candidates})
+	}
+	return rows, nil
 }
 func modelVersion(predictions []decisionclient.OutcomePrediction) string {
 	if len(predictions) == 0 {
